@@ -1,0 +1,205 @@
+{
+  "challenges": {
+    "easy": [
+      {
+        "title": "Simple Blogging Platform",
+        "outcome": "A basic platform for users to create and publish blog posts.",
+        "keyFeature": "Factory Method pattern for creating different types of blog posts.",
+        "generalDescription": "Creation and editing of blog posts, comment management, and basic user profiles.",
+        "expectedFunctionality": {
+          "CreatePost": "Create a new Text, Photo or Image post."
+        },
+        "usageScenarios": {
+          "TextPost": "Users can write and format text, add tags, and categorize their posts.",
+          "PhotoPost": "Users can upload images, create galleries, and add brief descriptions.",
+          "VideoPost": "Users can embed videos from platforms like YouTube or upload directly."
+        }
+      },
+      {
+        "title": "Lightweight Logging Framework",
+        "outcome": "A framework for logging application events.",
+        "keyFeature": "Strategy pattern to switch between different logging strategies (e.g., console, file).",
+        "generalDescription": "Implement a flexible logging system that allows switching between various logging methods based on the context or preference.",
+        "expectedFunctionality": {
+          "LogEvent": "Record an event in the specified log format.",
+          "ChangeLogStrategy": "Switch logging methods without changing the rest of the code."
+        },
+        "usageScenarios": {
+          "EventLogging": "As events occur within the application, they are logged according to the selected strategy."
+        }
+      },
+      {
+        "title": "Basic Cache System",
+        "outcome": "A caching system to store and retrieve data efficiently.",
+        "keyFeature": "Proxy pattern to control access to resource-intensive operations.",
+        "generalDescription": "Develop a caching mechanism to improve data retrieval performance by storing frequently accessed data in a faster, more accessible manner.",
+        "expectedFunctionality": {
+          "FetchData": "Retrieve data from the cache or the original source if not cached.",
+          "StoreData": "Store data in the cache for faster future access."
+        },
+        "usageScenarios": {
+          "DataRetrieval": "When data is requested, the system checks the cache before accessing the main data source."
+        }
+      },
+      {
+        "title": "Configuration Settings Manager",
+        "outcome": "A manager for application configuration settings.",
+        "keyFeature": "Memento pattern to save and restore configuration settings.",
+        "generalDescription": "Create a system that allows users to save, manage, and restore application settings, enhancing user experience and customization.",
+        "expectedFunctionality": {
+          "SaveSettings": "Save the current configuration settings.",
+          "RestoreSettings": "Revert to previously saved settings."
+        },
+        "usageScenarios": {
+          "SettingsChange": "Users modify and save settings, with the option to revert to a previous configuration."
+        }
+      },
+      {
+        "title": "Basic Social Media Post Scheduler",
+        "outcome": "An application to schedule and post content on social media.",
+        "keyFeature": "State pattern to track the status of scheduled posts.",
+        "generalDescription": "Develop a tool that allows users to create, schedule, and automate posting content on social media platforms, using the State pattern to manage the lifecycle of each post, including the ability to hide posts after publishing.",
+        "expectedFunctionality": {
+          "CreatePost": "Draft a new social media post.",
+          "SchedulePost": "Set a time and date for the post to be published.",
+          "PublishPost": "Automatically post the content at the scheduled time.",
+          "HidePost": "Provide an option to hide the post from public view after it has been published."
+        },
+        "usageScenarios": {
+          "ContentScheduling": "Users plan and schedule their social media content in advance.",
+          "PostManagement": "After posts are published, users have the option to hide them from their timeline or public view."
+        }
+      },
+      {
+        "title": "Customizable Coffee Order System",
+        "outcome": "A system for creating customized coffee orders.",
+        "keyFeature": "Decorator pattern to add new behaviors to coffee orders dynamically.",
+        "generalDescription": "Create a coffee ordering system where users can customize their coffee with options like milk, sugar, and flavors. This system should allow dynamic customization of basic coffee orders.",
+        "expectedFunctionality": {
+          "OrderCoffee": "Start with a basic coffee.",
+          "AddCustomization": "Add additional ingredients or flavors to the coffee."
+        },
+        "usageScenarios": {
+          "OrderCoffee": "Start with a basic coffee.",
+          "CoffeeCustomization": "Users customize their coffee order by adding ingredients like milk, sugar, and different flavors."
+        }
+      },
+      {
+        "title": "Zoo Animal Health Assessment",
+        "outcome": "A system to assess the health of animals in a zoo.",
+        "keyFeature": "Visitor pattern to perform various health assessments on different types of animals without modifying animal classes.",
+        "generalDescription": "Create a system for zookeepers to assess the health of various animals in a zoo. The system should be capable of performing different health checks (like weight monitoring, behavioral assessment) tailored to each animal type, providing an efficient way to track animal health.",
+        "expectedFunctionality": {
+          "AddAnimal": "Add different animals with their unique characteristics.",
+          "ConductHealthCheck": "Perform health assessments specific to each type of animal."
+        },
+        "usageScenarios": {
+          "HealthMonitoring": "Zookeepers use the system to regularly monitor and record the health status of the zoo animals."
+        }
+      },
+      {
+        "title": "Payment Gateway Integrator",
+        "outcome": "A system that integrates multiple payment gateways into one platform.",
+        "keyFeature": "Adapter pattern to interact with different payment processing APIs.",
+        "generalDescription": "Develop a unified payment platform that allows users to process transactions through various payment gateways. The platform should streamline the integration of diverse payment services, offering a consistent interface for transaction processing regardless of the underlying gateway.",
+        "expectedFunctionality": {
+          "AddPaymentGateway": "Add a new payment service to the platform.",
+          "ProcessPayment": "Handle payment transactions through the chosen gateway.",
+          "ManageTransactions": "Keep track of all transactions processed."
+        },
+        "usageScenarios": {
+          "ECommerceCheckout": "E-commerce sites use the platform for handling diverse payment options.",
+          "SubscriptionManagement": "Manage recurring payments for different services."
+        }
+      },
+      {
+        "title": "File System Organizer",
+        "outcome": "A system to organize files and folders.",
+        "keyFeature": "Composite pattern to treat files and folders uniformly.",
+        "generalDescription": "Develop an application that mimics a file system, where users can create files and folders. Folders can contain files or other folders. The system should treat both files and folders as 'File System Entities' to perform common operations like creating, managing permissions, and displaying.",
+        "expectedFunctionality": {
+          "CreateFile": "Create a new file with a name.",
+          "CreateFolder": "Create a new folder which can contain files or other folders.",
+          "ManagePermissions": "Set or change permissions (read, write, execute) for files and folders."
+        },
+        "usageScenarios": {
+          "Organization": "Users create and organize their digital files and folders, structuring them in a hierarchical manner.",
+          "ManualSearch": "Users navigate through the file system manually to locate specific files or folders.",
+          "PermissionManagement": "Users set or modify permissions for files and folders to control access and actions that can be performed on them.",
+          "FolderSummarization": "The system provides a summary of contents for each folder. For example, the number of files, total size, and types of files contained within."
+        }
+      },
+      {
+        "title": "User Session Tracker",
+        "outcome": "A system to track the active user session in an application.",
+        "keyFeature": "Singleton pattern for maintaining a single active user session.",
+        "generalDescription": "Create a session tracker to manage the user's session in an application. This tracker should be responsible for storing and providing access to user session information, ensuring that there is only one active session at a time.",
+        "expectedFunctionality": {
+          "StartSession": "Initiate a new user session.",
+          "EndSession": "Terminate the current user session.",
+          "GetSessionInfo": "Retrieve details of the active session."
+        },
+        "usageScenarios": {
+          "LoginProcess": "Manage user authentication and track session start.",
+          "SessionValidation": "Ensure that actions within the application are performed within a valid session."
+        }
+      }
+    ],
+    "medium": [
+      {
+        "title": "Smart Restaurant Ordering System",
+        "outcome": "A digital system for handling restaurant orders.",
+        "keyFeatures": [
+          "Observer pattern for order status updates",
+          "Command pattern for processing orders",
+          "Factory Method pattern for creating different types of menu items"
+        ],
+        "generalDescription": "Develop a system for 'Gourmet Bistro', a restaurant that allows customers to place orders digitally. The system should handle various types of menu items (like appetizers, main courses, desserts) and update customers on the status of their orders in real-time.",
+        "expectedFunctionality": {
+          "PlaceOrder": "Customers can place orders for different menu items.",
+          "UpdateOrderStatus": "Kitchen staff update the status of orders, which notifies customers.",
+          "CreateMenuItem": "Add new items to the menu, categorized by type."
+        },
+        "usageScenarios": {
+          "CustomerExperience": "Customers enjoy a seamless ordering experience, from browsing the menu to receiving real-time updates on their orders.",
+          "KitchenEfficiency": "Kitchen staff manage orders more efficiently, with clear communication and order tracking."
+        }
+      },
+      {
+        "title": "Hotel Room Booking System",
+        "outcome": "A system for managing hotel room reservations.",
+        "keyFeatures": [
+          "Factory Method pattern for creating different types of rooms",
+          "Singleton pattern for central reservation management"
+        ],
+        "generalDescription": "Develop a reservation system for 'Sunrise Hotels' that can handle bookings for various room types, including standard, deluxe, and suite. The system should centralize booking operations to maintain consistency and reliability across the hotel chain.",
+        "expectedFunctionality": {
+          "BookRoom": "Reserve a specific type of room for guests.",
+          "CancelBooking": "Cancel an existing reservation.",
+          "ViewBookings": "Display current bookings and their statuses."
+        },
+        "usageScenarios": {
+          "GuestAccommodation": "Guests book rooms suited to their preferences and needs.",
+          "ReservationManagement": "Hotel staff manage and oversee room reservations efficiently."
+        }
+      },
+      {
+        "title": "Customizable News Aggregator",
+        "outcome": "A news aggregation platform with personalized content.",
+        "keyFeatures": [
+          "Strategy pattern for different content curation algorithms",
+          "Builder pattern for constructing user-specific news feeds"
+        ],
+        "generalDescription": "Develop 'NewsStream', a news aggregation platform that curates content based on user preferences. The platform should offer different algorithms for content curation and allow users to build their personalized news feed.",
+        "expectedFunctionality": {
+          "SelectCurationAlgorithm": "Choose an algorithm for content recommendation.",
+          "BuildNewsFeed": "Customize the news feed based on user interests and preferences."
+        },
+        "usageScenarios": {
+          "PersonalizedContent": "Users receive news and articles tailored to their interests.",
+          "FeedCustomization": "Users adjust their news feed settings for a more relevant content experience."
+        }
+      }
+    ]
+  }
+}
