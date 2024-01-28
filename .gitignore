@@ -1,2 +1,21 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Build files
+build/
+dist/
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
 **/challenge_drafting
 UML_Mentor_Proposal.pdf
