@@ -1,14 +1,19 @@
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
-const cors = require('cors');
-const routes = require('./routes');
+const { connectToDatabase } = require('./db');
 
-// Middleware
-app.use(cors());
+const app = express();
+
+connectToDatabase();
+
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Routes
-app.use('/api', routes);
+app.get('/', (req, res) => {
+    res.send('test');
+});
 
-module.exports = app;
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
