@@ -1,0 +1,64 @@
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { PersonCircle } from "react-bootstrap-icons";
+
+import { useLocation } from "react-router-dom";
+
+const NAV_CONFIG = {
+  brand: "UML Mentor",
+  routes: [
+    {
+      name: "Home",
+      href: "/home",
+    },
+    {
+      name: "Challenges",
+      href: "/challenges",
+    },
+    {
+      name: "Solutions",
+      href: "/solutions",
+    },
+  ],
+  profile: {
+    icon: PersonCircle,
+    href: "/profile",
+  },
+};
+
+function NavigationBar() {
+  const location = useLocation().pathname;
+
+  return (
+    <Navbar expand="lg" className="bg-body-tertiary">
+      <Container>
+        <Navbar.Brand href={"/"}>{NAV_CONFIG.brand}</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            {NAV_CONFIG.routes.map((r) => (
+              <Nav.Link
+                href={r.href}
+                key={r.href}
+                className={location == r.href ? "text-primary" : ""}
+              >
+                {r.name}
+              </Nav.Link>
+            ))}
+          </Nav>
+        </Navbar.Collapse>
+        <Nav>
+          <Nav.Link href={NAV_CONFIG.profile.href}>
+            <NAV_CONFIG.profile.icon
+              size={"1.5rem"}
+              className={
+                location == NAV_CONFIG.profile.href ? "text-primary" : ""
+              }
+            />
+          </Nav.Link>
+        </Nav>
+      </Container>
+    </Navbar>
+  );
+}
+
+export default NavigationBar;
