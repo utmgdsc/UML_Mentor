@@ -2,6 +2,7 @@
   "challenges": {
     "easy": [
       {
+        "id": 1,
         "title": "Simple Blogging Platform",
         "outcome": "A basic platform for users to create and publish blog posts.",
         "keyFeature": "Factory Method pattern for creating different types of blog posts.",
@@ -16,6 +17,7 @@
         }
       },
       {
+        "id": 2,
         "title": "Lightweight Logging Framework",
         "outcome": "A framework for logging application events.",
         "keyFeature": "Strategy pattern to switch between different logging strategies (e.g., console, file).",
@@ -29,6 +31,7 @@
         }
       },
       {
+        "id": 3,
         "title": "Basic Cache System",
         "outcome": "A caching system to store and retrieve data efficiently.",
         "keyFeature": "Proxy pattern to control access to resource-intensive operations.",
@@ -42,6 +45,7 @@
         }
       },
       {
+        "id": 4,
         "title": "Configuration Settings Manager",
         "outcome": "A manager for application configuration settings.",
         "keyFeature": "Memento pattern to save and restore configuration settings.",
@@ -55,6 +59,7 @@
         }
       },
       {
+        "id": 5,
         "title": "Basic Social Media Post Scheduler",
         "outcome": "An application to schedule and post content on social media.",
         "keyFeature": "State pattern to track the status of scheduled posts.",
@@ -71,6 +76,7 @@
         }
       },
       {
+        "id": 6,
         "title": "Customizable Coffee Order System",
         "outcome": "A system for creating customized coffee orders.",
         "keyFeature": "Decorator pattern to add new behaviors to coffee orders dynamically.",
@@ -85,6 +91,7 @@
         }
       },
       {
+        "id": 7,
         "title": "Zoo Animal Health Assessment",
         "outcome": "A system to assess the health of animals in a zoo.",
         "keyFeature": "Visitor pattern to perform various health assessments on different types of animals without modifying animal classes.",
@@ -98,6 +105,7 @@
         }
       },
       {
+        "id": 8,
         "title": "Payment Gateway Integrator",
         "outcome": "A system that integrates multiple payment gateways into one platform.",
         "keyFeature": "Adapter pattern to interact with different payment processing APIs.",
@@ -113,6 +121,7 @@
         }
       },
       {
+        "id": 9,
         "title": "File System Organizer",
         "outcome": "A system to organize files and folders.",
         "keyFeature": "Composite pattern to treat files and folders uniformly.",
@@ -130,6 +139,7 @@
         }
       },
       {
+        "id": 10,
         "title": "User Session Tracker",
         "outcome": "A system to track the active user session in an application.",
         "keyFeature": "Singleton pattern for maintaining a single active user session.",
@@ -147,6 +157,7 @@
     ],
     "medium": [
       {
+        "id": 11,
         "title": "Smart Restaurant Ordering System",
         "outcome": "A digital system for handling restaurant orders.",
         "keyFeatures": [
@@ -167,6 +178,7 @@
         }
       },
       {
+        "id": 12,
         "title": "Hotel Room Booking System",
         "outcome": "A system for managing hotel room reservations.",
         "keyFeatures": [
@@ -186,6 +198,7 @@
         }
       },
       {
+        "id": 13,
         "title": "Customizable News Aggregator",
         "outcome": "A news aggregation platform with personalized content.",
         "keyFeatures": [
@@ -203,6 +216,7 @@
         }
       },
       {
+        "id": 14,
         "title": "Multi-Modal Transport Scheduler",
         "outcome": "A system for coordinating different modes of transportation.",
         "keyFeatures": [
@@ -221,6 +235,7 @@
         }
       },
       {
+        "id": 15,
         "title": "Cross-Platform UI Framework",
         "outcome": "A framework for building user interfaces across different platforms.",
         "keyFeatures": [
@@ -238,6 +253,7 @@
         }
       },
       {
+        "id": 16,
         "title": "Customer Support Chatbot",
         "outcome": "An AI-driven chatbot for handling customer support queries.",
         "keyFeatures": [
@@ -258,6 +274,7 @@
         }
       },
       {
+        "id": 17,
         "title": "Personal Finance Tracker and Advisor",
         "outcome": "A system for tracking personal finances and providing financial advice.",
         "keyFeatures": [
@@ -277,6 +294,7 @@
         }
       },
       {
+        "id": 18,
         "title": "Smart Energy Management for Buildings",
         "outcome": "A system to optimize energy usage in commercial and residential buildings.",
         "keyFeatures": [
@@ -296,6 +314,7 @@
         }
       },
       {
+        "id": 19,
         "title": "Corporate HR Structure Management Tool",
         "outcome": "A system to manage and visualize a company's hierarchical employee structure.",
         "keyFeatures": [
@@ -316,6 +335,7 @@
         }
       },
       {
+        "id": 20,
         "title": "Secure File Sharing Platform",
         "outcome": "A system for sharing files with enhanced security measures.",
         "keyFeatures": [
@@ -335,6 +355,7 @@
         }
       },
       {
+        "id": 21,
         "title": "Real-time Collaborative Editing Platform",
         "outcome": "A web application enabling multiple users to edit documents simultaneously in real time.",
         "keyFeatures": [
@@ -356,6 +377,7 @@
     ],
     "hard": [
       {
+        "id": 22,
         "title": "Custom PC Builder E-commerce Platform",
         "outcome": "A specialized e-commerce system for designing, configuring, and purchasing custom-built PCs.",
         "keyFeatures": [
@@ -379,6 +401,7 @@
         }
       },
       {
+        "id": 23,
         "title": "Multi-Tenant Cloud-Based IDE",
         "outcome": "A cloud-based integrated development environment (IDE) that supports multiple users and projects simultaneously.",
         "keyFeatures": [
@@ -403,6 +426,7 @@
         }
       },
       {
+        "id": 24,
         "title": "Advanced Traffic Management System",
         "outcome": "A system to optimize traffic flow and reduce congestion in urban areas.",
         "keyFeatures": [
@@ -424,6 +448,7 @@
         }
       },
       {
+        "id": 25,
         "title": "Distributed Cloud Storage Solution",
         "outcome": "A highly available and fault-tolerant cloud storage service.",
         "keyFeatures": [
@@ -445,6 +470,7 @@
         }
       },
       {
+        "id": 26,
         "title": "Smart Health Monitoring and Recommendation System",
         "outcome": "A personalized health and wellness platform that monitors user health data and provides tailored recommendations.",
         "keyFeatures": [
@@ -465,6 +491,7 @@
         }
       },
       {
+        "id": 27,
         "title": "Dynamic Event Planning and Coordination Platform",
         "outcome": "A comprehensive system for planning, organizing, and managing events with variable scales and complexities.",
         "keyFeatures": [
@@ -488,6 +515,7 @@
         }
       },
       {
+        "id": 28,
         "title": "Advanced Real Estate Portfolio Management System",
         "outcome": "An integrated solution for managing diverse real estate portfolios, offering insights into property performance and market trends.",
         "keyFeatures": [
@@ -511,6 +539,7 @@
         }
       },
       {
+        "id": 29,
         "title": "Comprehensive Learning Management System",
         "outcome": "A versatile platform for managing educational content, student progress, and online learning activities.",
         "keyFeatures": [
@@ -535,6 +564,7 @@
         }
       },
       {
+        "id": 30,
         "title": "Intelligent Urban Planning Simulation",
         "outcome": "A simulation tool for urban planners to model and visualize the impact of development projects on city infrastructure.",
         "keyFeatures": [
@@ -558,6 +588,7 @@
         }
       },
       {
+        "id": 31,
         "title": "Enterprise Workflow Automation System",
         "outcome": "A modular system that automates and optimizes enterprise workflows, enhancing operational efficiency and employee productivity.",
         "keyFeatures": [
@@ -568,7 +599,7 @@
           "Prototype Pattern for quickly replicating and customizing workflows for different projects or teams",
           "State Pattern to manage the lifecycle of workflow tasks, adapting to changes in task status or conditions"
         ],
-        "generalDescription": "WorkFlowPlus is an advanced system designed to streamline and automate key business processes within enterprises. It provides a flexible and powerful toolkit for defining, executing, and monitoring automated workflows across various operational areas.",
+        "generalDescription": "WorkFlowPlus is an advanced system designed to streamline and automate key business processes within enterprises, such as procurement, sales operations, customer relationship management, and human resources. By integrating these core processes, WorkFlowPlus enables seamless collaboration across departments, automates repetitive tasks, and provides leaders with insights into process efficiencies and employee productivity. Its flexible architecture allows businesses of any size to customize workflows to their unique operational models, driving innovation and operational excellence.",
         "expectedFunctionality": {
           "AutomatedTaskRouting": "Efficiently route tasks to the appropriate teams or systems based on predefined criteria.",
           "WorkflowCustomization": "Enable businesses to design and implement customized workflows that reflect their operational models.",
@@ -577,7 +608,10 @@
         },
         "usageScenarios": {
           "OnboardingNewEmployees": "Automate the entire onboarding process for new hires, from document submission to training schedules, ensuring a smooth introduction to the company.",
-          "CustomerServiceResolution": "Streamline customer service operations by automating the routing of inquiries to the right experts, tracking resolution progress, and gathering feedback for continuous improvement."
+          "CustomerServiceResolution": "Streamline customer service operations by automating the routing of inquiries to the right experts, tracking resolution progress, and gathering feedback for continuous improvement.",
+          "ProcurementProcessOptimization": "Transform the procurement process by automating vendor selection, purchase order creation, and invoice processing, reducing procurement cycle time and costs.",
+          "SalesPipelineManagement": "Enhance sales operations with automated lead tracking, qualification, and follow-up tasks, increasing sales team efficiency and closing rates.",
+          "PerformanceReviewAutomation": "Simplify the performance review process with automated self-assessments, peer reviews, and manager evaluations, culminating in actionable insights for employee development."
         }
       }
     ]
