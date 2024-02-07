@@ -5,7 +5,7 @@
         "id": 1,
         "title": "Simple Blogging Platform",
         "outcome": "A basic platform for users to create and publish blog posts.",
-        "keyFeature": "Factory Method pattern for creating different types of blog posts.",
+        "keyPatterns": ["Factory Method pattern for creating different types of blog posts."],
         "generalDescription": "Creation and editing of blog posts, comment management, and basic user profiles.",
         "expectedFunctionality": {
           "CreatePost": "Create a new Text, Photo or Image post."
@@ -20,7 +20,7 @@
         "id": 2,
         "title": "Lightweight Logging Framework",
         "outcome": "A framework for logging application events.",
-        "keyFeature": "Strategy pattern to switch between different logging strategies (e.g., console, file).",
+        "keyPatterns": ["Strategy pattern to switch between different logging strategies (e.g., console, file)."],
         "generalDescription": "Implement a flexible logging system that allows switching between various logging methods based on the context or preference.",
         "expectedFunctionality": {
           "LogEvent": "Record an event in the specified log format.",
@@ -34,7 +34,7 @@
         "id": 3,
         "title": "Basic Cache System",
         "outcome": "A caching system to store and retrieve data efficiently.",
-        "keyFeature": "Proxy pattern to control access to resource-intensive operations.",
+        "keyPatterns": ["Proxy pattern to control access to resource-intensive operations."],
         "generalDescription": "Develop a caching mechanism to improve data retrieval performance by storing frequently accessed data in a faster, more accessible manner.",
         "expectedFunctionality": {
           "FetchData": "Retrieve data from the cache or the original source if not cached.",
@@ -48,7 +48,7 @@
         "id": 4,
         "title": "Configuration Settings Manager",
         "outcome": "A manager for application configuration settings.",
-        "keyFeature": "Memento pattern to save and restore configuration settings.",
+        "keyPatterns": ["Memento pattern to save and restore configuration settings."],
         "generalDescription": "Create a system that allows users to save, manage, and restore application settings, enhancing user experience and customization.",
         "expectedFunctionality": {
           "SaveSettings": "Save the current configuration settings.",
@@ -62,7 +62,7 @@
         "id": 5,
         "title": "Basic Social Media Post Scheduler",
         "outcome": "An application to schedule and post content on social media.",
-        "keyFeature": "State pattern to track the status of scheduled posts.",
+        "keyPatterns": ["State pattern to track the status of scheduled posts."],
         "generalDescription": "Develop a tool that allows users to create, schedule, and automate posting content on social media platforms, using the State pattern to manage the lifecycle of each post, including the ability to hide posts after publishing.",
         "expectedFunctionality": {
           "CreatePost": "Draft a new social media post.",
@@ -79,7 +79,7 @@
         "id": 6,
         "title": "Customizable Coffee Order System",
         "outcome": "A system for creating customized coffee orders.",
-        "keyFeature": "Decorator pattern to add new behaviors to coffee orders dynamically.",
+        "keyPatterns": ["Decorator pattern to add new behaviors to coffee orders dynamically."],
         "generalDescription": "Create a coffee ordering system where users can customize their coffee with options like milk, sugar, and flavors. This system should allow dynamic customization of basic coffee orders.",
         "expectedFunctionality": {
           "OrderCoffee": "Start with a basic coffee.",
@@ -94,7 +94,7 @@
         "id": 7,
         "title": "Zoo Animal Health Assessment",
         "outcome": "A system to assess the health of animals in a zoo.",
-        "keyFeature": "Visitor pattern to perform various health assessments on different types of animals without modifying animal classes.",
+        "keyPatterns": ["Visitor pattern to perform various health assessments on different types of animals without modifying animal classes."],
         "generalDescription": "Create a system for zookeepers to assess the health of various animals in a zoo. The system should be capable of performing different health checks (like weight monitoring, behavioral assessment) tailored to each animal type, providing an efficient way to track animal health.",
         "expectedFunctionality": {
           "AddAnimal": "Add different animals with their unique characteristics.",
@@ -108,7 +108,7 @@
         "id": 8,
         "title": "Payment Gateway Integrator",
         "outcome": "A system that integrates multiple payment gateways into one platform.",
-        "keyFeature": "Adapter pattern to interact with different payment processing APIs.",
+        "keyPatterns": ["Adapter pattern to interact with different payment processing APIs."],
         "generalDescription": "Develop a unified payment platform that allows users to process transactions through various payment gateways. The platform should streamline the integration of diverse payment services, offering a consistent interface for transaction processing regardless of the underlying gateway.",
         "expectedFunctionality": {
           "AddPaymentGateway": "Add a new payment service to the platform.",
@@ -124,7 +124,7 @@
         "id": 9,
         "title": "File System Organizer",
         "outcome": "A system to organize files and folders.",
-        "keyFeature": "Composite pattern to treat files and folders uniformly.",
+        "keyPatterns": ["Composite pattern to treat files and folders uniformly."],
         "generalDescription": "Develop an application that mimics a file system, where users can create files and folders. Folders can contain files or other folders. The system should treat both files and folders as 'File System Entities' to perform common operations like creating, managing permissions, and displaying.",
         "expectedFunctionality": {
           "CreateFile": "Create a new file with a name.",
@@ -142,7 +142,7 @@
         "id": 10,
         "title": "User Session Tracker",
         "outcome": "A system to track the active user session in an application.",
-        "keyFeature": "Singleton pattern for maintaining a single active user session.",
+        "keyPatterns": ["Singleton pattern for maintaining a single active user session."],
         "generalDescription": "Create a session tracker to manage the user's session in an application. This tracker should be responsible for storing and providing access to user session information, ensuring that there is only one active session at a time.",
         "expectedFunctionality": {
           "StartSession": "Initiate a new user session.",
@@ -160,7 +160,7 @@
         "id": 11,
         "title": "Smart Restaurant Ordering System",
         "outcome": "A digital system for handling restaurant orders.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Observer pattern for order status updates",
           "Command pattern for processing orders",
           "Factory Method pattern for creating different types of menu items"
@@ -181,7 +181,7 @@
         "id": 12,
         "title": "Hotel Room Booking System",
         "outcome": "A system for managing hotel room reservations.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Factory Method pattern for creating different types of rooms",
           "Singleton pattern for central reservation management"
         ],
@@ -201,7 +201,7 @@
         "id": 13,
         "title": "Customizable News Aggregator",
         "outcome": "A news aggregation platform with personalized content.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Strategy pattern for different content curation algorithms",
           "Builder pattern for constructing user-specific news feeds"
         ],
@@ -219,7 +219,7 @@
         "id": 14,
         "title": "Multi-Modal Transport Scheduler",
         "outcome": "A system for coordinating different modes of transportation.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Mediator pattern for coordinating between various transport services",
           "Strategy pattern for route optimization"
         ],
@@ -238,7 +238,7 @@
         "id": 15,
         "title": "Cross-Platform UI Framework",
         "outcome": "A framework for building user interfaces across different platforms.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Bridge pattern to separate UI abstraction from implementation",
           "Factory Method pattern for creating platform-specific elements"
         ],
@@ -256,7 +256,7 @@
         "id": 16,
         "title": "Customer Support Chatbot",
         "outcome": "An AI-driven chatbot for handling customer support queries.",
-        "keyFeatures": [
+        "keyPatterns": [
           "State pattern for managing chatbot states",
           "Command pattern for processing user requests",
           "Mediator pattern for integrating various service modules"
@@ -277,7 +277,7 @@
         "id": 17,
         "title": "Personal Finance Tracker and Advisor",
         "outcome": "A system for tracking personal finances and providing financial advice.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Decorator pattern for adding advanced financial tracking features",
           "Observer pattern to monitor financial habits",
           "Strategy pattern for personalized financial advice"
@@ -297,7 +297,7 @@
         "id": 18,
         "title": "Smart Energy Management for Buildings",
         "outcome": "A system to optimize energy usage in commercial and residential buildings.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Observer pattern to monitor energy consumption",
           "Strategy pattern for efficient energy distribution",
           "Mediator pattern to integrate various energy sources"
@@ -317,7 +317,7 @@
         "id": 19,
         "title": "Corporate HR Structure Management Tool",
         "outcome": "A system to manage and visualize a company's hierarchical employee structure.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Composite pattern for representing organizational hierarchy",
           "Command pattern for managing employee records",
           "Visitor pattern for performing operations on hierarchy elements"
@@ -338,7 +338,7 @@
         "id": 20,
         "title": "Secure File Sharing Platform",
         "outcome": "A system for sharing files with enhanced security measures.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Proxy pattern for secure file access",
           "Decorator pattern for adding encryption/decryption"
         ],
@@ -358,7 +358,7 @@
         "id": 21,
         "title": "Real-time Collaborative Editing Platform",
         "outcome": "A web application enabling multiple users to edit documents simultaneously in real time.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Proxy pattern for managing document access and operations",
           "Memento pattern for undoing changes",
           "Observer pattern for notifying users about real-time edits"
@@ -380,7 +380,7 @@
         "id": 22,
         "title": "Custom PC Builder E-commerce Platform",
         "outcome": "A specialized e-commerce system for designing, configuring, and purchasing custom-built PCs.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Factory Method pattern for creating PC component options",
           "Builder pattern for assembling custom PC configurations",
           "Proxy pattern for secure payment processing",
@@ -404,7 +404,7 @@
         "id": 23,
         "title": "Multi-Tenant Cloud-Based IDE",
         "outcome": "A cloud-based integrated development environment (IDE) that supports multiple users and projects simultaneously.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Proxy pattern for handling requests to shared resources",
           "Factory Method pattern for creating project-specific environments",
           "Strategy pattern for customizable build and deployment processes",
@@ -429,7 +429,7 @@
         "id": 24,
         "title": "Advanced Traffic Management System",
         "outcome": "A system to optimize traffic flow and reduce congestion in urban areas.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Adapter pattern for integrating various traffic data sources",
           "State pattern for managing traffic light logic",
           "Observer pattern for real-time traffic condition monitoring",
@@ -451,7 +451,7 @@
         "id": 25,
         "title": "Distributed Cloud Storage Solution",
         "outcome": "A highly available and fault-tolerant cloud storage service.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Proxy pattern for managing storage requests",
           "Composite pattern for treating clustered storage as a single unit",
           "Decorator pattern for adding encryption and compression functionalities",
@@ -473,7 +473,7 @@
         "id": 26,
         "title": "Smart Health Monitoring and Recommendation System",
         "outcome": "A personalized health and wellness platform that monitors user health data and provides tailored recommendations.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Observer pattern for monitoring health metrics",
           "Strategy pattern for personalized health recommendations",
           "Bridge pattern for supporting multiple wearable devices",
@@ -494,7 +494,7 @@
         "id": 27,
         "title": "Dynamic Event Planning and Coordination Platform",
         "outcome": "A comprehensive system for planning, organizing, and managing events with variable scales and complexities.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Facade pattern for simplifying interactions with complex subsystems",
           "Adapter pattern for integrating with external services",
           "Observer pattern for real-time collaboration and updates",
@@ -518,7 +518,7 @@
         "id": 28,
         "title": "Advanced Real Estate Portfolio Management System",
         "outcome": "An integrated solution for managing diverse real estate portfolios, offering insights into property performance and market trends.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Adapter pattern for integrating diverse data sources",
           "Facade pattern for providing a unified interface to complex systems",
           "Singleton pattern for centralized management of real estate portfolios",
@@ -542,7 +542,7 @@
         "id": 29,
         "title": "Comprehensive Learning Management System",
         "outcome": "A versatile platform for managing educational content, student progress, and online learning activities.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Strategy pattern for adaptive learning paths",
           "Bridge pattern for integrating various educational tools and content formats",
           "Observer pattern for tracking student progress and engagement",
@@ -567,7 +567,7 @@
         "id": 30,
         "title": "Intelligent Urban Planning Simulation",
         "outcome": "A simulation tool for urban planners to model and visualize the impact of development projects on city infrastructure.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Strategy pattern for different simulation algorithms",
           "Factory Method pattern for creating various urban model components",
           "Observer pattern for monitoring changes in the simulation environment",
@@ -591,7 +591,7 @@
         "id": 31,
         "title": "Enterprise Workflow Automation System",
         "outcome": "A modular system that automates and optimizes enterprise workflows, enhancing operational efficiency and employee productivity.",
-        "keyFeatures": [
+        "keyPatterns": [
           "Mediator Pattern for coordinating complex workflows between different departments and systems",
           "Chain of Responsibility Pattern to delegate tasks through a hierarchy of operations based on their complexity and nature",
           "Builder Pattern for custom workflow creation, allowing businesses to tailor processes to their specific needs",
