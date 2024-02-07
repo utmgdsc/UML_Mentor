@@ -1,5 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Landing from "./pages/Landing.tsx";
+import Challenge  from "./pages/Challenge.tsx";
+
+
+const chalprops = {
+  id: 404
+};
+
 
 const router = createBrowserRouter([
   {
@@ -16,6 +23,10 @@ const router = createBrowserRouter([
     //   },
     // ],
   },
+  {
+    path: "/challenge",
+    element: <Challenge {...chalprops} />
+  }
 ]);
 
 function App() {
