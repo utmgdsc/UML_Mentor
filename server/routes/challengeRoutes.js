@@ -1,16 +1,20 @@
-const Challenge = require('../models/Challenge');
+const Challenge = require('../controllers/Challenge.controller');
+const router = require("express").Router();
 
-function getAllChallenges(req, res) {
-    Challenge.find()
-        .then(challenges => res.json(challenges))
-        .catch(err => res.status(500).json({ error: err.message }));
-}
+// Get a challenge from the database.
+router.get("/:id", Challenge.get);
 
-function createChallenge(req, res) {
-    const challenge = new Challenge(req.body);
-    challenge.save()
-        .then(newChallenge => res.status(201).json(newChallenge))
-        .catch(err => res.status(400).json({ error: err.message }));
-}
+// Get all solutions from a challenge.
+// Sorting (by date or upvote) happens on the client side.
+router.get("/:id", Challenge.getSolutions);
 
-module.exports = { getAllChallenges, createChallenge };
+// Create a new challenge in the database.
+route.post("/:id", Challenge.create);
+
+// Edit a challenge in the database.
+router.put("/:id", Challenge.edit);
+
+// Delete a challenge from the database.
+router.delete("/:id", Challenge.delete);
+
+module.exports = router;

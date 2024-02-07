@@ -21,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
         // Define associations
         User.hasMany(models.Solution, { foreignKey: 'userId' });
         User.hasMany(models.Comment, { foreignKey: 'userId' });
-      };
+    };
     
     return User;
-  };
+};
   
