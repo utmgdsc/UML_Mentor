@@ -48,19 +48,19 @@ const Challenge:FC<ChallengeProps> = ({id}) => {
     <Container>
         <section>
         <Row>
-            <header className="text-center">
+            <header className="text-center bg-secondary bg-gradient text-light p-5 my-4">
                 <h1>{challenge_details.title}</h1>
                 <h2>{challenge_details.outcome}</h2>
             </header> 
         </Row>
-        <Row>
+        <Row className="">
             <Col className="col-8">
                 <h3>Description:</h3>
                 <p>{challenge_details.generalDescription}</p>
             </Col>
             <Col className="text-center align-middle">
-                {completed && <div>
-                    <p>Completed</p>
+                {completed && <div className="">
+                    <p className="text-success"><strong>Completed</strong></p>
                     <Button>View Key Patterns</Button>
                 </div>}
             </Col>
@@ -85,7 +85,7 @@ const Challenge:FC<ChallengeProps> = ({id}) => {
             </ul>
             </Col>
         </Row>
-        <Row>
+        <Row className="my-4">
             <ButtonToolbar className="d-flex justify-content-evenly">
                 <Button>Open Editor</Button>
                 <Button>Post a Solution</Button>
