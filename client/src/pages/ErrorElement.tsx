@@ -29,7 +29,7 @@ function ErrorElement() {
     console.error(errorInfo);
     return (
       <h1 className={"my-5 text-center"}>
-        Hey! There's an error. More info in the console.
+        Hey! There&apos;s an error. More info in the console.
       </h1>
     );
   }
