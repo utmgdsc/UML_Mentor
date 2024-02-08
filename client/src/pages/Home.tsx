@@ -32,9 +32,9 @@ function Home() {
       <Container className={"mt-5"}>
         <h2 className={"mb-3"}>Recent Solutions</h2>
         <Row sm={1} lg={3} className={"gx-4 gy-4"}>
-          {DEMO_SOLUTION_CARDS.map((props) => (
-            <Col key={props.href}>
-              <SolutionCard {...props} />
+          {DEMO_SOLUTION_CARDS.map((p) => (
+            <Col key={p.href}>
+              <SolutionCard {...p} />
             </Col>
           ))}
         </Row>
@@ -55,9 +55,9 @@ function Home() {
           </Button>
         </Stack>
         <Row sm={1} lg={3} className={"gx-4 gy-4"}>
-          {DEMO_CHALLENGE_CARDS.map((props) => (
-            <Col key={props.href}>
-              <ChallengeCard {...props} />
+          {DEMO_CHALLENGE_CARDS.map((p) => (
+            <Col key={p.href}>
+              <ChallengeCard {...p} />
             </Col>
           ))}
         </Row>
