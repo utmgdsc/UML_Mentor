@@ -22,5 +22,6 @@ function SolutionCard({ imgSrc, title, href, description }: SolutionCardProps) {
     </Card>
   );
 }
+
 export type { SolutionCardProps };
 export default SolutionCard;

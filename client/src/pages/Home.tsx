@@ -1,4 +1,3 @@
-import NavigationBar from "../components/NavigationBar.tsx";
 import { Button, Col, Container, Row, Stack } from "react-bootstrap";
 import SolutionCard, {
   SolutionCardProps,
@@ -7,7 +6,6 @@ import { ArrowUpRightSquare } from "react-bootstrap-icons";
 import ChallengeCard, {
   ChallengeCardProps,
 } from "../components/ChallengeCard.tsx";
-import Footer from "../components/Footer.tsx";
 
 const DEMO_SOLUTION_CARDS: SolutionCardProps[] = Array(5).fill({
   title: "Example Challenge 1: Airport Management System",
@@ -15,7 +13,7 @@ const DEMO_SOLUTION_CARDS: SolutionCardProps[] = Array(5).fill({
     "Some quick example text to build on the card title and make up the bulk of the card's content.",
   imgSrc:
     "https://images.unsplash.com/photo-1596496181871-9681eacf9764?q=80&w=2086&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  href: "/home",
+  href: "/app/home",
 });
 
 const DEMO_CHALLENGE_CARDS: ChallengeCardProps[] = Array(3).fill({
@@ -23,13 +21,12 @@ const DEMO_CHALLENGE_CARDS: ChallengeCardProps[] = Array(3).fill({
   description:
     "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
     " and getting review, we provide you all you need to become a Software Architecture monster!",
-  href: "/home",
+  href: "/app/home",
 });
 
 function Home() {
   return (
     <section>
-      <NavigationBar />
       {/* Recent Solutions */}
       <Container className={"mt-5"}>
         <h2 className={"mb-3"}>Recent Solutions</h2>
@@ -44,6 +41,7 @@ function Home() {
           See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
         </Button>
       </Container>
+
       {/* Suggested Challenges */}
       <Container className={"mt-5"}>
         <Stack
@@ -63,7 +61,6 @@ function Home() {
           ))}
         </Row>
       </Container>
-      <Footer />
     </section>
   );
 }

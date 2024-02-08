@@ -1,29 +1,7 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
-import { PersonCircle } from "react-bootstrap-icons";
-
 import { useLocation } from "react-router-dom";
-
-const NAV_CONFIG = {
-  brand: "UML Mentor",
-  routes: [
-    {
-      name: "Home",
-      href: "/home",
-    },
-    {
-      name: "Challenges",
-      href: "/challenges",
-    },
-    {
-      name: "Solutions",
-      href: "/solutions",
-    },
-  ],
-  profile: {
-    icon: PersonCircle,
-    href: "/profile",
-  },
-};
+import { PersonCircle } from "react-bootstrap-icons";
+import { NAV_CONFIG } from "../App.tsx";
 
 function NavigationBar() {
   const location = useLocation().pathname;
@@ -39,7 +17,7 @@ function NavigationBar() {
               <Nav.Link
                 href={r.href}
                 key={r.href}
-                className={location == r.href ? "text-primary" : ""}
+                className={location === r.href ? "text-primary" : ""}
               >
                 {r.name}
               </Nav.Link>
@@ -48,7 +26,7 @@ function NavigationBar() {
         </Navbar.Collapse>
         <Nav>
           <Nav.Link href={NAV_CONFIG.profile.href}>
-            <NAV_CONFIG.profile.icon
+            <PersonCircle
               size={"1.5rem"}
               className={
                 location == NAV_CONFIG.profile.href ? "text-primary" : ""

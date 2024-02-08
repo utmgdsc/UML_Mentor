@@ -4,7 +4,7 @@ function Landing() {
   return (
     <section>
       <h1>UML Mentor</h1>
-      <Link to={"home"}>Home</Link>
+      <Link to={"app/home"}>Home</Link>
     </section>
   );
 }
