@@ -1,22 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Container, Row, Col, ButtonToolbar, Button } from "react-bootstrap";
-import { FC, useState } from "react";
+import { useState } from "react";
 
 
-interface ChallengeProps {
-    id: number
-};
-
-interface ExpectedFunctionProps {
-    name: string,
-    description: string
+type ChallengeProps = {
+    id: number;
 }
 
-const Challenge:FC<ChallengeProps> = ({id}) => {
+const Challenge = ({id} : ChallengeProps) => {
 
     const [completed, setCompleted] = useState(true);
-
     //fetch data about the challenge with the provided "id" here... (useEffect)
 
     const challenge_details = {
