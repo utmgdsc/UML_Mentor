@@ -3,11 +3,6 @@ import Landing from "./pages/Landing.tsx";
 import Challenge  from "./pages/Challenge.tsx";
 
 
-const chalprops = {
-  id: 404
-};
-
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -25,7 +20,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/challenge",
-    element: <Challenge {...chalprops} />
+    element: <Challenge />
   }
 ]);
 

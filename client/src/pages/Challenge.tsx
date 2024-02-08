@@ -2,16 +2,14 @@
 
 import { Container, Row, Col, ButtonToolbar, Button } from "react-bootstrap";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 
-type ChallengeProps = {
-    id: number;
-}
-
-const Challenge = ({id} : ChallengeProps) => {
+const Challenge = () => {
 
     const [completed, setCompleted] = useState(true);
     //fetch data about the challenge with the provided "id" here... (useEffect)
+    const id = useParams();
 
     const challenge_details = {
         "id": 12,
