@@ -1,4 +1,5 @@
 import Button from "../components/Button.tsx";
+
 function Landing() {
   return (
     <section>
