@@ -1,4 +1,5 @@
-import { Button, Col, Container, Row, Stack } from "react-bootstrap";
+import { Col, Container, Row, Stack } from "react-bootstrap";
+import Button from "../components/Button.tsx";
 import SolutionCard, {
   SolutionCardProps,
 } from "../components/SolutionCard.tsx";

@@ -1,5 +1,5 @@
 import Card from "react-bootstrap/Card";
-import { Button } from "react-bootstrap";
+import Button from "./Button.tsx";
 
 type ChallengeCardProps = {
   title: string;

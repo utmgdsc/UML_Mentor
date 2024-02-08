@@ -1,11 +1,11 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { PersonCircle } from "react-bootstrap-icons";
 import { NAV_CONFIG } from "../App.tsx";
 
 function NavigationBar() {
   const location = useLocation().pathname;
-
+  const navigate = useNavigate();
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
@@ -15,7 +15,9 @@ function NavigationBar() {
           <Nav className="me-auto">
             {NAV_CONFIG.routes.map((r) => (
               <Nav.Link
-                href={r.href}
+                onClick={() => {
+                  navigate(r.href);
+                }}
                 key={r.href}
                 className={location === r.href ? "text-primary" : ""}
               >
@@ -25,7 +27,11 @@ function NavigationBar() {
           </Nav>
         </Navbar.Collapse>
         <Nav>
-          <Nav.Link href={NAV_CONFIG.profile.href}>
+          <Nav.Link
+            onClick={() => {
+              navigate(NAV_CONFIG.profile.href);
+            }}
+          >
             <PersonCircle
               size={"1.5rem"}
               className={
