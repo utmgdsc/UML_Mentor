@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Landing from "./pages/Landing.tsx";
 import Home from "./pages/Home.tsx";
 import AppShell from "./components/AppShell.tsx";
 import ErrorElement from "./pages/ErrorElement.tsx";
@@ -9,19 +8,19 @@ const NAV_CONFIG = {
   routes: [
     {
       name: "Home",
-      href: "/app/home",
+      href: "/home",
     },
     {
       name: "Challenges",
-      href: "/app/challenges",
+      href: "/challenges",
     },
     {
       name: "Solutions",
-      href: "/app/solutions",
+      href: "/solutions",
     },
   ],
   profile: {
-    href: "/app/profile",
+    href: "/profile",
   },
 };
 
@@ -30,12 +29,8 @@ const NAV_CONFIG = {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Landing />,
-    errorElement: <ErrorElement />,
-  },
-  {
-    path: "app",
     element: <AppShell />,
+    errorElement: <ErrorElement />,
     children: [
       {
         path: "home",

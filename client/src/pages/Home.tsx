@@ -14,7 +14,8 @@ const DEMO_SOLUTION_CARDS: SolutionCardProps[] = Array(5).fill({
     "Some quick example text to build on the card title and make up the bulk of the card's content.",
   imgSrc:
     "https://images.unsplash.com/photo-1596496181871-9681eacf9764?q=80&w=2086&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  href: "/app/home",
+  href: "/home",
+  difficulty: "medium",
 });
 
 const DEMO_CHALLENGE_CARDS: ChallengeCardProps[] = Array(3).fill({
@@ -22,7 +23,7 @@ const DEMO_CHALLENGE_CARDS: ChallengeCardProps[] = Array(3).fill({
   description:
     "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
     " and getting review, we provide you all you need to become a Software Architecture monster!",
-  href: "/app/home",
+  href: "/home",
 });
 
 function Home() {
@@ -39,11 +40,7 @@ function Home() {
           ))}
         </Row>
         {/* See more solutions button */}
-        <Button
-          variant={"outline-primary"}
-          className={"mt-3"}
-          href={"/app/home"}
-        >
+        <Button variant={"outline-primary"} className={"mt-3"} href={"/home"}>
           See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
         </Button>
       </Container>
@@ -56,7 +53,7 @@ function Home() {
         >
           <h2>Suggested Challenges</h2>
           {/* See more challenges button */}
-          <Button variant={"outline-primary"} href={"/app/home"}>
+          <Button variant={"outline-primary"} href={"/home"}>
             See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
           </Button>
         </Stack>

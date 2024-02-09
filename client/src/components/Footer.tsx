@@ -3,6 +3,7 @@ import { Stack } from "react-bootstrap";
 function Footer() {
   return (
     <Stack
+      as={"footer"}
       style={{
         padding: "6rem 0",
         marginTop: "6rem",

@@ -5,7 +5,7 @@ import React from "react";
 // Button wrapper for react-router
 // Using hrefs lowers performance
 
-function Button({ href, onClick, ...oP }: ButtonProps) {
+function Button({ href, onClick, ...otherProps }: ButtonProps) {
   const navigate = useNavigate();
   let newOnClick = onClick;
   if (href) {
@@ -20,7 +20,7 @@ function Button({ href, onClick, ...oP }: ButtonProps) {
         };
   }
 
-  return <BootstrapButton onClick={newOnClick} {...oP} />;
+  return <BootstrapButton onClick={newOnClick} {...otherProps} />;
 }
 
 export default Button;
