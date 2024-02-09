@@ -32,13 +32,18 @@ function Home() {
       <Container className={"mt-5"}>
         <h2 className={"mb-3"}>Recent Solutions</h2>
         <Row sm={1} lg={3} className={"gx-4 gy-4"}>
-          {DEMO_SOLUTION_CARDS.map((p) => (
-            <Col key={p.href}>
-              <SolutionCard {...p} />
+          {DEMO_SOLUTION_CARDS.map((solutionCardProps) => (
+            <Col key={solutionCardProps.href}>
+              <SolutionCard {...solutionCardProps} />
             </Col>
           ))}
         </Row>
-        <Button variant={"outline-primary"} className={"mt-3"} href={"/home"}>
+        {/* See more solutions button */}
+        <Button
+          variant={"outline-primary"}
+          className={"mt-3"}
+          href={"/app/home"}
+        >
           See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
         </Button>
       </Container>
@@ -50,14 +55,15 @@ function Home() {
           className={"justify-content-between mb-3"}
         >
           <h2>Suggested Challenges</h2>
-          <Button variant={"outline-primary"} href={"/home"}>
+          {/* See more challenges button */}
+          <Button variant={"outline-primary"} href={"/app/home"}>
             See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
           </Button>
         </Stack>
         <Row sm={1} lg={3} className={"gx-4 gy-4"}>
-          {DEMO_CHALLENGE_CARDS.map((p) => (
-            <Col key={p.href}>
-              <ChallengeCard {...p} />
+          {DEMO_CHALLENGE_CARDS.map((challengeCardProps) => (
+            <Col key={challengeCardProps.href}>
+              <ChallengeCard {...challengeCardProps} />
             </Col>
           ))}
         </Row>

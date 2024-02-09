@@ -13,15 +13,15 @@ function NavigationBar() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            {NAV_CONFIG.routes.map((r) => (
+            {NAV_CONFIG.routes.map((route) => (
               <Nav.Link
                 onClick={() => {
-                  navigate(r.href);
+                  navigate(route.href);
                 }}
-                key={r.href}
-                className={location === r.href ? "text-primary" : ""}
+                key={route.href}
+                className={location === route.href ? "text-primary" : ""}
               >
-                {r.name}
+                {route.name}
               </Nav.Link>
             ))}
           </Nav>
