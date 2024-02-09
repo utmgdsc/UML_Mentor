@@ -24,6 +24,7 @@ const Challenge = () => {
 
     const [completed, setCompleted] = useState(true);
     const [details, setDetails]  = useState<ChallengeDetails>();
+    const [showingDetails, setShowingDetails] = useState(false); //toggle state for showing/hiding design pattern list
     //fetch data about the challenge with the provided "id" here... (useEffect)
     const { id } = useParams();
 
@@ -35,10 +36,8 @@ const Challenge = () => {
             if(!response.ok){
                 throw new Error(response.statusText);                
             }
-            console.log(response);
             return response.json() as Promise<{data : ChallengeDetails}>; //THIS LINE MAY CAUSE ERRORS. Need to test with proper server.
         }).then((data) => {
-            console.log(data);
             setDetails(data.data);
             return;
         }).catch((err) => {
@@ -50,56 +49,97 @@ const Challenge = () => {
 
 
     const challenge_details: ChallengeDetails = {
-        "title": "Hotel Room Booking System",
-        "difficulty": ChallengeDifficulties.MEDIUM,
-        "outcome": "A system for managing hotel room reservations.",
+        difficulty: ChallengeDifficulties.HARD,
+        "title": "Intelligent Urban Planning Simulation",
+        "outcome": "A simulation tool for urban planners to model and visualize the impact of development projects on city infrastructure.",
         "keyPatterns": [
-          "Factory Method pattern for creating different types of rooms",
-          "Singleton pattern for central reservation management"
+          "Strategy pattern for different simulation algorithms",
+          "Factory Method pattern for creating various urban model components",
+          "Observer pattern for monitoring changes in the simulation environment",
+          "Mediator pattern for coordinating interactions between simulation components",
+          "Prototype pattern for cloning existing urban models for new simulations"
         ],
-        "generalDescription": "Develop a reservation system for 'Sunrise Hotels' that can handle bookings for various room types, including standard, deluxe, and suite. The system should centralize booking operations to maintain consistency and reliability across the hotel chain.",
+        "generalDescription": "UrbanSim is a cutting-edge simulation tool that enables urban planners to create detailed models of urban development projects and assess their potential impacts on traffic, population density, public services, and the environment. By offering a variety of components and dynamic interactions, UrbanSim provides a comprehensive view of potential urban transformations.",
         "expectedFunctionality": {
-          "BookRoom": "Reserve a specific type of room for guests.",
-          "CancelBooking": "Cancel an existing reservation.",
-          "ViewBookings": "Display current bookings and their statuses."
+          "ModelCreation": "Design comprehensive urban models with diverse components including residential areas, commercial zones, transportation networks, and public services.",
+          "ImpactAnalysis": "Analyze the effects of proposed developments on city infrastructure, such as traffic congestion, environmental sustainability, and public service accessibility.",
+          "SimulationVariants": "Generate and compare different development scenarios to identify optimal urban layouts and policies."
         },
         "usageScenarios": {
-          "OnlineRoomSelection": "Guests browse available rooms, filter by room type, amenities, and price, and then book their preferred room online.",
-          "BookingModification": "Guests easily modify their existing bookings, such as changing the room type or dates, through the system without the need to call the hotel.",
-          "ReservationOverview": "Hotel staff access a centralized dashboard to view all current and upcoming bookings, manage room availability, and respond to customer inquiries about reservations."
+          "CloningForExpansionProjects": "Urban planners use UrbanSim to clone the existing urban model as a baseline for proposed expansions. This cloned model is then augmented with new residential areas, commercial centers, and transportation networks. This enables a direct comparison of potential future developments against the current state.",
+          "NewPublicTransportSystem": "Planners simulate the introduction of a new public transport system, evaluating its effects on traffic flow and commuter times. The simulation includes various transport modes and their integration into the existing urban fabric.",
+          "UrbanRenewalProjects": "UrbanSim models the impact of a major urban renewal project, providing insights into potential challenges and benefits for the community. This includes revitalizing old districts, adding green spaces, and improving public amenities.",
+          "PopulationGrowthAdaptation": "Planners use UrbanSim to anticipate changes due to population growth, simulating the expansion of housing, schools, hospitals, and transportation systems to maintain quality of life for residents."
         }
       };
 
+
+    
 
     //START FOR TESTING ONLY
     if (details == undefined){
         setDetails(challenge_details);  
     } 
+    
     //END FOR TESTING ONLY
+
+    function getDifficulty(difficulty: ChallengeDifficulties): string{
+        switch(difficulty){
+            case ChallengeDifficulties.EASY:
+                return "var(--bs-teal)";
+            case ChallengeDifficulties.MEDIUM:
+                return "var(--bs-warning)";
+            case ChallengeDifficulties.HARD:
+                return "var(--bs-danger)";
+        }
+    }
+
     if (details != undefined)
     return(
     <Container>
         <section>
         <Row>
-            <header className="text-center bg-secondary bg-gradient text-light p-5 my-4">
-                <h1>{details.title}</h1>
-                <h2>{details.outcome}</h2>
+            <header className="text-center bg-secondary  text-light p-5 my-4">
+                <h1 style={{color: getDifficulty(details.difficulty)}} >{details.title}</h1>
+                <h2 className="text-light fw-semibold fs-3">{details.outcome}</h2>
             </header> 
         </Row>
-        <Row className="">
-            <Col className="col-8">
+        
+        <Row >
+            <Col md={8} >
                 <h3>Description:</h3>
                 <p>{details.generalDescription}</p>
             </Col>
-            <Col className="text-center align-middle">
-                {completed && <div className="">
+            <Col md={4} >
+                {/* If completed, allow to view design patterns. */}
+                {completed && <div className="mb-4 text-center">
                     <p className="text-success"><strong>Completed</strong></p>
-                    <Button>View Key Patterns</Button>
+                    {/* toggle the state on click and hide/display design pattern list*/}
+                    {!showingDetails ? 
+                        <Button  
+                            variant="outline-success"
+                            onClick={()=>{setShowingDetails(!showingDetails)}}
+                        >View Key Patterns
+                        </Button> : 
+                        <Button 
+                            variant="outline-danger"
+                            onClick={()=>{setShowingDetails(!showingDetails)}}
+                        >Hide Key Patterns</Button>} 
                 </div>}
             </Col>
         </Row>
         <Row>
-            <Col className="col-8">
+            <Col md={{span:4, order:2}}>
+                {showingDetails && <>
+                    <h3>Key Patterns</h3>
+                    <ul>    
+                        {details.keyPatterns.map((pattern, index) => {
+                            return <li key={index}>{pattern  + "."}</li>;
+                        })}         
+                    </ul>
+                </>}
+            </Col>
+            <Col md={{span:8, order:1}}>
                 <h3>Expected functionality:</h3>
                 <ul>    
                     {Object.entries(challenge_details.expectedFunctionality).map(([key, value]) => {
@@ -109,7 +149,7 @@ const Challenge = () => {
             </Col>
         </Row>
         <Row>
-            <Col className="col-8">
+            <Col md={8}>
             <h3>Usage Scenarios</h3>
             <ul>
             {Object.entries(challenge_details.usageScenarios).map(([key, value]) => {
@@ -120,9 +160,9 @@ const Challenge = () => {
         </Row>
         <Row className="my-4">
             <ButtonToolbar className="d-flex justify-content-evenly">
-                <Button>Open Editor</Button>
-                <Button>Post a Solution</Button>
-                <Button>View Solutions</Button>
+                <Button className="m-1" target="_blank" href="/editor">Open Editor</Button>
+                <Button className="m-1" href={"/solutions/post/" + id}>Post a Solution</Button>
+                <Button className="m-1" target="_blank" href={"/solutions/challenge/" + id}>View Solutions</Button>
             </ButtonToolbar>
         </Row>
         </ section>
