@@ -3,22 +3,8 @@
 import { Container, Row, Col, ButtonToolbar, Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-enum ChallengeDifficulties {
-    EASY,
-    MEDIUM,
-    HARD
-}
-
-type ChallengeDetails = {
-    title: string;
-    outcome: string;
-    difficulty: ChallengeDifficulties;
-    generalDescription: string;
-    keyPatterns: Array<string>;
-    expectedFunctionality: object;
-    usageScenarios: object;
-}
+import { ChallengeDetails, ChallengeDifficulties } from "../types";
+import { getDifficulty } from "../utils";
 
 const Challenge = () => {
 
@@ -47,11 +33,9 @@ const Challenge = () => {
         });
    }, [id])
 
-
-
     //START FOR TESTING ONLY
 
-    const challenge_details: ChallengeDetails = {
+    const challengeDetails: ChallengeDetails = {
         difficulty: ChallengeDifficulties.HARD,
         "title": "Intelligent Urban Planning Simulation",
         "outcome": "A simulation tool for urban planners to model and visualize the impact of development projects on city infrastructure.",
@@ -77,28 +61,17 @@ const Challenge = () => {
       };
 
     if (details == undefined){
-        setDetails(challenge_details);  
+        setDetails(challengeDetails);  
     } 
     
     //END FOR TESTING ONLY
-
-    function getDifficulty(difficulty: ChallengeDifficulties): string{
-        switch(difficulty){
-            case ChallengeDifficulties.EASY:
-                return "var(--bs-teal)";
-            case ChallengeDifficulties.MEDIUM:
-                return "var(--bs-warning)";
-            case ChallengeDifficulties.HARD:
-                return "var(--bs-danger)";
-        }
-    }
 
     if (details != undefined)
     return(
     <Container>
         <section>
         <Row>
-            <header className="text-center  bg-secondary text-light p-5 my-4">
+            <header className="text-center  bg-dark text-light p-5 my-4">
                 <h1 className="fw-semibold" style={{color: getDifficulty(details.difficulty)}} >{details.title}</h1>
                 <h2 className="text-light fw-normal fs-3">{details.outcome}</h2>
             </header> 
@@ -120,7 +93,7 @@ const Challenge = () => {
                         >Hide Key Patterns</Button>}
                         <span className="float-end  text-end text-success"><strong>Completed</strong></span>
                 </div>}
-                <Col md={{span:9, order:2}}>
+                <Col xl={10}>
                 {showingDetails && <>
                     <h3 className="fs-4">Key Patterns</h3>
                     <ol>    
@@ -132,29 +105,26 @@ const Challenge = () => {
             </Col>
         </Row>
         <Row >
-            <Col md={9} >
+            <Col xl={10} >
                 <h3 className="fs-4">Description:</h3>
                 <p>{details.generalDescription}</p>
             </Col>
-            <Col md={4} >
-                
-            </Col>
         </Row>
         <Row>
-            <Col md={{span:9, order:1}}>
+            <Col xl={10}>
                 <h3 className="fs-4">Expected functionality:</h3>
                 <ul>    
-                    {Object.entries(challenge_details.expectedFunctionality).map(([key, value]) => {
+                    {Object.entries(challengeDetails.expectedFunctionality).map(([key, value]) => {
                         return <li key={key}><strong>{key}:</strong> {value}</li>;
                     })}            
                 </ul>
             </Col>
         </Row>
         <Row>
-            <Col md={9}>
+            <Col xl={10}>
             <h3 className="fs-4">Usage Scenarios</h3>
             <ul>
-            {Object.entries(challenge_details.usageScenarios).map(([key, value]) => {
+            {Object.entries(challengeDetails.usageScenarios).map(([key, value]) => {
                     return <li key={key}><strong>{key}:</strong> {value}</li>;
                 })}  
             </ul>
