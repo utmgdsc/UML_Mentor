@@ -78,7 +78,7 @@ const Challenge = () => {
         </Row>
         <Row>
             {/* If completed, allow to view design patterns. */}
-            {completed && <div className="w-100 mb-4 text-start">
+            {completed && <div className="w-100 mb-4">
                     {/* <p className="mx-5 text-success"><strong>Completed</strong></p> */}
                     {/* toggle the state on click and hide/display design pattern list*/}
                     {!showingDetails ? 
@@ -91,7 +91,9 @@ const Challenge = () => {
                             variant="outline-danger"
                             onClick={()=>{setShowingDetails(!showingDetails)}}
                         >Hide Key Patterns</Button>}
-                        <span className="float-end  text-end text-success"><strong>Completed</strong></span>
+                        <span className="fs-5 float-end text-success">
+                            <strong>Completed</strong>
+                        </span>
                 </div>}
                 <Col xl={10}>
                 {showingDetails && <>
