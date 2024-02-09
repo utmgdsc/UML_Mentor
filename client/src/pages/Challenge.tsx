@@ -99,9 +99,9 @@ const Challenge = () => {
     <Container>
         <section>
         <Row>
-            <header className="text-center bg-secondary  text-light p-5 my-4">
-                <h1 style={{color: getDifficulty(details.difficulty)}} >{details.title}</h1>
-                <h2 className="text-light fw-semibold fs-3">{details.outcome}</h2>
+            <header className="text-center  bg-secondary text-light p-5 my-4">
+                <h1 className="fw-semibold" style={{color: getDifficulty(details.difficulty)}} >{details.title}</h1>
+                <h2 className="text-light fw-normal fs-3">{details.outcome}</h2>
             </header> 
         </Row>
         
