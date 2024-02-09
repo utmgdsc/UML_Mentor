@@ -25,11 +25,11 @@ const Challenge = () => {
     const [completed, setCompleted] = useState(true);
     const [details, setDetails]  = useState<ChallengeDetails>();
     const [showingDetails, setShowingDetails] = useState(false); //toggle state for showing/hiding design pattern list
-    //fetch data about the challenge with the provided "id" here... (useEffect)
+
     const { id } = useParams();
 
-    useEffect(() => {
-    
+    useEffect(() => {   
+        //fetch data about the challenge with the provided "id"
         //NEEDS TESTING
         //get the challenge details
         fetch('/api/challenge/' + id).then((response) => {
@@ -47,6 +47,9 @@ const Challenge = () => {
         });
    }, [id])
 
+
+
+    //START FOR TESTING ONLY
 
     const challenge_details: ChallengeDetails = {
         difficulty: ChallengeDifficulties.HARD,
@@ -73,10 +76,6 @@ const Challenge = () => {
         }
       };
 
-
-    
-
-    //START FOR TESTING ONLY
     if (details == undefined){
         setDetails(challenge_details);  
     } 
@@ -104,16 +103,10 @@ const Challenge = () => {
                 <h2 className="text-light fw-normal fs-3">{details.outcome}</h2>
             </header> 
         </Row>
-        
-        <Row >
-            <Col md={8} >
-                <h3 className="fs-4">Description:</h3>
-                <p>{details.generalDescription}</p>
-            </Col>
-            <Col md={4} >
-                {/* If completed, allow to view design patterns. */}
-                {completed && <div className="mb-4 text-center">
-                    <p className="text-success"><strong>Completed</strong></p>
+        <Row>
+            {/* If completed, allow to view design patterns. */}
+            {completed && <div className="w-100 mb-4 text-start">
+                    {/* <p className="mx-5 text-success"><strong>Completed</strong></p> */}
                     {/* toggle the state on click and hide/display design pattern list*/}
                     {!showingDetails ? 
                         <Button  
@@ -124,12 +117,10 @@ const Challenge = () => {
                         <Button 
                             variant="outline-danger"
                             onClick={()=>{setShowingDetails(!showingDetails)}}
-                        >Hide Key Patterns</Button>} 
+                        >Hide Key Patterns</Button>}
+                        <span className="float-end  text-end text-success"><strong>Completed</strong></span>
                 </div>}
-            </Col>
-        </Row>
-        <Row>
-            <Col md={{span:4, order:2}}>
+                <Col md={{span:9, order:2}}>
                 {showingDetails && <>
                     <h3 className="fs-4">Key Patterns</h3>
                     <ol>    
@@ -139,7 +130,18 @@ const Challenge = () => {
                     </ol>
                 </>}
             </Col>
-            <Col md={{span:8, order:1}}>
+        </Row>
+        <Row >
+            <Col md={9} >
+                <h3 className="fs-4">Description:</h3>
+                <p>{details.generalDescription}</p>
+            </Col>
+            <Col md={4} >
+                
+            </Col>
+        </Row>
+        <Row>
+            <Col md={{span:9, order:1}}>
                 <h3 className="fs-4">Expected functionality:</h3>
                 <ul>    
                     {Object.entries(challenge_details.expectedFunctionality).map(([key, value]) => {
@@ -149,7 +151,7 @@ const Challenge = () => {
             </Col>
         </Row>
         <Row>
-            <Col md={8}>
+            <Col md={9}>
             <h3 className="fs-4">Usage Scenarios</h3>
             <ul>
             {Object.entries(challenge_details.usageScenarios).map(([key, value]) => {
