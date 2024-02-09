@@ -107,7 +107,7 @@ const Challenge = () => {
         
         <Row >
             <Col md={8} >
-                <h3>Description:</h3>
+                <h3 className="fs-4">Description:</h3>
                 <p>{details.generalDescription}</p>
             </Col>
             <Col md={4} >
@@ -131,16 +131,16 @@ const Challenge = () => {
         <Row>
             <Col md={{span:4, order:2}}>
                 {showingDetails && <>
-                    <h3>Key Patterns</h3>
-                    <ul>    
+                    <h3 className="fs-4">Key Patterns</h3>
+                    <ol>    
                         {details.keyPatterns.map((pattern, index) => {
                             return <li key={index}>{pattern  + "."}</li>;
                         })}         
-                    </ul>
+                    </ol>
                 </>}
             </Col>
             <Col md={{span:8, order:1}}>
-                <h3>Expected functionality:</h3>
+                <h3 className="fs-4">Expected functionality:</h3>
                 <ul>    
                     {Object.entries(challenge_details.expectedFunctionality).map(([key, value]) => {
                         return <li key={key}><strong>{key}:</strong> {value}</li>;
@@ -150,7 +150,7 @@ const Challenge = () => {
         </Row>
         <Row>
             <Col md={8}>
-            <h3>Usage Scenarios</h3>
+            <h3 className="fs-4">Usage Scenarios</h3>
             <ul>
             {Object.entries(challenge_details.usageScenarios).map(([key, value]) => {
                     return <li key={key}><strong>{key}:</strong> {value}</li>;
