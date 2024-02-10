@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
-import { getDifficulty } from "../utils";
+// import { getDifficulty } from "../utils";
+import DifficultyBadge from "../elements/DifficultyBadge";
 
 //FOR TESTING ONLY
 const challengeDetails: ChallengeDetails = {
@@ -37,7 +38,6 @@ const Challenge = () => {
     //TODO: Fetch this value from the server
     const [completed, setCompleted] = useState(true);
     const [details, setDetails]  = useState<ChallengeDetails>();
-    const [showingDetails, setShowingDetails] = useState(false); //toggle state for showing/hiding design pattern list
 
     const { id } = useParams();
 
@@ -73,10 +73,17 @@ const Challenge = () => {
     <Container>
         <section>
         <Row>
-            <header className="text-center  bg-dark text-light p-5 my-4">
-                <h1 className="fw-semibold" style={{color: getDifficulty(details.difficulty)}} >{details.title}</h1>
-                <h2 className="text-light fw-normal fs-3">{details.outcome}</h2>
+            <header className="text-center  bg-dark text-light p-5 pb-3 mb-4 mt-2">
+                <h1 className="fw-semibold" >{details.title}</h1>
+                <h2 className=" text-light fw-normal fs-3">{details.outcome}</h2>
+                <div className="mt-4 me-n4">
+                    <DifficultyBadge difficulty={details.difficulty}></DifficultyBadge>
+                </div>
             </header> 
+        </Row>
+        <Row >
+            <Col xl={{offset: 11}}>
+            </Col>
         </Row>
         {completed &&
         <Row>
@@ -137,8 +144,8 @@ const Challenge = () => {
             </ButtonToolbar>
         </Row>
         </ section>
-    </Container>)
-  }
+    </Container>);
+  };
   
   export default Challenge;
   
