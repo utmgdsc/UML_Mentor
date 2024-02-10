@@ -13,7 +13,20 @@ module.exports = (sequelize, DataTypes) => {
               model: 'Users',
               key: 'id',
             }
-        }
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        title: {
+            type: DataTypes.TEXT,
+            allowNull: false
+        },
+        diagram: {
+          type: DataTypes.STRING,
+          allowNull: true,
+          comment: "URL to the diagram image"
+      }
     });
     // Define associations
     Solution.associate = function(models) {
