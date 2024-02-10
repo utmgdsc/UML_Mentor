@@ -1,6 +1,5 @@
 import { ChallengeDifficulties } from '../types/challengeDifficulties';
 import { Badge } from 'react-bootstrap';
-import { FC } from 'react';
 
 export function getDifficulty(difficulty: ChallengeDifficulties): string{
     switch(difficulty){
@@ -17,7 +16,7 @@ type DifficultyBadgeProps = {
     difficulty: ChallengeDifficulties;
 };
 
-const DifficultyBadge:FC<DifficultyBadgeProps> = ({ difficulty }: DifficultyBadgeProps) => {
+const DifficultyBadge = ({ difficulty }: DifficultyBadgeProps) => {
     const badgeColor: string = getDifficulty(difficulty);
     let badgeText: string;
 

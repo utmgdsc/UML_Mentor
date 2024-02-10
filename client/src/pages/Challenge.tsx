@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
 // import { getDifficulty } from "../utils";
-import DifficultyBadge from "../elements/DifficultyBadge";
+import DifficultyBadge from "../components/DifficultyBadge";
 
 //FOR TESTING ONLY
 const challengeDetails: ChallengeDetails = {
@@ -136,7 +136,7 @@ const Challenge = () => {
             </ul>
             </Col>
         </Row>
-        <Row className="my-4">
+        <Row className="mt-4">
             <ButtonToolbar className="d-flex justify-content-evenly">
                 <Button className="m-1" target="_blank" href="/editor">Open Editor</Button>
                 <Button className="m-1" href={"/solutions/post/" + id}>Post a Solution</Button>
