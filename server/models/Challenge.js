@@ -1,5 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
     const Challenge = sequelize.define('Challenge', {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
         description: {
             type: DataTypes.TEXT,
             allowNull: false
@@ -7,8 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         title: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        difficulty: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
     });
     return Challenge;
-  };
-  
+};
