@@ -1,4 +1,4 @@
-import { ChallengeDifficulties } from "./types";
+import { ChallengeDifficulties } from "./types/challengeDifficulties";
 
 export function getDifficulty(difficulty: ChallengeDifficulties): string{
     switch(difficulty){

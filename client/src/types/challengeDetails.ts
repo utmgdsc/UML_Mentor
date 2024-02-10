@@ -1,8 +1,4 @@
-export enum ChallengeDifficulties {
-    EASY,
-    MEDIUM,
-    HARD
-}
+import { ChallengeDifficulties } from './challengeDifficulties';
 
 export type ChallengeDetails = {
     title: string;
