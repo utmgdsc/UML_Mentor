@@ -7,24 +7,24 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 
-// Sync Sequelize models and create a test user
+// Sync Sequelize models 
 db.sequelize.sync({ force: true }).then(async () => { // Use { force: true } cautiously as it will drop existing tables
     console.log('Database synced');
 
-    // Create a test user 
-    // This is for TESTING PURPOSES ONLY.
-    try {
-        const testUser = await db.User.create({
-            username: 'testuser',
-            passwordHash: 'testpassword',
-            email: 'test@example.com',
-            preferredName: 'Test',
-            score: 1
-        });
-        console.log('Test user created:', testUser.toJSON());
-    } catch (err) {
-        console.error('Failed to create test user:', err);
-    }
+    // // Create a test user 
+    // // This is for TESTING PURPOSES ONLY.
+    // try {
+    //     const testUser = await db.User.create({
+    //         username: 'testuser',
+    //         passwordHash: 'testpassword',
+    //         email: 'test@example.com',
+    //         preferredName: 'Test',
+    //         score: 1
+    //     });
+    //     console.log('Test user created:', testUser.toJSON());
+    // } catch (err) {
+    //     console.error('Failed to create test user:', err);
+    // }
 
     // Start listening for requests after the database is ready
     app.listen(PORT, () => {
