@@ -3,6 +3,7 @@ import Home from "./pages/Home.tsx";
 import AppShell from "./components/AppShell.tsx";
 import ErrorElement from "./pages/ErrorElement.tsx";
 import Challenge from "./pages/Challenge.tsx"; //TODO: REMOVE THIS LINE
+import Profile from "./pages/Profile.tsx";
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -21,6 +22,7 @@ const NAV_CONFIG = {
     },
   ],
   profile: {
+    name: "Profile",
     href: "/profile",
   },
 };
@@ -40,7 +42,11 @@ const router = createBrowserRouter([
       {
         path: "challenge",
         element: <Challenge /> //TODO: REMOVE THIS ROUTE
-      }
+      },
+      {
+        path: "profile",
+        element: <Profile />
+      },
     ],
   },
 ]);
