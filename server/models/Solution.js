@@ -23,9 +23,9 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         diagram: {
-          type: DataTypes.STRING,
-          allowNull: true,
-          comment: "URL to the diagram image"
+            type: DataTypes.STRING,
+            allowNull: true,
+            comment: "URL to the diagram image"
       }
     });
     // Define associations
