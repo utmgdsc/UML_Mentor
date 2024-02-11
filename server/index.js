@@ -11,7 +11,8 @@ const PORT = process.env.PORT || 3000;
 db.sequelize.sync({ force: true }).then(async () => { // Use { force: true } cautiously as it will drop existing tables
     console.log('Database synced');
 
-    // Create a test user
+    // Create a test user 
+    // This is for TESTING PURPOSES ONLY.
     try {
         const testUser = await db.User.create({
             username: 'testuser',
