@@ -13,36 +13,21 @@ const PORT = process.env.PORT || 8080;
 db.sequelize.sync({ force: true }).then(async () => { // Use { force: true } cautiously as it will drop existing tables
     console.log('Database synced');
 
-    // // Create a test user 
-    // // This is for TESTING PURPOSES ONLY.
-    // try {
-    //     const testUser = await db.User.create({
-    //         username: 'testuser',
-    //         passwordHash: 'testpassword',
-    //         email: 'test@example.com',
-    //         preferredName: 'Test',
-    //         score: 1
-    //     });
-    //     console.log('Test user created:', testUser.toJSON());
-    // } catch (err) {
-    //     console.error('Failed to create test user:', err);
-    // }
-
     // Start listening for requests after the database is ready
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}.`);
     });
 });
 
-// Welcome route
-app.get('/api', (req, res) => {
-    res.json({ message: 'Welcome to the server!' });
-});
-
-// Test route
-app.get('/api/hi', (req, res) => {
-    res.json({ message: 'Hello!' });
-});
+// Set up API routes
+const challenges = require('./routes/ChallengeRoutes');
+// const solutions = require('./routes/SolutionRoutes');
+// const users = require('./routes/UserRoutes');
+// const comments = require('./routes/CommentRoutes');
+app.use('/api/challenges', challenges);
+// app.use('/api/solutions', solutions);
+// app.use('/api/users', users);
+// app.use('/api/comments', comments);
 
 //uncomment for production
 // app.use(express.static(path.resolve(__dirname, "../client/dist")))
