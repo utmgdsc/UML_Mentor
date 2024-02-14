@@ -1,6 +1,8 @@
 const express = require('express');
-const app = express();
+const path = require('node:path');
 const db = require('./models');
+
+const app = express();
 
 app.use(express.json());
 
@@ -37,7 +39,16 @@ app.get('/api', (req, res) => {
     res.json({ message: 'Welcome to the server!' });
 });
 
-// Welcome route
+// Test route
 app.get('/api/hi', (req, res) => {
     res.json({ message: 'Hello!' });
 });
+
+//uncomment for production
+// app.use(express.static(path.resolve(__dirname, "../client/dist")))
+
+//Send all non-api requests to the React app.
+//uncomment for production
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"))
+// })
