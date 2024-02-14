@@ -3,7 +3,7 @@ import Button from "./Button.tsx";
 import { StarFill } from "react-bootstrap-icons";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
 // TODO: extract challenge into its own type
-
+import { Link } from "react-router-dom";
 
 
 function ChallengeCard({
@@ -30,7 +30,11 @@ function ChallengeCard({
       <Card.Body>
         <Card.Title>{title}</Card.Title>
         <Card.Text>{generalDescription}</Card.Text>
-        <Button href={"/challenge/" + id}>Solve</Button>
+        <Link style={{textDecoration: "none"}} to={"/challenge/" + id}>
+          <Button>
+            Solve
+          </Button>
+        </Link>
       </Card.Body>
     </Card>
   );

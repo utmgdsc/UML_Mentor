@@ -138,70 +138,71 @@ function Challenges() {
     return(
         <section>
             <Container>
-                <Row className="my-2">
-                    <Col>
-                    <header>
-                        <h1 className="fs-2">Challenges</h1>
-                        <h2 className="fs-5">Choose a challenge to start solving!</h2>
-                        </header>
-                    </Col>
-                    <Col>
-                        <Dropdown className="mt-4 float-end "> 
-                            <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                                Sort by Difficulty
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Dropdown.Item onClick={ () => {
-                                    setSortByDifficulty(!sortByDifficulty);
-                                }}>
-                                    {sortByDifficulty ? "Easier First" : "Harder First"}
-                                </Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                        <Dropdown className="mt-4 mx-2 float-end">
-                            <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                                Filter by
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Form className="ms-2">
-                                    <Form.Label>Difficulty</Form.Label>
-                                    <Form.Check
-                                        type="checkbox"
-                                        label="Easy"
-                                        onClick={() => {
-                                            filterIncluded(ChallengeDifficulties.EASY, filter) ? setFilter(filter & 6) : setFilter(filter | 1);
-                                        }}
-                                        // checked={filterByDifficulty.includes(ChallengeDifficulties.EASY)}
-                                    />
-                                    <Form.Check
-                                        type="checkbox"
-                                        label="Medium"
-                                        onClick={
-                                            () => {
-                                                filterIncluded(ChallengeDifficulties.MEDIUM, filter) ? setFilter(filter & 5) : setFilter(filter | 2);
-                                        }}
-                                        // checked={filterByDifficulty.includes(ChallengeDifficulties.MEDIUM)}
-                                    />
-                                    <Form.Check
-                                        type="checkbox"
-                                        label="Hard"
-                                        onClick={
-                                            () => {
-                                                filterIncluded(ChallengeDifficulties.HARD, filter) ? setFilter(filter & 3) : setFilter(filter | 4);
-                                        }}
-                                        // checked={filterByDifficulty.includes(ChallengeDifficulties.HARD)}
-                                    />
-                                    </Form>
+                <header>
+                    <Row className="my-2">
+                        <Col>
+                            <h1 className="fs-2">Challenges</h1>
+                            <h2 className="fs-5">Choose a challenge to start solving!</h2>
+                        </Col>
+                        <Col>
+                            <Dropdown className="mt-4 float-end "> 
+                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                    Sort by Difficulty
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={ () => {
+                                        setSortByDifficulty(!sortByDifficulty);
+                                    }}>
+                                        {sortByDifficulty ? "Easier First" : "Harder First"}
+                                    </Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
-                        <Button 
-                            className={"mt-4 float-end " + (hideComplete ? "btn-primary" : "btn-danger")}
-                            onClick={() => {setHideComplete(!hideComplete)}}
-                            >
-                            {hideComplete ? "Showing Completed" : "Hiding Completed"}
-                        </Button>        
-                    </Col>
-                </Row>
+                            <Dropdown className="mt-4 mx-2 float-end">
+                                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                                    Filter by
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Form className="ms-2">
+                                        <Form.Label>Difficulty</Form.Label>
+                                        <Form.Check
+                                            type="checkbox"
+                                            label="Easy"
+                                            onClick={() => {
+                                                filterIncluded(ChallengeDifficulties.EASY, filter) ? setFilter(filter & 6) : setFilter(filter | 1);
+                                            }}
+                                            // checked={filterByDifficulty.includes(ChallengeDifficulties.EASY)}
+                                        />
+                                        <Form.Check
+                                            type="checkbox"
+                                            label="Medium"
+                                            onClick={
+                                                () => {
+                                                    filterIncluded(ChallengeDifficulties.MEDIUM, filter) ? setFilter(filter & 5) : setFilter(filter | 2);
+                                            }}
+                                            // checked={filterByDifficulty.includes(ChallengeDifficulties.MEDIUM)}
+                                        />
+                                        <Form.Check
+                                            type="checkbox"
+                                            label="Hard"
+                                            onClick={
+                                                () => {
+                                                    filterIncluded(ChallengeDifficulties.HARD, filter) ? setFilter(filter & 3) : setFilter(filter | 4);
+                                            }}
+                                            // checked={filterByDifficulty.includes(ChallengeDifficulties.HARD)}
+                                        />
+                                        </Form>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            <Button 
+                                className={"mt-4 float-end " + (hideComplete ? "btn-primary" : "btn-danger")}
+                                onClick={() => {setHideComplete(!hideComplete)}}
+                                >
+                                {hideComplete ? "Showing Completed" : "Hiding Completed"}
+                            </Button>        
+                        </Col>
+                    </Row>
+                </header>
+
                 {grid}
             </Container>
         </section>
