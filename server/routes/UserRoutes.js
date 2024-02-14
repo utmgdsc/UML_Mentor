@@ -1,4 +1,4 @@
-const User = require('../controller/User.controller');
+const User = require('../controllers/UserController');
 const router = require("express").Router();
 
 // Get a user from the database.

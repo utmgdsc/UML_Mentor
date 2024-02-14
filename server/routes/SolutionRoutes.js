@@ -1,15 +1,15 @@
-const Solution = require('../controllers/Solution.controller');
+const Solution = require('../controllers/SolutionController');
 const router = require("express").Router();
 
 // Getsolution from the database.
-router.get("/:id", Soltion.get);
+router.get("/:id", Solution.get);
 
 // Get all comments for a solutions.
 // Sorting (by date or upvote) happens on the client side.
-router.get("/:id", Challenge.getComments);
+// router.get("/:id", Challenge.getComments);
 
 // Create a new solution in the database.
-route.post("/:id", Solution.create);
+router.post("/:id", Solution.create);
 
 // Edit a solution in the database.
 router.put("/:id/edit", Solution.edit);
