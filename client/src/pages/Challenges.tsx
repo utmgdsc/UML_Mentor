@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ChallengeCard from "../components/ChallengeCard";
 import { Container, Row, Col, Button, Stack, Dropdown, Form, FormCheck} from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
@@ -50,16 +50,47 @@ const challengesDemo: ChallengeDetailsShort[] = [
 // END FOR TESTING ONLY
 
 function Challenges() {
-    const [challengesData, setChallengesData] = useState([] as ChallengeDetailsShort[]);
+
+    const [grid, setGrid] = useState([] as JSX.Element[]);
+    const [challengesData, setChallengesData] = useState(challengesDemo);
     const [sortByDifficulty, setSortByDifficulty] = useState(false);
-    const [filterByDifficulty, setFilterByDifficulty] = useState([] as ChallengeDifficulties[]);
+    const [filter, setFilter] = useState(0);
     const [hideComplete, setHideComplete] = useState(false);
 
-    function makeGrid(challenges: ChallengeDetailsShort[]): JSX.Element[] {
+
+    /**
+     * Handles the sorting of challenges by difficulty
+     */
+    function handleSortByDifficulty(prevChallengesData: ChallengeDetailsShort[]) {
+        const sortedChallengesData = [...prevChallengesData];
+        if (sortByDifficulty) {
+            // Sort challengesData in ascending order by difficulty
+            sortedChallengesData.sort((a, b) => a.difficulty - b.difficulty);
+        } else {
+            // Sort challengesData in descending order by difficulty
+            sortedChallengesData.sort((a, b) => b.difficulty - a.difficulty);
+        }
+        return sortedChallengesData;
+    }
+
+    
+
+    /**
+     * Create the grid of challenges based on the filter
+     * @param challenges the challenges data
+     * @returns the grid of ChallengeCards
+     */
+    const makeGrid = useCallback((): JSX.Element[] => {
         const grid: JSX.Element[] = [];
         let row: JSX.Element[] = [];
         let i = 0;
-        for (const challenge of challenges) {
+        for (const challenge of challengesData) {
+            //make sure the challenge is not filtered out
+            if(!(filterIncluded(challenge.difficulty, filter) || filter === 0)) {
+                // console.log("Filtering out: " + challenge.difficulty);
+                continue;
+            }
+
             row.push(
                 <Col lg={4} key={i} className="mb-4">
                     <ChallengeCard {...challenge} />
@@ -75,27 +106,35 @@ function Challenges() {
             grid.push(<Row key={i}>{row}</Row>);
         }
         return grid;
-    }
+    }, [filter, challengesData]);
+
 
     useEffect(() => {    
         //NEXT LINE IS FOR TESTING ONLY
-        setChallengesData(challengesDemo);
-    }, [hideComplete, sortByDifficulty, filterByDifficulty]);
+        // setChallengesData(challengesDemo);
+        // const sortedChallengesData = useMemo(()=> {return handleSortByDifficulty(challengesData)}, sortByDifficulty);
+        // setChallengesData(sortedChallengesData);
+        const newGrid = makeGrid();
+        setGrid(newGrid);
+    }, [hideComplete, challengesData, makeGrid]);
 
-    const handleSortByDifficulty = () => {
-        setSortByDifficulty(!sortByDifficulty);
-        if (sortByDifficulty) {
-            // Sort challengesData in ascending order by difficulty
-            setChallengesData([...challengesData].sort((a, b) => a.difficulty - b.difficulty));
-        } else {
-            // Sort challengesData in descending order by difficulty
-            setChallengesData([...challengesData].sort((a, b) => b.difficulty - a.difficulty));
+    /**
+     * Retuns true if the difficulty is included in the filter
+     */
+    function filterIncluded(difficulty: ChallengeDifficulties, filter: number): boolean {
+        console.log("Filter: " + filter);
+        switch(difficulty) {
+            case ChallengeDifficulties.EASY:
+                return (filter & 1) === 1;
+            case ChallengeDifficulties.MEDIUM:
+                return (filter & 2) === 2;
+            case ChallengeDifficulties.HARD:
+                return (filter & 4) === 4;
+            default:
+                return false;
         }
-    };
-
-    function handleFilterByDifficulty() {
-        return ;
     }
+
 
     return(
         <section>
@@ -113,7 +152,9 @@ function Challenges() {
                                 Sort by Difficulty
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
-                                <Dropdown.Item onClick={handleSortByDifficulty}>
+                                <Dropdown.Item onClick={ () => {
+                                    setSortByDifficulty(!sortByDifficulty);
+                                }}>
                                     {sortByDifficulty ? "Easier First" : "Harder First"}
                                 </Dropdown.Item>
                             </Dropdown.Menu>
@@ -128,19 +169,27 @@ function Challenges() {
                                     <Form.Check
                                         type="checkbox"
                                         label="Easy"
-                                        onChange={handleFilterByDifficulty}
+                                        onClick={() => {
+                                            filterIncluded(ChallengeDifficulties.EASY, filter) ? setFilter(filter & 6) : setFilter(filter | 1);
+                                        }}
                                         // checked={filterByDifficulty.includes(ChallengeDifficulties.EASY)}
                                     />
                                     <Form.Check
                                         type="checkbox"
                                         label="Medium"
-                                        onChange={handleFilterByDifficulty}
+                                        onClick={
+                                            () => {
+                                                filterIncluded(ChallengeDifficulties.MEDIUM, filter) ? setFilter(filter & 5) : setFilter(filter | 2);
+                                        }}
                                         // checked={filterByDifficulty.includes(ChallengeDifficulties.MEDIUM)}
                                     />
                                     <Form.Check
                                         type="checkbox"
                                         label="Hard"
-                                        onChange={handleFilterByDifficulty}
+                                        onClick={
+                                            () => {
+                                                filterIncluded(ChallengeDifficulties.HARD, filter) ? setFilter(filter & 3) : setFilter(filter | 4);
+                                        }}
                                         // checked={filterByDifficulty.includes(ChallengeDifficulties.HARD)}
                                     />
                                     </Form>
@@ -154,7 +203,7 @@ function Challenges() {
                         </Button>        
                     </Col>
                 </Row>
-                {makeGrid(challengesData)}
+                {grid}
             </Container>
         </section>
     );
