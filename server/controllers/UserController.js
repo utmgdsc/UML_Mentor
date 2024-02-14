@@ -51,7 +51,7 @@ exports.create = async (req, res) => {
     }
 }
 
-exports.edit = async (req, res) => {
+exports.update = async (req, res) => {
     try {
         const { id } = req.params;
         const { username, passwordHash, preferredName, email, score } = req.body;

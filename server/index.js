@@ -21,13 +21,13 @@ db.sequelize.sync({ force: true }).then(async () => { // Use { force: true } cau
 
 // Set up API routes
 const challenges = require('./routes/ChallengeRoutes');
-// const solutions = require('./routes/SolutionRoutes');
-// const users = require('./routes/UserRoutes');
-// const comments = require('./routes/CommentRoutes');
+const solutions = require('./routes/SolutionRoutes');
+const users = require('./routes/UserRoutes');
+const comments = require('./routes/CommentRoutes');
 app.use('/api/challenges', challenges);
-// app.use('/api/solutions', solutions);
-// app.use('/api/users', users);
-// app.use('/api/comments', comments);
+app.use('/api/solutions', solutions);
+app.use('/api/users', users);
+app.use('/api/comments', comments);
 
 //uncomment for production
 // app.use(express.static(path.resolve(__dirname, "../client/dist")))
