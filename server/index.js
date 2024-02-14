@@ -4,7 +4,7 @@ const db = require('./models');
 
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 
 // Sync Sequelize models 
@@ -33,6 +33,11 @@ db.sequelize.sync({ force: true }).then(async () => { // Use { force: true } cau
 });
 
 // Welcome route
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.json({ message: 'Welcome to the server!' });
+});
+
+// Welcome route
+app.get('/api/hi', (req, res) => {
+    res.json({ message: 'Hello!' });
 });
