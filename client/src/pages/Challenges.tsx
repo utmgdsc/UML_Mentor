@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChallengeCard from "../components/ChallengeCard";
 import { Container, Row, Col, Button, Stack, Dropdown, Form, FormCheck} from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
@@ -50,9 +50,9 @@ const challengesDemo: ChallengeDetailsShort[] = [
 // END FOR TESTING ONLY
 
 function Challenges() {
+    const challengesData = useRef(challengesDemo);
 
     const [grid, setGrid] = useState([] as JSX.Element[]);
-    const [challengesData, setChallengesData] = useState(challengesDemo);
     const [sortByDifficulty, setSortByDifficulty] = useState(false);
     const [filter, setFilter] = useState(0);
     const [hideComplete, setHideComplete] = useState(false);
@@ -61,9 +61,9 @@ function Challenges() {
     /**
      * Handles the sorting of challenges by difficulty
      */
-    function handleSortByDifficulty(prevChallengesData: ChallengeDetailsShort[]) {
+    const handleSortByDifficulty = useCallback((prevChallengesData: ChallengeDetailsShort[]) => {
         const sortedChallengesData = [...prevChallengesData];
-        if (sortByDifficulty) {
+        if (!sortByDifficulty) {
             // Sort challengesData in ascending order by difficulty
             sortedChallengesData.sort((a, b) => a.difficulty - b.difficulty);
         } else {
@@ -71,7 +71,7 @@ function Challenges() {
             sortedChallengesData.sort((a, b) => b.difficulty - a.difficulty);
         }
         return sortedChallengesData;
-    }
+    }, [sortByDifficulty]);
 
     
 
@@ -84,7 +84,7 @@ function Challenges() {
         const grid: JSX.Element[] = [];
         let row: JSX.Element[] = [];
         let i = 0;
-        for (const challenge of challengesData) {
+        for (const challenge of challengesData.current) {
             //make sure the challenge is not filtered out
             if(!(filterIncluded(challenge.difficulty, filter) || filter === 0)) {
                 // console.log("Filtering out: " + challenge.difficulty);
@@ -106,18 +106,17 @@ function Challenges() {
             grid.push(<Row key={i}>{row}</Row>);
         }
         return grid;
-    }, [filter, challengesData]);
+    }, [filter]);
 
 
     useEffect(() => {    
-        //NEXT LINE IS FOR TESTING ONLY
-        // setChallengesData(challengesDemo);
-        // const sortedChallengesData = useMemo(()=> {return handleSortByDifficulty(challengesData)}, sortByDifficulty);
-        // setChallengesData(sortedChallengesData);
+        const sortedChallengesData = handleSortByDifficulty(challengesData.current);
+        challengesData.current = sortedChallengesData;
         const newGrid = makeGrid();
         setGrid(newGrid);
-    }, [hideComplete, challengesData, makeGrid]);
+    }, [hideComplete, challengesData, makeGrid, handleSortByDifficulty]);
 
+    
     /**
      * Retuns true if the difficulty is included in the filter
      */
