@@ -4,5 +4,5 @@ export type ChallengeDetailsShort = {
     title: string;
     difficulty: ChallengeDifficulties;
     generalDescription: string;
-    id: string;
+    id: number;
 }

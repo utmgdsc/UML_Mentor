@@ -4,7 +4,7 @@ import { Container, Row, Col, ButtonToolbar, Button, AccordionItem, AccordionHea
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
-// import { getDifficulty } from "../utils";
+import { ChallengeDifficulties } from "../types/challengeDifficulties";
 import DifficultyBadge from "../components/DifficultyBadge";
 
 const Challenge = () => {
