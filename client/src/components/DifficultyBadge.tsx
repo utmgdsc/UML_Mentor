@@ -1,7 +1,7 @@
 import { ChallengeDifficulties } from '../types/challengeDifficulties';
 import { Badge } from 'react-bootstrap';
 
-export function getDifficulty(difficulty: ChallengeDifficulties): string{
+function getDifficulty(difficulty: ChallengeDifficulties): string{
     switch(difficulty){
         case ChallengeDifficulties.EASY:
             return "success";

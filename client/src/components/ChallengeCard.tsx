@@ -1,49 +1,39 @@
 import Card from "react-bootstrap/Card";
 import Button from "./Button.tsx";
 import { StarFill } from "react-bootstrap-icons";
-
-enum Difficulty {
-  easy = "easy",
-  medium = "medium",
-  hard = "hard",
-}
-
+import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
 // TODO: extract challenge into its own type
 
-type ChallengeCardProps = {
-  title: string;
-  description: string;
-  href: string;
-  difficulty: Difficulty;
-};
 
-const DIFFICULTY_TO_STARCOUNT = {
-  easy: 1,
-  medium: 2,
-  hard: 3,
-};
 
 function ChallengeCard({
   title,
-  description,
-  href,
+  generalDescription,
+  id,
   difficulty,
-}: ChallengeCardProps) {
+}: ChallengeDetailsShort) {
+
+  function getDifficulty(): JSX.Element[] {
+    const difficultyList: JSX.Element[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    for (let i = 0; i <= difficulty; i++) {
+      difficultyList.push(<StarFill key={i} />);
+    }
+    return difficultyList;
+  }
+
   return (
     <Card>
       <Card.Header>
-        {Array(DIFFICULTY_TO_STARCOUNT[difficulty]).map((_, index) => (
-          <StarFill key={index} />
-        ))}
+        {getDifficulty()}
       </Card.Header>
       <Card.Body>
         <Card.Title>{title}</Card.Title>
-        <Card.Text>{description}</Card.Text>
-        <Button href={href}>Solve</Button>
+        <Card.Text>{generalDescription}</Card.Text>
+        <Button href={"/challenge/" + id}>Solve</Button>
       </Card.Body>
     </Card>
   );
 }
 
-export type { ChallengeCardProps };
 export default ChallengeCard;
