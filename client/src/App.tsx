@@ -38,7 +38,7 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "challenge",
+        path: "challenge/:id",
         element: <Challenge /> //TODO: REMOVE THIS ROUTE
       }
     ],

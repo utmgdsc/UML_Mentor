@@ -22,7 +22,8 @@ module.exports = async function importChallenges() {
                     outcome: challenge.outcome,
                     keyPatterns: challenge.keyPatterns,
                     generalDescription: challenge.generalDescription,
-                    usageScenarios: challenge.usageScenarios
+                    usageScenarios: challenge.usageScenarios,
+                    expectedFunctionality: challenge.expectedFunctionality
                 })
             };
 
@@ -42,7 +43,8 @@ module.exports = async function importChallenges() {
                     outcome: challenge.outcome,
                     keyPatterns: challenge.keyPatterns,
                     generalDescription: challenge.generalDescription,
-                    usageScenarios: challenge.usageScenarios
+                    usageScenarios: challenge.usageScenarios,
+                    expectedFunctionality: challenge.expectedFunctionality
                 })
             };
 
@@ -61,7 +63,8 @@ module.exports = async function importChallenges() {
                     outcome: challenge.outcome,
                     keyPatterns: challenge.keyPatterns,
                     generalDescription: challenge.generalDescription,
-                    usageScenarios: challenge.usageScenarios
+                    usageScenarios: challenge.usageScenarios,
+                    expectedFunctionality: challenge.expectedFunctionality
                 })
             };
 

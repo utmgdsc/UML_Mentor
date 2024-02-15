@@ -1,6 +1,21 @@
 const db = require("../models/index");
 const Challenge = db.Challenge;
 
+function diffToNum(difficulty) {
+    switch (difficulty) {
+        case "easy":
+            return 0;
+        case "medium":
+            return 1;
+        case "hard":
+            return 2;
+        default:
+            return -1;
+    }
+
+}
+
+
 exports.findAll = async (req, res) => {
     try {
         const challengesData = await Challenge.findAll();
@@ -10,11 +25,12 @@ exports.findAll = async (req, res) => {
             return {
                 id: challengeData.id,
                 title: challengeData.title,
-                difficulty: challengeData.difficulty,
+                difficulty: diffToNum(challengeData.difficulty),
                 outcome: challengeDescription.outcome,
                 keyPatterns: challengeDescription.keyPatterns,
                 generalDescription: challengeDescription.generalDescription,
-                usageScenarios: challengeDescription.usageScenarios
+                usageScenarios: challengeDescription.usageScenarios,
+                expectedFunctionality: challengeDescription.expectedFunctionality
             }
         });
 
@@ -43,11 +59,12 @@ exports.findOne = async (req, res) => {
         const challenge = {
             id: challengeData.id,
             title: challengeData.title,
-            difficulty: challengeData.difficulty,
+            difficulty: diffToNum(challengeData.difficulty),
             outcome: challengeDescription.outcome,
             keyPatterns: challengeDescription.keyPatterns,
             generalDescription: challengeDescription.generalDescription,
-            usageScenarios: challengeDescription.usageScenarios
+            usageScenarios: challengeDescription.usageScenarios,
+            expectedFunctionality: challengeDescription.expectedFunctionality
         }
 
         res.status(200).json(challenge);
