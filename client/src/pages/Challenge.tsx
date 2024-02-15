@@ -9,7 +9,7 @@ import DifficultyBadge from "../components/DifficultyBadge";
 
 const Challenge = () => {
     //TODO: Fetch this value from the server
-    const [completed, setCompleted] = useState(true);
+    const [completed, setCompleted] = useState(true); //TODO: This value should be fetched from the server
     const [details, setDetails] = useState<ChallengeDetails>();
     const [isLoading, setIsLoading] = useState(true);
 

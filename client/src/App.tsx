@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import AppShell from "./components/AppShell.tsx";
 import ErrorElement from "./pages/ErrorElement.tsx";
-import Challenge from "./pages/Challenge.tsx"; //TODO: REMOVE THIS LINE
+import Challenge from "./pages/Challenge.tsx";
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
       },
       {
         path: "challenge/:id",
-        element: <Challenge /> //TODO: REMOVE THIS ROUTE
+        element: <Challenge />
       }
     ],
   },
