@@ -6,13 +6,12 @@ const challenges = require("../../challenges.json"); // Import the challenges da
 
 module.exports = async function importChallenges() {
     
-
+    // Break down by difficulty
     const easyChallenges = challenges.challenges.easy;
     const mediumChallenges = challenges.challenges.medium;
     const hardChallenges = challenges.challenges.hard;
 
-    // console.log(challenges);
-
+    // Import challenges by difficulty
     try {
         easyChallenges.forEach(async (challenge) => {
             const newEasyChallenge = {

@@ -3,7 +3,21 @@ const Challenge = db.Challenge;
 
 exports.findAll = async (req, res) => {
     try {
-        const challenges = await Challenge.findAll();
+        const challengesData = await Challenge.findAll();
+
+        const challenges = challengesData.map(challengeData => {
+            const challengeDescription = JSON.parse(challengeData.description);
+            return {
+                id: challengeData.id,
+                title: challengeData.title,
+                difficulty: challengeData.difficulty,
+                outcome: challengeDescription.outcome,
+                keyPatterns: challengeDescription.keyPatterns,
+                generalDescription: challengeDescription.generalDescription,
+                usageScenarios: challengeDescription.usageScenarios
+            }
+        });
+
         res.status(200).json(challenges);
     }
     catch (error) {
@@ -16,30 +30,24 @@ exports.findOne = async (req, res) => {
 	try {
         const challenge_id = req.params.id;
 
-
-        // const challenge = await Challenge.findOne({
-        //     where: { 
-        //         id: challenge_id ,
-        //         // userId: req.user.id //Set up properly after done authentication
-        //     },
-        // });
-
-        //FOR TESTING
-        const challenge = {
-            "id": 1,
-            "difficulty": "Easy",
-            "title": "Simple Blogging Platform",
-            "outcome": "A basic platform for users to create and publish blog posts.",
-            "keyPatterns": ["Factory Method pattern for creating different types of blog posts."],
-            "generalDescription": "Creation and editing of blog posts, comment management, and basic user profiles.",
-            "expectedFunctionality": {
-                "CreatePost": "Create a new Text, Photo or Image post."
+        const challengeData = await Challenge.findOne({
+            where: { 
+                id: challenge_id ,
+                // userId: req.user.id //Set up properly after done authentication
             },
-            "usageScenarios": {
-                "TextPost": "Users can write and format text, add tags, and categorize their posts.",
-                "PhotoPost": "Users can upload images, create galleries, and add brief descriptions.",
-                "VideoPost": "Users can embed videos from platforms like YouTube or upload directly."
-            }
+        });
+
+        const challengeDescription = JSON.parse(challengeData.description);
+
+        // Convert the challenge into proper format
+        const challenge = {
+            id: challengeData.id,
+            title: challengeData.title,
+            difficulty: challengeData.difficulty,
+            outcome: challengeDescription.outcome,
+            keyPatterns: challengeDescription.keyPatterns,
+            generalDescription: challengeDescription.generalDescription,
+            usageScenarios: challengeDescription.usageScenarios
         }
 
         res.status(200).json(challenge);
