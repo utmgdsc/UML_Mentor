@@ -1,6 +1,17 @@
 const db = require("../models/index");
 const Challenge = db.Challenge;
 
+exports.findAll = async (req, res) => {
+    try {
+        const challenges = await Challenge.findAll();
+        res.status(200).json(challenges);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+
+}
+
 exports.findOne = async (req, res) => {
 	try {
         const challenge_id = req.params.id;
