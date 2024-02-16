@@ -4,55 +4,14 @@ import ChallengeCard from "../components/ChallengeCard";
 import { Container, Row, Col, Button, Stack, Dropdown, Form, FormCheck} from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
-// START FOR TESTING ONLY
-const challengesDemo: ChallengeDetailsShort[] = [
-    {
-        title: "Demo Challenge Card",
-        generalDescription:
-            "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
-            " and getting review, we provide you all you need to become a Software Architecture monster!",
-        id: 0,
-        difficulty: ChallengeDifficulties.HARD,
-    },
-    {
-        title: "Demo Challenge Card",
-        generalDescription:
-            "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
-            " and getting review, we provide you all you need to become a Software Architecture monster!",
-        id: 1,
-        difficulty: ChallengeDifficulties.MEDIUM,
-    },
-    {
-        title: "Demo Challenge Card",
-        generalDescription:
-            "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
-            " and getting review, we provide you all you need to become a Software Architecture monster!",
-        id: 2,
-        difficulty: ChallengeDifficulties.EASY,
-    },
-    {
-        title: "Demo Challenge Card",
-        generalDescription:
-            "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
-            " and getting review, we provide you all you need to become a Software Architecture monster!",
-        id: 3,
-        difficulty: ChallengeDifficulties.HARD,
-    },
-    {
-        title: "Demo Challenge Card",
-        generalDescription:
-            "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
-            " and getting review, we provide you all you need to become a Software Architecture monster!",
-        id: 4,
-        difficulty: ChallengeDifficulties.MEDIUM,
-    }
-]
-// END FOR TESTING ONLY
+
 
 function Challenges() {
-    const challengesData = useRef(challengesDemo);
+    const challengesData = useRef<ChallengeDetailsShort[]>();
 
     const [grid, setGrid] = useState([] as JSX.Element[]);
+    const [isLoading, setIsLoading] = useState(true);
+
     const [sortByDifficulty, setSortByDifficulty] = useState(false);
     const [filter, setFilter] = useState(0);
     const [hideComplete, setHideComplete] = useState(false);
@@ -72,7 +31,6 @@ function Challenges() {
         }
         return sortedChallengesData;
     }, [sortByDifficulty]);
-
     
 
     /**
@@ -81,6 +39,10 @@ function Challenges() {
      * @returns the grid of ChallengeCards
      */
     const makeGrid = useCallback((): JSX.Element[] => {
+        if (challengesData.current === undefined) {
+            return [];
+        }
+
         const grid: JSX.Element[] = [];
         let row: JSX.Element[] = [];
         let i = 0;
@@ -108,13 +70,35 @@ function Challenges() {
         return grid;
     }, [filter]);
 
+    useEffect(() => {   
+        //fetch data about the challenge with the provided "id"
+        setIsLoading(true);
+        fetch('/api/challenges').then((response) => {
+            if(!response.ok){
+                throw new Error(response.statusText);                
+            }
+            return response.json() as Promise<ChallengeDetailsShort[]>; //THIS LINE MAY CAUSE ERRORS. Need to test with proper server.
+        }).then((data) => {
+            challengesData.current = data;
+            console.log(data);
+            setIsLoading(false);
+            return;
+        }).catch((err) => {
+            console.log();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            console.error("Failed fetching the challenges." + "\nError message: " + err.message)
+        });
+   }, [challengesData]);
 
     useEffect(() => {    
-        const sortedChallengesData = handleSortByDifficulty(challengesData.current);
-        challengesData.current = sortedChallengesData;
+        if (challengesData.current != undefined) {
+            const sortedChallengesData = handleSortByDifficulty(challengesData.current);
+            challengesData.current = sortedChallengesData;
+        }
         const newGrid = makeGrid();
         setGrid(newGrid);
-    }, [hideComplete, challengesData, makeGrid, handleSortByDifficulty]);
+        console.log("Grid updated");
+    }, [hideComplete, makeGrid, handleSortByDifficulty, challengesData, isLoading]);
 
     
     /**

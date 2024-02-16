@@ -4,7 +4,6 @@ import { Container, Row, Col, ButtonToolbar, Button, AccordionItem, AccordionHea
 import { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
-import { ChallengeDifficulties } from "../types/challengeDifficulties";
 import DifficultyBadge from "../components/DifficultyBadge";
 
 function useScrollToTop() {
@@ -25,8 +24,6 @@ const Challenge = () => {
 
     useScrollToTop();
 
-    //TODO: Refactor once the API is ready
-    //TODO: Refactor once the API is ready
     useEffect(() => {   
         //fetch data about the challenge with the provided "id"
         fetch('/api/challenges/' + id).then((response) => {
