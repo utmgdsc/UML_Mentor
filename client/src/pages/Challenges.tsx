@@ -77,7 +77,7 @@ function Challenges() {
             if(!response.ok){
                 throw new Error(response.statusText);                
             }
-            return response.json() as Promise<ChallengeDetailsShort[]>; //THIS LINE MAY CAUSE ERRORS. Need to test with proper server.
+            return response.json() as Promise<ChallengeDetailsShort[]>;
         }).then((data) => {
             challengesData.current = data;
             console.log(data);

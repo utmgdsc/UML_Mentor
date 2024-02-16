@@ -30,7 +30,7 @@ const Challenge = () => {
             if(!response.ok){
                 throw new Error(response.statusText);                
             }
-            return response.json() as Promise<ChallengeDetails>; //THIS LINE MAY CAUSE ERRORS. Need to test with proper server.
+            return response.json() as Promise<ChallengeDetails>;
         }).then((data) => {
             setDetails(data);
             setIsLoading(false);
