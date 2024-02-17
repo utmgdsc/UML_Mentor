@@ -23,7 +23,7 @@ const DEMO_CHALLENGE_CARDS: ChallengeCardProps[] = Array(3).fill({
   description:
     "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
     " and getting review, we provide you all you need to become a Software Architecture monster!",
-  href: "/home",
+  href: "/solutions/post/123",
 });
 
 function Home() {
