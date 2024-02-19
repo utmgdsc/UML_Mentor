@@ -13,7 +13,7 @@ function Challenges() {
     const [isLoading, setIsLoading] = useState(true);
 
     const [sortByDifficulty, setSortByDifficulty] = useState(false);
-    const [filter, setFilter] = useState(0);
+    const [filter, setFilter] = useState([] as ChallengeDifficulties[]);
     const [hideComplete, setHideComplete] = useState(false);
 
 
@@ -48,10 +48,16 @@ function Challenges() {
         let i = 0;
         for (const challenge of challengesData.current) {
             //make sure the challenge is not filtered out
-            if(!(filterIncluded(challenge.difficulty, filter) || filter === 0)) {
+            if(!(filter.includes(challenge.difficulty)) && filter.length > 0) {
                 // console.log("Filtering out: " + challenge.difficulty);
+                // console.log(filter);
                 continue;
             }
+            
+            // if(hideComplete && challenge.completed) { //TODO: add completed field to challengeDetailsShort
+            //     // console.log("Filtering out: " + challenge.title);
+            //     continue;
+            // }
 
             row.push(
                 <Col lg={4} key={i} className="mb-4">
@@ -69,6 +75,7 @@ function Challenges() {
         }
         return grid;
     }, [filter]);
+
 
     useEffect(() => {   
         //fetch data about the challenge with the provided "id"
@@ -88,8 +95,9 @@ function Challenges() {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             console.error("Failed fetching the challenges." + "\nError message: " + err.message)
         });
-   }, [challengesData]);
+   }, []);
 
+   
     useEffect(() => {    
         if (challengesData.current != undefined) {
             const sortedChallengesData = handleSortByDifficulty(challengesData.current);
@@ -98,23 +106,15 @@ function Challenges() {
         const newGrid = makeGrid();
         setGrid(newGrid);
         console.log("Grid updated");
-    }, [hideComplete, makeGrid, handleSortByDifficulty, challengesData, isLoading]);
+    }, [hideComplete, makeGrid, handleSortByDifficulty, challengesData, filter, isLoading]);
 
     
-    /**
-     * Retuns true if the difficulty is included in the filter
-     */
-    function filterIncluded(difficulty: ChallengeDifficulties, filter: number): boolean {
-        console.log("Filter: " + filter);
-        switch(difficulty) {
-            case ChallengeDifficulties.EASY:
-                return (filter & 1) === 1;
-            case ChallengeDifficulties.MEDIUM:
-                return (filter & 2) === 2;
-            case ChallengeDifficulties.HARD:
-                return (filter & 4) === 4;
-            default:
-                return false;
+    function handleFilter(difficulty: ChallengeDifficulties) {
+        if (filter.includes(difficulty)) {
+            setFilter(filter.filter((d) => d !== difficulty));
+        }
+        else {
+            setFilter([...filter, difficulty]);
         }
     }
 
@@ -152,7 +152,7 @@ function Challenges() {
                                             type="checkbox"
                                             label="Easy"
                                             onClick={() => {
-                                                filterIncluded(ChallengeDifficulties.EASY, filter) ? setFilter(filter & 6) : setFilter(filter | 1);
+                                                handleFilter(ChallengeDifficulties.EASY);
                                             }}
                                             // checked={filterByDifficulty.includes(ChallengeDifficulties.EASY)}
                                         />
@@ -161,8 +161,8 @@ function Challenges() {
                                             label="Medium"
                                             onClick={
                                                 () => {
-                                                    filterIncluded(ChallengeDifficulties.MEDIUM, filter) ? setFilter(filter & 5) : setFilter(filter | 2);
-                                            }}
+                                                    handleFilter(ChallengeDifficulties.MEDIUM);
+                                                }}
                                             // checked={filterByDifficulty.includes(ChallengeDifficulties.MEDIUM)}
                                         />
                                         <Form.Check
@@ -170,8 +170,8 @@ function Challenges() {
                                             label="Hard"
                                             onClick={
                                                 () => {
-                                                    filterIncluded(ChallengeDifficulties.HARD, filter) ? setFilter(filter & 3) : setFilter(filter | 4);
-                                            }}
+                                                    handleFilter(ChallengeDifficulties.HARD);
+                                                }}
                                             // checked={filterByDifficulty.includes(ChallengeDifficulties.HARD)}
                                         />
                                         </Form>
