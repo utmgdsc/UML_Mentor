@@ -7,9 +7,8 @@ import { ChallengeDifficulties } from "../types/challengeDifficulties";
 
 
 function Challenges() {
-    const challengesData = useRef<ChallengeDetailsShort[]>();
+    const [challengesData, setChallengesData] = useState<ChallengeDetailsShort[]>();
 
-    const [grid, setGrid] = useState([] as JSX.Element[]);
     const [isLoading, setIsLoading] = useState(true);
 
     const [sortByDifficulty, setSortByDifficulty] = useState(false);
@@ -33,20 +32,55 @@ function Challenges() {
     }, [sortByDifficulty]);
     
 
-    /**
-     * Create the grid of challenges based on the filter
-     * @param challenges the challenges data
-     * @returns the grid of ChallengeCards
-     */
-    const makeGrid = useCallback((): JSX.Element[] => {
-        if (challengesData.current === undefined) {
+    useEffect(() => {   
+        //fetch data about the challenge with the provided "id"
+        setIsLoading(true);
+        fetch('/api/challenges').then((response) => {
+            if(!response.ok){
+                throw new Error(response.statusText);                
+            }
+            return response.json() as Promise<ChallengeDetailsShort[]>;
+        }).then((data) => {
+            setChallengesData(data);
+            console.log(data);
+            setIsLoading(false);
+            return;
+        }).catch((err) => {
+            console.log();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            console.error("Failed fetching the challenges." + "\nError message: " + err.message)
+        });
+   }, []);
+
+   
+    useEffect(() => {    
+        if (challengesData != undefined) {
+            const sortedChallengesData = handleSortByDifficulty(challengesData);
+            setChallengesData(sortedChallengesData);
+        }
+        console.log("Challenges sorted");
+    }, [sortByDifficulty]);
+
+    
+    function handleFilter(difficulty: ChallengeDifficulties) {
+        if (filter.includes(difficulty)) {
+            setFilter(filter.filter((d) => d !== difficulty));
+        }
+        else {
+            setFilter([...filter, difficulty]);
+        }
+    }
+
+
+    function makeGrid() {
+        if (challengesData === undefined) {
             return [];
         }
-
+    
         const grid: JSX.Element[] = [];
         let row: JSX.Element[] = [];
         let i = 0;
-        for (const challenge of challengesData.current) {
+        for (const challenge of challengesData) {
             //make sure the challenge is not filtered out
             if(!(filter.includes(challenge.difficulty)) && filter.length > 0) {
                 // console.log("Filtering out: " + challenge.difficulty);
@@ -58,7 +92,7 @@ function Challenges() {
             //     // console.log("Filtering out: " + challenge.title);
             //     continue;
             // }
-
+    
             row.push(
                 <Col lg={4} key={i} className="mb-4">
                     <ChallengeCard {...challenge} />
@@ -73,51 +107,10 @@ function Challenges() {
         if (row.length > 0) {
             grid.push(<Row key={i}>{row}</Row>);
         }
+        console.log("Grid made");
         return grid;
-    }, [filter]);
-
-
-    useEffect(() => {   
-        //fetch data about the challenge with the provided "id"
-        setIsLoading(true);
-        fetch('/api/challenges').then((response) => {
-            if(!response.ok){
-                throw new Error(response.statusText);                
-            }
-            return response.json() as Promise<ChallengeDetailsShort[]>;
-        }).then((data) => {
-            challengesData.current = data;
-            console.log(data);
-            setIsLoading(false);
-            return;
-        }).catch((err) => {
-            console.log();
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            console.error("Failed fetching the challenges." + "\nError message: " + err.message)
-        });
-   }, []);
-
-   
-    useEffect(() => {    
-        if (challengesData.current != undefined) {
-            const sortedChallengesData = handleSortByDifficulty(challengesData.current);
-            challengesData.current = sortedChallengesData;
-        }
-        const newGrid = makeGrid();
-        setGrid(newGrid);
-        console.log("Grid updated");
-    }, [hideComplete, makeGrid, handleSortByDifficulty, challengesData, filter, isLoading]);
-
-    
-    function handleFilter(difficulty: ChallengeDifficulties) {
-        if (filter.includes(difficulty)) {
-            setFilter(filter.filter((d) => d !== difficulty));
-        }
-        else {
-            setFilter([...filter, difficulty]);
-        }
     }
-
+    
 
     return(
         <section>
@@ -186,8 +179,7 @@ function Challenges() {
                         </Col>
                     </Row>
                 </header>
-
-                {grid}
+                {makeGrid()}
             </Container>
         </section>
     );
