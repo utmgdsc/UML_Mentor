@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChallengeCard from "../components/ChallengeCard";
-import { Container, Row, Col, Button, Stack, Dropdown, Form, FormCheck} from "react-bootstrap";
+import { Container, Row, Col, Button, Spinner, Dropdown, Form, FormCheck} from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
 
@@ -53,7 +53,13 @@ function Challenges() {
      */
     const makeGrid = useCallback((): JSX.Element[] => {
         if (isLoading || challengesData === undefined) {
-            return [];
+            return ([
+            <Row key="spinner" className="d-flex justify-content-center">
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </Row>
+            ])
         }
     
         const grid: JSX.Element[] = [];
@@ -112,7 +118,7 @@ function Challenges() {
             setFilter([...filter, difficulty]);
         }
     }
-    
+
 
     return(
         <section>

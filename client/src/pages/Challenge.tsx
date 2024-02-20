@@ -2,17 +2,10 @@
 
 import { Container, Row, Col, ButtonToolbar, Button, AccordionItem, AccordionHeader, AccordionBody, Accordion } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
 import DifficultyBadge from "../components/DifficultyBadge";
 
-function useScrollToTop() {
-    const { pathname } = useLocation();
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [pathname]);
-}
 
 const Challenge = () => {
     //TODO: Fetch this value from the server
@@ -22,7 +15,6 @@ const Challenge = () => {
 
     const { id } = useParams();
 
-    useScrollToTop();
 
     useEffect(() => {   
         //fetch data about the challenge with the provided "id"
