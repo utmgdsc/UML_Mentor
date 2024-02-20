@@ -4,13 +4,12 @@ import { Container, Row, Col, ButtonToolbar, Button, AccordionItem, AccordionHea
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
-import DifficultyBadge from "../components/DifficultyBadge";
 import { StarFill } from "react-bootstrap-icons";
 
 
 const Challenge = () => {
     //TODO: Fetch this value from the server
-    const [completed, setCompleted] = useState(true); //TODO: This value should be fetched from the server
+    const [completed, setCompleted] = useState(false); //TODO: This value should be fetched from the server
     const [details, setDetails] = useState<ChallengeDetails>();
     const [isLoading, setIsLoading] = useState(true);
 
@@ -49,48 +48,20 @@ const Challenge = () => {
             <header className="text-center bg-secondary-subtle text-dark p-5 pb-3 mb-4 mt-2">
                 <h1 className="fw-bold" >{details.title}</h1>
                 <h2 className=" text-dark fw-semibold fs-3">{details.outcome}</h2>
-                <div className="mt-4 me-n4 float-end">
+                <div className="mt-4 me-n4 float-start ">
                     {getDifficultyStars(details.difficulty)}
                 </div>
+                {completed && <span className=" mt-4 float-end text-success">
+                    <strong>Completed</strong>
+                </span>}
             </header> 
         </Row>
-        <Row >
-            <Col xl={{offset: 11}}>
-            </Col>
-        </Row>
-        {completed &&
         <Row>
-            {/* If completed, allow to view design patterns. */}
-            <Col xl={{span:2, order:2}}> 
-                <span className="fs-5 mb-2 float-end text-success">
-                    <strong>Completed</strong>
-                </span>
-            </Col>
-            <Col xl={{span:10, order: 1}}>
-                <Accordion className="mb-2">
-                    <AccordionItem eventKey="0">
-                        <AccordionHeader className="fs-4">
-                            <h3 className="fs-4">Key Design Patterns</h3>
-                        </AccordionHeader>
-                        <AccordionBody>
-                            <ul>
-                                {details.keyPatterns.map((pattern, index) => {
-                                    return <li key={index}>{pattern + (pattern[-1] !== "." && ".")}</li>
-                                })}
-                            </ul>
-                        </AccordionBody>
-                    </AccordionItem>
-                </Accordion>
-            </Col>
-        </Row>}
-        <Row >
-            <Col xl={10} >
+            <Col lg={{span: 6, offset: 0}} xl={{span: 5, offset: 1}}>
                 <h3 className="fs-4">Description:</h3>
                 <p>{details.generalDescription}</p>
             </Col>
-        </Row>
-        <Row>
-            <Col xl={10}>
+            <Col lg={6} xl={5}>
                 <h3 className="fs-4">Expected functionality:</h3>
                 <ul>    
                     {Object.entries(details.expectedFunctionality).map(([key, value]) => {
@@ -99,8 +70,8 @@ const Challenge = () => {
                 </ul>
             </Col>
         </Row>
-        <Row>
-            <Col xl={10}>
+        <Row className={!completed ? "align-items-end": ""}> 
+            <Col lg={{span: 6, offset: 0}} xl={{span: 5, offset: 1}}>
             <h3 className="fs-4">Usage Scenarios</h3>
             <ul>
             {Object.entries(details.usageScenarios).map(([key, value]) => {
@@ -108,14 +79,37 @@ const Challenge = () => {
                 })}  
             </ul>
             </Col>
+            {
+            //if completed, display key patterns, otherwise display buttons
+            completed ?
+            <Col lg={{span: 6, offset: 0}} xl={{span: 5, offset: 1}}>
+                <h3 className="fs-4 text-success">Key Design Patterns</h3>
+                <ul>
+                    {details.keyPatterns.map((pattern, index) => {
+                        return <li key={index}>{pattern + (pattern[-1] !== "." && ".")}</li>
+                    })}
+                </ul>
+            </Col>
+            :
+            <Col>
+                <ButtonToolbar className="d-flex align-items-end justify-content-around">
+                    <Button className="m-1" target="_blank" href="/editor">Open Editor</Button>
+                    <Button className="m-1" href={"/solutions/post/" + id}>Post a Solution</Button>
+                    <Button className="m-1" target="_blank" href={"/solutions/challenge/" + id}>View Solutions</Button>
+                </ButtonToolbar>
+            </Col>
+            }            
         </Row>
-        <Row className="mt-4">
-            <ButtonToolbar className="d-flex justify-content-evenly">
+        {
+        // If completed, display buttons at the bottom
+        completed &&
+        <Row>
+           <ButtonToolbar className="d-flex align-items-end justify-content-around">
                 <Button className="m-1" target="_blank" href="/editor">Open Editor</Button>
                 <Button className="m-1" href={"/solutions/post/" + id}>Post a Solution</Button>
                 <Button className="m-1" target="_blank" href={"/solutions/challenge/" + id}>View Solutions</Button>
             </ButtonToolbar>
-        </Row>
+        </Row>}
         </ section>
     </Container>);
   };
