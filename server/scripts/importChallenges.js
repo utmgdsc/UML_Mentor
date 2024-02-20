@@ -2,10 +2,15 @@ const db = require("../models/index");
 const Challenge = db.Challenge;
 const challenges = require("../../challenges.json"); // Import the challenges data
 
+
+
 // Sync the challenges data with the database
 
-module.exports = async function importChallenges() {
-    
+module.exports = async function importChallenges(dropTable = false) {
+    // Drop the existing Challenge table
+    if (dropTable)
+    await Challenge.drop();
+
     // Break down by difficulty
     const easyChallenges = challenges.challenges.easy;
     const mediumChallenges = challenges.challenges.medium;
@@ -28,9 +33,8 @@ module.exports = async function importChallenges() {
             };
 
             await Challenge.create(newEasyChallenge);
-            });
-        }
-    catch (error) {
+        });
+    } catch (error) {
         console.error("Error importing easy challenges: " + error);
     }
     try {

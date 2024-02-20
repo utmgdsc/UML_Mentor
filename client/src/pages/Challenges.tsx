@@ -14,22 +14,6 @@ function Challenges() {
     const [sortByDifficulty, setSortByDifficulty] = useState(false);
     const [filter, setFilter] = useState([] as ChallengeDifficulties[]);
     const [hideComplete, setHideComplete] = useState(false);
-
-
-    /**
-     * Handles the sorting of challenges by difficulty
-     */
-    const handleSortByDifficulty = useCallback((prevChallengesData: ChallengeDetailsShort[]) => {
-        const sortedChallengesData = [...prevChallengesData];
-        if (!sortByDifficulty) {
-            // Sort challengesData in ascending order by difficulty
-            sortedChallengesData.sort((a, b) => a.difficulty - b.difficulty);
-        } else {
-            // Sort challengesData in descending order by difficulty
-            sortedChallengesData.sort((a, b) => b.difficulty - a.difficulty);
-        }
-        return sortedChallengesData;
-    }, [sortByDifficulty]);
     
 
     useEffect(() => {   
@@ -54,6 +38,7 @@ function Challenges() {
 
    
     useEffect(() => {    
+    // Sort challengesData by difficulty
         if (challengesData != undefined) {
             const sortedChallengesData = handleSortByDifficulty(challengesData);
             setChallengesData(sortedChallengesData);
@@ -61,19 +46,13 @@ function Challenges() {
         console.log("Challenges sorted");
     }, [sortByDifficulty]);
 
-    
-    function handleFilter(difficulty: ChallengeDifficulties) {
-        if (filter.includes(difficulty)) {
-            setFilter(filter.filter((d) => d !== difficulty));
-        }
-        else {
-            setFilter([...filter, difficulty]);
-        }
-    }
 
-
-    function makeGrid() {
-        if (challengesData === undefined) {
+    /**
+     * Make a grid of ChallengeCards depending on the challengesData
+     * @returns a bootstrap grid of ChallengeCards
+     */
+    const makeGrid = useCallback((): JSX.Element[] => {
+        if (isLoading || challengesData === undefined) {
             return [];
         }
     
@@ -109,6 +88,29 @@ function Challenges() {
         }
         console.log("Grid made");
         return grid;
+    }, [isLoading, challengesData, filter, hideComplete]);
+    
+
+    function handleSortByDifficulty (prevChallengesData: ChallengeDetailsShort[]) {
+        const sortedChallengesData = [...prevChallengesData];
+        if (!sortByDifficulty) {
+            // Sort challengesData in ascending order by difficulty
+            sortedChallengesData.sort((a, b) => a.difficulty - b.difficulty);
+        } else {
+            // Sort challengesData in descending order by difficulty
+            sortedChallengesData.sort((a, b) => b.difficulty - a.difficulty);
+        }
+        return sortedChallengesData;
+    }
+
+
+    function handleFilter(difficulty: ChallengeDifficulties) {
+        if (filter.includes(difficulty)) {
+            setFilter(filter.filter((d) => d !== difficulty));
+        }
+        else {
+            setFilter([...filter, difficulty]);
+        }
     }
     
 
@@ -147,7 +149,6 @@ function Challenges() {
                                             onClick={() => {
                                                 handleFilter(ChallengeDifficulties.EASY);
                                             }}
-                                            // checked={filterByDifficulty.includes(ChallengeDifficulties.EASY)}
                                         />
                                         <Form.Check
                                             type="checkbox"
@@ -156,7 +157,6 @@ function Challenges() {
                                                 () => {
                                                     handleFilter(ChallengeDifficulties.MEDIUM);
                                                 }}
-                                            // checked={filterByDifficulty.includes(ChallengeDifficulties.MEDIUM)}
                                         />
                                         <Form.Check
                                             type="checkbox"
@@ -165,7 +165,6 @@ function Challenges() {
                                                 () => {
                                                     handleFilter(ChallengeDifficulties.HARD);
                                                 }}
-                                            // checked={filterByDifficulty.includes(ChallengeDifficulties.HARD)}
                                         />
                                         </Form>
                                     </Dropdown.Menu>
