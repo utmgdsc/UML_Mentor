@@ -1,3 +1,5 @@
+// Currently not used in the application
+
 import { ChallengeDifficulties } from '../types/challengeDifficulties';
 import { Badge } from 'react-bootstrap';
 
