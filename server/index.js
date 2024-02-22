@@ -11,11 +11,11 @@ const PORT = process.env.PORT || 8080;
 
 
 // Sync Sequelize models 
-db.sequelize.sync({ force: true, logging: false}).then(async () => { // Use { force: true } cautiously as it will drop existing tables
+db.sequelize.sync().then(async () => { // Use { force: true } cautiously as it will drop existing tables
     console.log('Database synced');
 
-    //import the challenges into the db
-    await importChallenges();
+    // import the challenges into the db. Comment out after first run
+    // await importChallenges();
 
     // Start listening for requests after the database is ready
     app.listen(PORT, () => {

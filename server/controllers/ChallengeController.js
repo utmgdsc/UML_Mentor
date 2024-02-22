@@ -12,7 +12,6 @@ function diffToNum(difficulty) {
         default:
             return -1;
     }
-
 }
 
 

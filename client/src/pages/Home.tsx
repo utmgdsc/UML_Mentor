@@ -4,9 +4,9 @@ import SolutionCard, {
   SolutionCardProps,
 } from "../components/SolutionCard.tsx";
 import { ArrowUpRightSquare } from "react-bootstrap-icons";
-import ChallengeCard, {
-  ChallengeCardProps,
-} from "../components/ChallengeCard.tsx";
+import ChallengeCard from "../components/ChallengeCard.tsx";
+import { ChallengeDifficulties } from "../types/challengeDifficulties.ts";
+import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
 
 const DEMO_SOLUTION_CARDS: SolutionCardProps[] = Array(5).fill({
   title: "Example Challenge 1: Airport Management System",
@@ -14,16 +14,16 @@ const DEMO_SOLUTION_CARDS: SolutionCardProps[] = Array(5).fill({
     "Some quick example text to build on the card title and make up the bulk of the card's content.",
   imgSrc:
     "https://images.unsplash.com/photo-1596496181871-9681eacf9764?q=80&w=2086&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  href: "/home",
-  difficulty: "medium",
+  href: "/home"
 });
 
-const DEMO_CHALLENGE_CARDS: ChallengeCardProps[] = Array(3).fill({
+const DEMO_CHALLENGE_CARDS: ChallengeDetailsShort[] = Array(3).fill({
   title: "Demo Challenge Card",
-  description:
+  generalDescription:
     "In this demo challenge you will be demoing our platform. From creating UML diagrams to submitting" +
     " and getting review, we provide you all you need to become a Software Architecture monster!",
-  href: "/home",
+  id: 0,
+  difficulty: ChallengeDifficulties.MEDIUM,
 });
 
 function Home() {
@@ -59,7 +59,7 @@ function Home() {
         </Stack>
         <Row sm={1} lg={3} className={"gx-4 gy-4"}>
           {DEMO_CHALLENGE_CARDS.map((challengeCardProps) => (
-            <Col key={challengeCardProps.href}>
+            <Col key={challengeCardProps.id}>
               <ChallengeCard {...challengeCardProps} />
             </Col>
           ))}
