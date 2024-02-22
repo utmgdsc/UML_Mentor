@@ -1,4 +1,4 @@
-  import Card from "react-bootstrap/Card";
+import Card from "react-bootstrap/Card";
 import Button from "./Button.tsx";
 import { StarFill } from "react-bootstrap-icons";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";

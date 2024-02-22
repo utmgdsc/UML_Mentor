@@ -3,7 +3,6 @@ const Challenge = db.Challenge;
 const challenges = require("../../challenges.json"); // Import the challenges data
 
 
-
 // Sync the challenges data with the database
 
 module.exports = async function importChallenges(dropTable = false) {

@@ -30,7 +30,6 @@ function Challenges() {
             setIsLoading(false);
             return;
         }).catch((err) => {
-            console.log();
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             console.error("Failed fetching the challenges." + "\nError message: " + err.message)
         });
