@@ -2,23 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
 import SolutionCard from '../components/SolutionCard';
+import "./Profile.css"
 
 const Profile: React.FC = () => {
   const [userData, setUserData] = useState<any>({});
   const [recentSolutions, setRecentSolutions] = useState<any[]>([]);
 	const [recentComments, setRecentComments] = useState<any[]>([]);
 
+	// Hardcode recentSolutions and recentComments for now.
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get('/api/user/1');
-        setUserData(response.data);
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-      }
-    };
-
-    // Simulate recent solutions data
     const sampleRecentSolutions = [
       {
         id: 1,
@@ -34,7 +26,6 @@ const Profile: React.FC = () => {
         imgSrc: "https://example.com/image2.jpg",
         difficulty: "hard"
       },
-      // Add more sample recent solutions as needed
     ];
 
 		const sampleRecentComments = [
@@ -47,7 +38,6 @@ const Profile: React.FC = () => {
 
     setRecentSolutions(sampleRecentSolutions);
 		setRecentComments(sampleRecentComments);
-    fetchUserData();
   }, []);
 
   // Sample user data for testing
@@ -60,11 +50,10 @@ const Profile: React.FC = () => {
     <Container>
       <Row className="my-5">
         <Col>
-          <h1>{userData.username}</h1>
-          <h3>{userData.preferedName}</h3>
-          <p><strong>Email:</strong> {userData.email}</p>
+          <h1 className="username">{userData.username}</h1>
+          <h3 className="preferedName">{userData.preferedName}</h3>
+          <p>{userData.email}</p>
           <p>Score: {userData.score}</p>
-          {/* Render other user data as needed */}
         </Col>
       </Row>
       <Row>
@@ -73,25 +62,27 @@ const Profile: React.FC = () => {
           <Row xs={1} md={2} lg={3} className="g-4">
             {recentSolutions.map(solution => (
               <Col key={solution.id}>
-                <SolutionCard 
-                  title={solution.title} 
-                  description={solution.description} 
-                  imgSrc={solution.imgSrc} 
-                  href={`/solution/${solution.id}`} 
-                  difficulty={solution.difficulty} 
-                />
+                <div className="solution-card">
+                  <SolutionCard 
+                    title={solution.title} 
+                    description={solution.description} 
+                    imgSrc={solution.imgSrc} 
+                    href={`/solution/${solution.id}`}
+                  />
+                </div>
               </Col>
             ))}
           </Row>
         </Col>
       </Row>
-			<Row>
+      <Row>
         <Col>
           <h2>Recent Comments</h2>
           {recentComments.map(comment => (
-            <div key={comment.id}>
-              <p>{comment.content}</p>
-              <p>{comment.createdAt}</p>
+            <div key={comment.id} className="comment-box">
+							<p className="comment-title">Solution Title: {comment.id}</p>
+              <p className="comment-date">{comment.createdAt}</p>
+              <p className="comment-content">{comment.content}</p>
             </div>
           ))}
         </Col>
