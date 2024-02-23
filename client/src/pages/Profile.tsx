@@ -48,7 +48,7 @@ const Profile: React.FC = () => {
 
   return (
     <Container>
-      <Row className="my-5">
+      <Row className="userInfo">
         <Col>
           <h1 className="username">{userData.username}</h1>
           <h3 className="preferedName">{userData.preferedName}</h3>
@@ -56,7 +56,7 @@ const Profile: React.FC = () => {
           <p>Score: {userData.score}</p>
         </Col>
       </Row>
-      <Row>
+      <Row className="recentSolutions">
         <Col>
           <h2>Recent Solutions</h2>
           <Row xs={1} md={2} lg={3} className="g-4">
@@ -75,7 +75,7 @@ const Profile: React.FC = () => {
           </Row>
         </Col>
       </Row>
-      <Row>
+      <Row className="recentComments">
         <Col>
           <h2>Recent Comments</h2>
           {recentComments.map(comment => (
