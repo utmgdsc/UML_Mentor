@@ -6,6 +6,7 @@ import SolutionCard from '../components/SolutionCard';
 const Profile: React.FC = () => {
   const [userData, setUserData] = useState<any>({});
   const [recentSolutions, setRecentSolutions] = useState<any[]>([]);
+	const [recentComments, setRecentComments] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -36,7 +37,16 @@ const Profile: React.FC = () => {
       // Add more sample recent solutions as needed
     ];
 
+		const sampleRecentComments = [
+			{
+				id: 1,
+				content: "This solution is amazing!",
+				createdAt: "wednesday",
+			}
+		];
+
     setRecentSolutions(sampleRecentSolutions);
+		setRecentComments(sampleRecentComments);
     fetchUserData();
   }, []);
 
@@ -73,6 +83,17 @@ const Profile: React.FC = () => {
               </Col>
             ))}
           </Row>
+        </Col>
+      </Row>
+			<Row>
+        <Col>
+          <h2>Recent Comments</h2>
+          {recentComments.map(comment => (
+            <div key={comment.id}>
+              <p>{comment.content}</p>
+              <p>{comment.createdAt}</p>
+            </div>
+          ))}
         </Col>
       </Row>
     </Container>
