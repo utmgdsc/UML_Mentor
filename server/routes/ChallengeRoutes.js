@@ -1,10 +1,14 @@
 const Challenge = require('../controllers/ChallengeController');
 const router = require("express").Router();
 
+
+// Get all challenges from the database.
+router.get("/", Challenge.findAll);
+
 // Get a challenge from the database.
 router.get("/:id", Challenge.findOne);
 
-// Get all solutions from a challenge.
+// Get all solutions from a challenge. NOT GOING TO WORK AS IS
 // Sorting (by date or upvote) happens on the client side.
 // router.get("/:id", Challenge.getSolutions);
 

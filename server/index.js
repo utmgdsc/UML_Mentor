@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('node:path');
 const db = require('./models');
+const importChallenges = require('./scripts/importChallenges');
 
 const app = express();
 
@@ -10,8 +11,11 @@ const PORT = process.env.PORT || 8080;
 
 
 // Sync Sequelize models 
-db.sequelize.sync({ force: true }).then(async () => { // Use { force: true } cautiously as it will drop existing tables
+db.sequelize.sync({ force: true, logging: false}).then(async () => { // Use { force: true } cautiously as it will drop existing tables
     console.log('Database synced');
+
+    //import the challenges into the db
+    await importChallenges();
 
     // Start listening for requests after the database is ready
     app.listen(PORT, () => {

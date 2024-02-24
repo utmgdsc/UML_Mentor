@@ -2,7 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import AppShell from "./components/AppShell.tsx";
 import ErrorElement from "./pages/ErrorElement.tsx";
-import Challenge from "./pages/Challenge.tsx"; //TODO: REMOVE THIS LINE
+import Challenge from "./pages/Challenge.tsx";
 import Profile from "./pages/Profile.tsx";
 
 const NAV_CONFIG = {
@@ -40,13 +40,13 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "challenge",
-        element: <Challenge /> //TODO: REMOVE THIS ROUTE
+        path: "challenge/:id",
+        element: <Challenge />
       },
       {
         path: "profile",
         element: <Profile />
-      },
+      }
     ],
   },
 ]);
