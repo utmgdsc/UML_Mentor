@@ -1,5 +1,5 @@
 const express = require("express");
-const instructionsController = require("../controllers/InstructionController");
+const instructionsController = require("../controllers/InstructionsController");
 const router = express.Router();
 
 router.get('/instructions', instructionsController.getInstructions);
