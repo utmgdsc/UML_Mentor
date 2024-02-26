@@ -28,6 +28,8 @@ const challenges = require('./routes/ChallengeRoutes');
 const solutions = require('./routes/SolutionRoutes');
 const users = require('./routes/UserRoutes');
 const comments = require('./routes/CommentRoutes');
+const instructionsRoutes = require('./routes/instructions.routes');
+app.use('/api', instructionsRoutes);
 app.use('/api/challenges', challenges);
 app.use('/api/solutions', solutions);
 app.use('/api/users', users);
