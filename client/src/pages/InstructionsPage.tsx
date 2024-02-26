@@ -20,7 +20,7 @@ const InstructionsPage: React.FC = () => {
 
   return (
     <Container className="mt-5">
-      <h1>Instructions</h1>
+      <h1>Instructions/FAQ</h1>
       <Accordion defaultActiveKey="0">
         {instructions.map((instruction, index) => (
           <Card key={index}>

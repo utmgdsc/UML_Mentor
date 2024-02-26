@@ -21,6 +21,10 @@ const NAV_CONFIG = {
       name: "Solutions",
       href: "/solutions",
     },
+    {
+      name: "Instructions",
+      href: "/instructions",
+    },
   ],
   profile: {
     href: "/profile",
