@@ -21,7 +21,7 @@ exports.get = async (req, res) => {
         id: id,
       },
     });
-    res.status(200).json(solutions);
+    res.status(200).json(solutions[0]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

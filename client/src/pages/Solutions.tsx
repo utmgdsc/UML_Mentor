@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import SolutionCard from "../components/SolutionCard.tsx";
-import { Solution } from "../types/solution.ts";
+import { SolutionData } from "../types/SolutionData.ts";
 
 const Solutions: React.FC = () => {
-  const [solutions, setSolutions] = useState<Solution[]>([]);
+  const [solutions, setSolutions] = useState<SolutionData[]>([]);
+  // TODO: use a storage service for diagrams
   const diagram =
     "https://images.unsplash.com/photo-1573166364266-356ef04ae798";
   useEffect(() => {

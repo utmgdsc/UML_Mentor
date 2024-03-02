@@ -6,6 +6,7 @@ import Challenges from "./pages/Challenges.tsx";
 import Challenge from "./pages/Challenge.tsx";
 import Solutions from "./pages/Solutions.tsx";
 import PostSolution from "./pages/PostSolution.tsx";
+import Solution from "./pages/Solution.tsx";
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
       {
         path: "solutions",
         element: <Solutions />,
+      },
+      {
+        path: "solution/:id",
+        element: <Solution />,
       },
       {
         path: "/solutions/post/:id",

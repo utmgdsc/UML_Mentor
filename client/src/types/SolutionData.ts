@@ -1,4 +1,4 @@
-export type Solution = {
+export type SolutionData = {
   id: number;
   challengeId: number;
   userId: number;
