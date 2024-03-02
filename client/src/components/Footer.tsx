@@ -6,7 +6,7 @@ function Footer() {
       as={"footer"}
       style={{
         padding: "6rem 0",
-        marginTop: "6rem",
+        flexGrow: "0",
       }}
       className={"bg-dark text-white text-center"}
     >

@@ -18,6 +18,7 @@ exports.get = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const { text, userId, solutionId } = req.body;
+    console.log("x", req.body);
     const newComment = await Comment.create({ text, userId, solutionId });
     res.status(201).json(newComment);
   } catch (error) {

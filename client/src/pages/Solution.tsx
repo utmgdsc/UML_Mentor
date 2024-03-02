@@ -52,6 +52,9 @@ function loadComments(
 }
 
 const Solution = () => {
+  // TODO: replace this once auth is available.
+  const userId = 0;
+
   const { id } = useParams();
   const [solutionData, setSolutionData] = useState<SolutionData>();
   const [comments, setComments] = useState<CommentData[]>();
@@ -63,9 +66,26 @@ const Solution = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Here you would implement the logic to submit the new comment to the backend
-    console.log("New Comment:", newComment);
-    // Clear the comment input field after submission
+
+    fetch(`/api/comments/${solutionData?.id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        solutionId: solutionData?.id,
+        text: newComment,
+      }),
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        loadComments(id, setComments);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
     setNewComment("");
   };
 
@@ -76,13 +96,16 @@ const Solution = () => {
     }
   }, [id]);
 
-  console.log("solution data", solutionData);
-  console.log("comments", comments);
+  useEffect(() => {
+    console.log("solution data", solutionData);
+    console.log("comments", comments);
+  }, [solutionData, comments]);
 
   return (
     <Container>
       <Row sm={2} className="mt-4">
         <Col>
+          <h2>Solution</h2>
           {solutionData && (
             <Card>
               <Card.Body>
@@ -99,13 +122,17 @@ const Solution = () => {
             </Card>
           )}
         </Col>
-        <Col>
+        <Col
+          style={{
+            maxHeight: "66vh",
+            overflowY: "scroll",
+          }}
+        >
           <h2>Comments</h2>
           <Card>
             <Card.Body>
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="commentForm">
-                  <Form.Label>Add a Comment</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
