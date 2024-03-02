@@ -43,8 +43,14 @@ exports.getComments = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { challengeId, userId } = req.body;
-    const newSolution = await Solution.create({ challengeId, userId });
+    const { challengeId, userId, title, description, diagram } = req.body;
+    const newSolution = await Solution.create({
+      challengeId,
+      userId,
+      title,
+      description,
+      diagram,
+    });
     res.status(201).json(newSolution);
   } catch (error) {
     res.status(500).json({ error: error.message });

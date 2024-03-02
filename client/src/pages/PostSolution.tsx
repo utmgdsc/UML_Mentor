@@ -13,7 +13,8 @@ interface FormData {
 // TODO: Include data about the challenge like title
 
 const PostSolution: React.FC = () => {
-  const { challengeId } = useParams();
+  const userId = 0; // TODO: change this when auth is added!
+  const { id: challengeId } = useParams();
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
@@ -45,17 +46,27 @@ const PostSolution: React.FC = () => {
     // Handle form submission here
     console.log(formData);
     console.log(challengeId);
+
     fetch(`/api/solutions`, {
-      method: "post",
+      method: "POST", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        challengeId: Number(challengeId),
+        userId,
+        ...formData,
+      }),
     })
       .then((resp) => resp.json())
       .then((data) => {
-        console.log(`Successfully posted solution ${data}`);
+        console.log(`Successfully posted solution`, data);
       })
       .catch((err) => {
         console.error(err);
       });
   };
+
   return (
     <Container>
       <Row className={"my-5 justify-content-center"}>
