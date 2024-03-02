@@ -1,11 +1,11 @@
-const Comment = require('../controllers/Comment.controller');
+const Comment = require('../controllers/CommentController');
 const router = require("express").Router();
 
 // Get a comment for a solution.
 router.get("/:id", Comment.get);
 
 // Create a new comment for a solution in the database.
-route.post("/:id", Comment.create);
+router.post("/:id", Comment.create);
 
 // Edit a comment for a solution in the database.
 router.put("/:id", Comment.edit);

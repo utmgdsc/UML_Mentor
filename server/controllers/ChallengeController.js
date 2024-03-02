@@ -1,10 +1,72 @@
 const db = require("../models/index");
 const Challenge = db.Challenge;
 
-exports.get = async (req, res) => {
-	try {
-        const challenges = await Challenge.findAll();
+function diffToNum(difficulty) {
+    switch (difficulty) {
+        case "easy":
+            return 0;
+        case "medium":
+            return 1;
+        case "hard":
+            return 2;
+        default:
+            return -1;
+    }
+}
+
+
+exports.findAll = async (req, res) => {
+    try {
+        const challengesData = await Challenge.findAll();
+
+        const challenges = challengesData.map(challengeData => {
+            const challengeDescription = JSON.parse(challengeData.description);
+            return {
+                id: challengeData.id,
+                title: challengeData.title,
+                difficulty: diffToNum(challengeData.difficulty),
+                outcome: challengeDescription.outcome,
+                keyPatterns: challengeDescription.keyPatterns,
+                generalDescription: challengeDescription.generalDescription,
+                usageScenarios: challengeDescription.usageScenarios,
+                expectedFunctionality: challengeDescription.expectedFunctionality
+            }
+        });
+
         res.status(200).json(challenges);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+
+}
+
+exports.findOne = async (req, res) => {
+	try {
+        const challenge_id = req.params.id;
+
+        const challengeData = await Challenge.findOne({
+            where: { 
+                id: challenge_id ,
+                // userId: req.user.id //Set up properly after done authentication
+            },
+        });
+
+        const challengeDescription = JSON.parse(challengeData.description);
+
+        // Convert the challenge into proper format
+        const challenge = {
+            id: challengeData.id,
+            title: challengeData.title,
+            difficulty: diffToNum(challengeData.difficulty),
+            outcome: challengeDescription.outcome,
+            keyPatterns: challengeDescription.keyPatterns,
+            generalDescription: challengeDescription.generalDescription,
+            usageScenarios: challengeDescription.usageScenarios,
+            expectedFunctionality: challengeDescription.expectedFunctionality
+        }
+
+        res.status(200).json(challenge);
     }
 	catch (error) {
         res.status(500).json({ error: error.message });
