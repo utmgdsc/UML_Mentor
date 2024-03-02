@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import SolutionCard from "../components/SolutionCard.tsx";
 import { SolutionData } from "../types/SolutionData.ts";
 
-const Solutions: React.FC = () => {
+const Solutions = () => {
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
   // TODO: use a storage service for diagrams
   const diagram =
@@ -12,7 +12,7 @@ const Solutions: React.FC = () => {
     // Fetching solutions data
     fetch("/api/solutions")
       .then((resp) => resp.json())
-      .then((data) => {
+      .then((data: SolutionData[]) => {
         setSolutions(data);
       })
       .catch((err) => {

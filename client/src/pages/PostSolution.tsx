@@ -3,16 +3,16 @@ import { useParams } from "react-router-dom";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "../components/Button.tsx";
 
-interface FormData {
+type FormData = {
   title: string;
   description: string;
   diagram: File | null;
-}
+};
 
 // TODO: Add form validation
 // TODO: Include data about the challenge like title
 
-const PostSolution: React.FC = () => {
+const PostSolution = () => {
   const userId = 0; // TODO: change this when auth is added!
   const { id: challengeId } = useParams();
   const [formData, setFormData] = useState<FormData>({
@@ -43,7 +43,7 @@ const PostSolution: React.FC = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission here
+    // TODO: Form validation
     console.log(formData);
     console.log(challengeId);
 
@@ -70,8 +70,8 @@ const PostSolution: React.FC = () => {
   return (
     <Container>
       <Row className={"my-5 justify-content-center"}>
-        <Col md={4} className={"bg-gray-200 rounded py-5 px-md-5"}>
-          <h2>Submit Your Solution!</h2>
+        <Col md={6} className={"bg-gray-200 rounded py-5 px-md-5"}>
+          <h1>Submit Your Solution!</h1>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="title">
               <Form.Label>Title</Form.Label>
