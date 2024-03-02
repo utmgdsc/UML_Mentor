@@ -45,6 +45,16 @@ const PostSolution: React.FC = () => {
     // Handle form submission here
     console.log(formData);
     console.log(challengeId);
+    fetch(`/api/solutions`, {
+      method: "post",
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        console.log(`Successfully posted solution ${data}`);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
   return (
     <Container>
