@@ -1,90 +1,144 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Button, Col, Card } from 'react-bootstrap';
 import SolutionCard from '../components/SolutionCard';
-import "./Profile.css"
+import { User } from '../../../server/models/User';
+import "./Profile.css";
 
-const Profile: React.FC = () => {
-  const [userData, setUserData] = useState<any>({});
-  const [recentSolutions, setRecentSolutions] = useState<any[]>([]);
-	const [recentComments, setRecentComments] = useState<any[]>([]);
+const Profile = () => {
+const sampleUser = {
+  username: 'Alexander Apostolu',
+  preferredName: 'Alex',
+  email: 'apostolu240@gmail.com',
+  score: 100
+};
 
-	// Hardcode recentSolutions and recentComments for now.
-  useEffect(() => {
-    const sampleRecentSolutions = [
-      {
-        id: 1,
-        title: "Solution 1",
-        description: "Description of Solution 1",
-        imgSrc: "https://example.com/image1.jpg",
-        difficulty: "medium"
-      },
-      {
-        id: 2,
-        title: "Solution 2",
-        description: "Description of Solution 2",
-        imgSrc: "https://example.com/image2.jpg",
-        difficulty: "hard"
-      },
-    ];
+const sampleSolutions = [
+  {
+    id: 1,
+    title: "Solution 1",
+    description: "Description of Solution 1",
+    imgSrc: "https://example.com/image1.jpg",
+    difficulty: "medium"
+  },
+  {
+    id: 2,
+    title: "Solution 2",
+    description: "Description of Solution 2",
+    imgSrc: "https://example.com/image2.jpg",
+    difficulty: "hard"
+  },
+];
 
-		const sampleRecentComments = [
-			{
-				id: 1,
-				content: "This solution is amazing!",
-				createdAt: "wednesday",
-			}
-		];
+const sampleComments = [
+  {
+    name: "Factory Design Pattern",
+    content: "This solution is amazing!",
+    createdAt: "Wednesday",
+  },
+  {
+    name: "Builder Design Pattern",
+    content: "jobizdan",
+    createdAt: "Thursday",
+  }
+];
 
-    setRecentSolutions(sampleRecentSolutions);
-		setRecentComments(sampleRecentComments);
+const [user, setUser] = useState(sampleUser);
+const [solutions, setSolutions] = useState(sampleSolutions);
+const [comments, setComments] = useState(sampleComments);
+
+useEffect(() => {
+  fetch('/api/users/')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setUser(data);
+    })
+    .catch(error => {
+      console.error('Error fetching user data:', error);
+    });
+
+  fetch('/api/solutions/')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch solution data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setSolutions(data);
+    })
+    .catch(error => {
+      console.error('Error fetching solution data:', error);
+    });
+
+  fetch('/api/comments/')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch comment data');
+      }
+      return response.json();
+    })
+    .then(data => {
+      setComments(data);
+    })
+    .catch(error => {
+      console.error('Error fetching comment data:', error);
+    });
   }, []);
-
-  // Sample user data for testing
-  userData.username = "Alex Apostolu";
-  userData.preferedName = "Alex";
-  userData.email = "apostolu240@gmail.com";
-  userData.score = 200;
 
   return (
     <Container>
-      <Row className="userInfo">
+      <Row className="p-4 mb-5" style={{ backgroundColor: 'rgb(175, 175, 175)' }}>
         <Col>
-          <h1 className="username">{userData.username}</h1>
-          <h3 className="preferedName">{userData.preferedName}</h3>
-          <p>{userData.email}</p>
-          <p>Score: {userData.score}</p>
+          <h1 className="">{user.username}</h1>
+          <h3 className="">{user.preferredName}</h3>
+          <p>{user.email}</p>
+        </Col>
+        <Col>
+          <h3>Score: {user.score}</h3>
         </Col>
       </Row>
-      <Row className="recentSolutions">
+      <Row className="mb-5 border-0 rounded-3 overflow-hidden shadow-sm">
         <Col>
-          <h2>Recent Solutions</h2>
+          <h2 className="mb-4">Solutions</h2>
           <Row xs={1} md={2} lg={3} className="g-4">
-            {recentSolutions.map(solution => (
+            {solutions.map(solution => (
               <Col key={solution.id}>
-                <div className="solution-card">
-                  <SolutionCard 
-                    title={solution.title} 
-                    description={solution.description} 
-                    imgSrc={solution.imgSrc} 
-                    href={`/solution/${solution.id}`}
-                  />
-                </div>
+                <Card className="transition-hover">
+                  <Card.Img variant="top" src={solution.imgSrc} />
+                  <Card.Body>
+                    <Card.Title>{solution.title}</Card.Title>
+                    <Card.Text>
+                      {solution.description}
+                    </Card.Text>
+                    <Button variant="primary" href={`/solution/${solution.id}`}>View Solution</Button>
+                  </Card.Body>
+                </Card>
               </Col>
             ))}
           </Row>
         </Col>
       </Row>
-      <Row className="recentComments">
+      <Row className="border-0 rounded-3 overflow-hidden shadow-sm">
         <Col>
-          <h2>Recent Comments</h2>
-          {recentComments.map(comment => (
-            <div key={comment.id} className="comment-box">
-							<p className="comment-title">Solution Title: {comment.id}</p>
-              <p className="comment-date">{comment.createdAt}</p>
-              <p className="comment-content">{comment.content}</p>
-            </div>
-          ))}
+          <h2 className="mb-4">Comments</h2>
+          <Row xs={1} md={2} lg={3} className="g-4">
+            {comments.map(comment => (
+              <Col key={comment.name}>
+                <Card className="mb-3 transition-hover">
+                  <Card.Body>
+                    <Card.Title className="">{comment.name}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">{comment.createdAt}</Card.Subtitle>
+                    <Card.Text className="">{comment.content}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
         </Col>
       </Row>
     </Container>
@@ -92,3 +146,4 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
+
