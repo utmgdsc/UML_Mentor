@@ -13,7 +13,7 @@ router.get("/:id", Solution.get);
 // router.get("/:id", Challenge.getComments);
 
 // Create a new solution in the database.
-router.post("/:id", Solution.create);
+router.post("/", Solution.create);
 
 // Edit a solution in the database.
 router.put("/:id/edit", Solution.edit);
