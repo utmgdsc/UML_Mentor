@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ChallengeCard from "../components/ChallengeCard";
-import { Container, Row, Col, Button, Spinner, Dropdown, Form, FormCheck} from "react-bootstrap";
+import { Container, Row, Col, Button, Spinner, Dropdown, Form} from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
 

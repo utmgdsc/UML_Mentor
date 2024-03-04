@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Container, Row, Col, ButtonToolbar, Button, AccordionItem, AccordionHeader, AccordionBody, Accordion } from "react-bootstrap";
+import { Container, Row, Col, ButtonToolbar, Button } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
@@ -25,6 +25,7 @@ const Challenge = () => {
             return response.json() as Promise<ChallengeDetails>;
         }).then((data) => {
             setDetails(data);
+            setCompleted(true); //TODO: This value should be fetched from the server
             setIsLoading(false);
             // console.log(details);
             return;
