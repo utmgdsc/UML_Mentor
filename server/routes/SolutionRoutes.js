@@ -1,7 +1,11 @@
-const Solution = require('../controllers/SolutionController');
+const Solution = require("../controllers/SolutionController");
+const Challenge = require("../controllers/ChallengeController");
 const router = require("express").Router();
 
-// Getsolution from the database.
+// Get solutions from the database.
+router.get("/", Solution.getAll);
+
+// Get individual solution by id
 router.get("/:id", Solution.get);
 
 // Get all comments for a solutions.
@@ -9,7 +13,7 @@ router.get("/:id", Solution.get);
 // router.get("/:id", Challenge.getComments);
 
 // Create a new solution in the database.
-router.post("/:id", Solution.create);
+router.post("/", Solution.create);
 
 // Edit a solution in the database.
 router.put("/:id/edit", Solution.edit);
