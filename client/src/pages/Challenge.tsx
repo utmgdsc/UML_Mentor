@@ -41,8 +41,26 @@ const Challenge = () => {
       });
   }, [id]);
 
-  // TODO: optional - can be converted to useMemo, or even removed until performance
-  // becomes an issue.
+    useEffect(() => {   
+        //fetch data about the challenge with the provided "id"
+        fetch('/api/challenges/' + id).then((response) => {
+            if(!response.ok){
+                throw new Error(response.statusText);                
+            }
+            return response.json() as Promise<ChallengeDetails>;
+        }).then((data) => {
+            setDetails(data);
+            setCompleted(true); //TODO: This value should be fetched from the server
+            setIsLoading(false);
+            // console.log(details);
+            return;
+        }).catch((err) => {
+            console.log();
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            console.error("Failed fetching the challenge number: " + id + "\nError message: " + err.message)
+        });
+   }, [id]);
+
 
   const difficultyStars = useMemo(
     () =>
