@@ -1,17 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {
-  Container,
-  Row,
-  Col,
-  ButtonToolbar,
-  Button,
-  AccordionItem,
-  AccordionHeader,
-  AccordionBody,
-  Accordion,
-} from "react-bootstrap";
-import { useCallback, useEffect, useState } from "react";
+import { Container, Row, Col, ButtonToolbar, Button } from "react-bootstrap";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
 import { StarFill } from "react-bootstrap-icons";
@@ -54,12 +44,12 @@ const Challenge = () => {
   // TODO: optional - can be converted to useMemo, or even removed until performance
   // becomes an issue.
 
-  const getDifficultyStars = useCallback(
-    (difficulty: number) => {
-      return Array.from({ length: difficulty + 1 }, (_, i) => (
+  const difficultyStars = useMemo(
+    () =>
+      details &&
+      Array.from({ length: details.difficulty + 1 }, (_, i) => (
         <StarFill key={i} />
-      ));
-    },
+      )),
     [details],
   );
 
@@ -72,9 +62,7 @@ const Challenge = () => {
           <header className="text-center bg-secondary-subtle text-dark p-5 pb-3 mb-4 mt-2">
             <h1 className="fw-bold">{details.title}</h1>
             <h2 className=" text-dark fw-semibold fs-3">{details.outcome}</h2>
-            <div className="mt-4 me-n4 float-start ">
-              {getDifficultyStars(details.difficulty)}
-            </div>
+            <div className="mt-4 me-n4 float-start ">{difficultyStars}</div>
             {completed && (
               <span className=" mt-4 float-end text-success">
                 <strong>Completed</strong>

@@ -6,23 +6,6 @@ import { CommentData } from "../types/CommentData.ts";
 import Card from "react-bootstrap/Card";
 import Button from "../components/Button.tsx";
 
-// export type SolutionData = {
-//     id: number;
-//     challengeId: number;
-//     userId: number;
-//     description: string;
-//     title: string;
-//     diagram: string;
-// };
-
-// export type CommentData = {
-//     id: number;
-//     solutionId: number;
-//     userId: number;
-//     text: string;
-//     helpful: boolean;
-// };
-
 function loadSolution(
   id: string,
   setter: React.Dispatch<React.SetStateAction<SolutionData | undefined>>,

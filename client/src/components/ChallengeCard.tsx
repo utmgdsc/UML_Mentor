@@ -2,7 +2,7 @@ import Card from "react-bootstrap/Card";
 import Button from "./Button.tsx";
 import { StarFill } from "react-bootstrap-icons";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
-import { useCallback } from "react";
+import { useMemo } from "react";
 
 function ChallengeCard({
   title,
@@ -10,18 +10,15 @@ function ChallengeCard({
   id,
   difficulty,
 }: ChallengeDetailsShort) {
-  const getDifficultyStars = useCallback(
-    (difficulty: number) => {
-      return Array.from({ length: difficulty + 1 }, (_, i) => (
-        <StarFill key={i} />
-      ));
-    },
+  const difficultyStars = useMemo(
+    () =>
+      Array.from({ length: difficulty + 1 }, (_, i) => <StarFill key={i} />),
     [difficulty],
   );
 
   return (
     <Card>
-      <Card.Header>{getDifficultyStars(difficulty)}</Card.Header>
+      <Card.Header>{difficultyStars}</Card.Header>
       <Card.Body>
         <Card.Title>{title}</Card.Title>
         <Card.Text>{generalDescription}</Card.Text>
