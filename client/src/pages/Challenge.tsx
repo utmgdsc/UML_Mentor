@@ -5,6 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
 import { StarFill } from "react-bootstrap-icons";
+import InstructionsPopup from '../components/InstructionsPopup';
+
 
 
 const Challenge = () => {
@@ -12,8 +14,9 @@ const Challenge = () => {
     const [completed, setCompleted] = useState(false); //TODO: This value should be fetched from the server
     const [details, setDetails] = useState<ChallengeDetails>();
     const [isLoading, setIsLoading] = useState(true);
-
     const { id } = useParams();
+    // Setting the state true initally to show the instructions
+    const [showInstructions, setShowInstructions] = useState(true);
 
 
     useEffect(() => {   
@@ -111,6 +114,7 @@ const Challenge = () => {
             </ButtonToolbar>
         </Row>}
         </ section>
+        <InstructionsPopup show={showInstructions} handleClose={() => setShowInstructions(false)} />
     </Container>);
   };
   

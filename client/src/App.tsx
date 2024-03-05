@@ -4,7 +4,6 @@ import AppShell from "./components/AppShell.tsx";
 import ErrorElement from "./pages/ErrorElement.tsx";
 import Challenges from "./pages/Challenges.tsx";
 import Challenge from "./pages/Challenge.tsx";
-import InstructionsPage from './pages/InstructionsPage'; 
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -20,10 +19,6 @@ const NAV_CONFIG = {
     {
       name: "Solutions",
       href: "/solutions",
-    },
-    {
-      name: "Instructions",
-      href: "/instructions",
     },
   ],
   profile: {
@@ -50,10 +45,6 @@ const router = createBrowserRouter([
       {
         path: "challenge/:id",
         element: <Challenge />,
-      },
-      {
-        path: "instructions",
-        element: <InstructionsPage />,
       },
     ],
   },
