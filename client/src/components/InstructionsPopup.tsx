@@ -10,27 +10,27 @@ const instructions = [
     { 
       title: 'Understand the Problem',
       body: 'Begin by thoroughly understanding the problem statement. A clear grasp of the situation is crucial for crafting an effective solution.',
-      imgSrc: '../assets/InstructionsDesc.png'
+      imgSrc: '/images/InstructionsDesc.png'
     },
     { 
       title: 'Check the Difficulty',
       body: 'The number of stars indicates the difficulty of the challenge. More stars mean a greater challenge!',
-      imgSrc: '../assets/InstructionsDifficulty.png'
+      imgSrc: '/images/InstructionDifficulty.png'
     },
     { 
       title: 'Design Your Solution',
       body: 'Use our integrated drawing tool to diagram your solution. A well-thought-out design is key to addressing the challenge effectively.',
-      imgSrc: '../assets/InstructionsEditor.png'
+      imgSrc: '/images/InstructionsEditor.png'
     },
     { 
       title: 'Submit Your Work',
       body: 'Once you are satisfied with your design, go ahead and submit it. Your innovative solutions are what were looking forward to seeing.',
-      imgSrc: '../assets/InstructionsPostSol.png'
+      imgSrc: '/images/InstructionsPostSol.png'
     },
     { 
       title: 'Collaborate and Provide Feedback',
       body: 'Engage with your peers by reviewing their solutions. Constructive feedback fosters learning and innovation within our community.',
-      imgSrc: '../assets/InstructionsViewSol.png'
+      imgSrc: '/images/InstructionsViewSol.png'
     }
     // Add more instructions as needed
   ];
@@ -51,16 +51,19 @@ function InstructionsPopup({ show, handleClose }: InstructionsPopupProps) {
   return (
     <Modal show={show} onHide={handleClose} centered size="lg">
       <Card>
-        <Card.Header>
-        {instructions[currentInstructionIndex].title}
-        <span className="float-right">
-            {currentInstructionIndex + 1}/{instructions.length}
-        </span>
+      <Card.Header>
+        <div className="d-flex justify-content-between align-items-center">
+            <div>{instructions[currentInstructionIndex].title}</div>
+            <div>
+            <span className="badge bg-secondary">
+                {currentInstructionIndex + 1}/{instructions.length}
+            </span>
+            </div>
+        </div>
         </Card.Header>
         <Card.Img 
         variant="top" 
         src={instructions[currentInstructionIndex].imgSrc} 
-        style={{ maxHeight: '200px', width: 'auto' }}
         />
         <Card.Body>
           <Card.Text>{instructions[currentInstructionIndex].body}</Card.Text>
