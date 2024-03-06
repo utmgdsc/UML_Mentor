@@ -4,13 +4,10 @@ import AppShell from "./components/AppShell.tsx";
 import ErrorElement from "./pages/ErrorElement.tsx";
 import Challenges from "./pages/Challenges.tsx";
 import Challenge from "./pages/Challenge.tsx";
-<<<<<<< HEAD
-import Profile from "./pages/Profile.tsx";
-=======
 import Solutions from "./pages/Solutions.tsx";
 import PostSolution from "./pages/PostSolution.tsx";
 import Solution from "./pages/Solution.tsx";
->>>>>>> e455fa842bb169dda73810de09228aefbd8614df
+import Profile from "./pages/Profile.tsx"
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
