@@ -4,7 +4,10 @@ const challenges = require("../../challenges.json"); // Import the challenges da
 
 
 // Sync the challenges data with the database
-
+/**
+ * Imports the challenges from the challenges.json file into the database.
+ * @param {boolean} dropTable drop existing challenges. False by default.
+ */
 module.exports = async function importChallenges(dropTable = false) {
     // Drop the existing Challenge table
     if (dropTable)

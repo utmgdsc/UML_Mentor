@@ -20,4 +20,3 @@ out.
 ## File Structure
 We use an atomic file structure where we extract pages, components and hooks
 into their separate files.
-
