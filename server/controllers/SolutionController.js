@@ -4,8 +4,16 @@ const Comment = db.Comment;
 
 exports.get = async (req, res) => {
     try {
-        const solutions = await Solution.findAll();
-        res.status(200).json(solutions);
+        const sampleSolutions = [
+            {
+                challengeId: 1,
+                userId: "Alex Apostolu",
+                description: "Make a Factory Design Pattern",
+                title: "Factory Design Pattern"
+            }
+        ];
+
+        res.status(200).json(sampleSolutions);
     }
 	catch (error) {
         res.status(500).json({ error: error.message });

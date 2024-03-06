@@ -3,8 +3,25 @@ const Comment = db.Comment;
 
 exports.get = async (req, res) => {
     try {
-        const comments = await Comment.findAll();
-        res.status(200).json(comments);
+        //const comments = await Comment.findAll();
+        const sampleComments = [
+            {
+                text: "Amazing Work!",
+                userId: "Alex Apostolu",
+                solutionId: 1
+            },
+            {
+                text: "Great job!",
+                userId: "Alex Apostolu",
+                solutionId: 2
+            },
+            {
+                text: "jozisdan!",
+                userId: "Alex Apostolu",
+                solutionId: 3
+            },
+        ];
+        res.status(200).json(sampleComments);
     }
 	catch (error) {
         res.status(500).json({ error: error.message });
