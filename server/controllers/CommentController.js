@@ -2,7 +2,6 @@ const db = require("../models/index");
 const Comment = db.Comment;
 
 exports.get = async (req, res) => {
-<<<<<<< HEAD
     try {
         //const comments = await Comment.findAll();
         const sampleComments = [
@@ -28,20 +27,6 @@ exports.get = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
-=======
-  try {
-    const { solutionId } = req.params;
-    const comments = await Comment.findAll({
-      where: {
-        solutionId,
-      },
-    });
-    res.status(200).json(comments);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
->>>>>>> e455fa842bb169dda73810de09228aefbd8614df
 
 exports.create = async (req, res) => {
   try {
