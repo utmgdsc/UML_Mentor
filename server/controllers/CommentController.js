@@ -16,7 +16,7 @@ exports.get = async (req, res) => {
                 solutionId: 2
             },
             {
-                text: "jozisdan!",
+                text: "jobizdan!",
                 userId: "Alex Apostolu",
                 solutionId: 3
             },
