@@ -1,8 +1,8 @@
-const Comment = require('../controllers/CommentController');
+const Comment = require("../controllers/CommentController");
 const router = require("express").Router();
 
 // Get a comment for a solution.
-router.get("/:id", Comment.get);
+router.get("/:solutionId", Comment.get);
 
 // Create a new comment for a solution in the database.
 router.post("/:id", Comment.create);
