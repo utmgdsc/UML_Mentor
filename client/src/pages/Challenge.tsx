@@ -5,14 +5,17 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ChallengeDetails } from "../types/challengeDetails";
 import { StarFill } from "react-bootstrap-icons";
+import InstructionsPopup from '../components/InstructionsPopup';
+
 
 const Challenge = () => {
-  //TODO: Fetch this value from the server
-  const [completed, setCompleted] = useState(false);
-  const [details, setDetails] = useState<ChallengeDetails>();
-  const [isLoading, setIsLoading] = useState(true);
-
-  const { id } = useParams();
+    //TODO: Fetch this value from the server
+    const [completed, setCompleted] = useState(false); //TODO: This value should be fetched from the server
+    const [details, setDetails] = useState<ChallengeDetails>();
+    const [isLoading, setIsLoading] = useState(true);
+    const { id } = useParams();
+    // Setting the state true initally to show the instructions
+    const [showInstructions, setShowInstructions] = useState(true);
 
   useEffect(() => {
     //fetch data about the challenge with the provided "id"
@@ -180,6 +183,7 @@ const Challenge = () => {
           )
         }
       </section>
+        <InstructionsPopup show={showInstructions} handleClose={() => setShowInstructions(false)} />
     </Container>
   );
 };

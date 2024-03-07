@@ -16,7 +16,7 @@ db.sequelize.sync().then(async () => {
 
   // import the challenges into the db. Comment out after first run
   // await importChallenges();
-
+  
   // Start listening for requests after the database is ready
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
