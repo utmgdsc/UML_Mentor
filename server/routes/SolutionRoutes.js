@@ -1,5 +1,8 @@
 const Solution = require("../controllers/SolutionController");
-const Challenge = require("../controllers/ChallengeController");
+const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
+
+AsyncWrapController(Solution);
+
 const router = require("express").Router();
 
 // Get solutions from the database.
