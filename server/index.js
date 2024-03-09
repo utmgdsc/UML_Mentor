@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("node:path");
 const db = require("./models");
 const importChallenges = require("./scripts/importChallenges");
+const { ErrorHandler } = require("./routes/ErrorHandlingMiddleware");
+const loggingMiddleware = require("./routes/LoggingMiddleware");
 
 const app = express();
 
@@ -16,7 +18,7 @@ db.sequelize.sync().then(async () => {
 
   // import the challenges into the db. Comment out after first run
   // await importChallenges();
-  
+
   // Start listening for requests after the database is ready
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
@@ -28,10 +30,15 @@ const challenges = require("./routes/ChallengeRoutes");
 const solutions = require("./routes/SolutionRoutes");
 const users = require("./routes/UserRoutes");
 const comments = require("./routes/CommentRoutes");
+
+app.use(loggingMiddleware);
+
 app.use("/api/challenges", challenges);
 app.use("/api/solutions", solutions);
 app.use("/api/users", users);
 app.use("/api/comments", comments);
+
+app.use(ErrorHandler);
 
 //uncomment for production
 // app.use(express.static(path.resolve(__dirname, "../client/dist")))
