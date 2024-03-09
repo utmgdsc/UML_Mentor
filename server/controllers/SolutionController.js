@@ -14,21 +14,22 @@ exports.getAll = async (req, res) => {
 };
 
 exports.get = async (req, res) => {
-    try {
-        const sampleSolutions = [
-            {
-                challengeId: 1,
-                userId: "Alex Apostolu",
-                description: "Make a Factory Design Pattern",
-                title: "Factory Design Pattern"
-            }
-        ];
+  try {
+    // const solutions = await Solution.findAll();
+    const sampleSolutions = [
+      {
+        challengeId: 1,
+        userId: "Alex Apostolu",
+        description: "Make a Factory Design Pattern",
+        title: "Factory Design Pattern"
+      }
+    ];
 
-        res.status(200).json(sampleSolutions);
-    }
-	catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+    res.status(200).json(sampleSolutions);
+  }
+  catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }
 
 exports.getComments = async (req, res) => {

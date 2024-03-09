@@ -1,8 +1,6 @@
 const User = require('../controllers/UserController');
 const router = require("express").Router();
 
-router.get("/", User.findAll);
-
 // Get a user from the database.
 router.get("/:id", User.get);
 
