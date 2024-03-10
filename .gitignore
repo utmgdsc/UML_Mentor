@@ -1,6 +1,7 @@
 **/challenge_drafting
 UML_Mentor_Proposal.pdf
 *.sqlite
+file_uploads/
 
 # Logs
 logs
