@@ -3,7 +3,14 @@ const Comment = db.Comment;
 
 exports.get = async (req, res) => {
   try {
-    //const comments = await Comment.findAll();
+    // const { solutionId } = req.params;
+    // const comments = await Comment.findAll({
+    //   where: {
+    //     solutionId,
+    //   },
+    // });
+    // res.status(200).json(comments);
+    
     const sampleComments = [
       {
         text: "Amazing Work!",
@@ -21,6 +28,7 @@ exports.get = async (req, res) => {
         solutionId: 3
       },
     ];
+
     res.status(200).json(sampleComments);
   }
   catch (error) {

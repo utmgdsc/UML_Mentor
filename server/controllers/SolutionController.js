@@ -15,7 +15,14 @@ exports.getAll = async (req, res) => {
 
 exports.get = async (req, res) => {
   try {
-    // const solutions = await Solution.findAll();
+    // const { id } = req.params;
+    // const solutions = await Solution.findAll({
+    //   where: {
+    //     id: id,
+    //   },
+    // });
+    // res.status(200).json(solutions[0]);
+    
     const sampleSolutions = [
       {
         challengeId: 1,
