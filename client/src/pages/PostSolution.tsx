@@ -1,7 +1,8 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "../components/Button.tsx";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   title: string;
@@ -13,6 +14,7 @@ type FormData = {
 // TODO: Include data about the challenge like title
 
 const PostSolution = () => {
+  const navigate = useNavigate();
   const userId = 0; // TODO: change this when auth is added!
   const { id: challengeId } = useParams();
   const [formData, setFormData] = useState<FormData>({
@@ -44,23 +46,24 @@ const PostSolution = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: Form validation
-    console.log(formData);
-    console.log(challengeId);
+    const data = new FormData();
+    data.append("userId", `${userId}`);
+    data.append("challengeId", `${challengeId}`);
+
+    data.append("title", formData.title);
+
+    data.append("description", formData.description);
+    data.append("diagram", formData.diagram);
 
     fetch(`/api/solutions`, {
-      method: "POST", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        challengeId: Number(challengeId),
-        userId,
-        ...formData,
-      }),
+      method: "POST",
+      body: data,
     })
       .then((resp) => resp.json())
       .then((data) => {
-        console.log(`Successfully posted solution`, data);
+        console.log(data);
+        navigate(`/solution/${data.id}`);
+        console.log("did not redirect");
       })
       .catch((err) => {
         console.error(err);

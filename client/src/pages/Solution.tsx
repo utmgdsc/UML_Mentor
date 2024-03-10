@@ -86,7 +86,7 @@ const Solution = () => {
 
   return (
     <Container>
-      <Row sm={2} className="mt-4">
+      <Row sm={2} className="mt-4 pb-4">
         <Col>
           <h2>Solution</h2>
           {solutionData && (
@@ -97,7 +97,7 @@ const Solution = () => {
                 {solutionData.diagram && (
                   <Card.Img
                     variant="bottom"
-                    src={solutionData.diagram}
+                    src={`/api/solutions/diagrams/${solutionData.diagram}`}
                     alt="Solution Diagram"
                   />
                 )}

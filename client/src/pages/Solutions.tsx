@@ -5,9 +5,6 @@ import { SolutionData } from "../types/SolutionData.ts";
 
 const Solutions = () => {
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
-  // TODO: use a storage service for diagrams
-  const diagram =
-    "https://images.unsplash.com/photo-1573166364266-356ef04ae798";
   useEffect(() => {
     // Fetching solutions data
     fetch("/api/solutions")
@@ -30,7 +27,7 @@ const Solutions = () => {
               <SolutionCard
                 title={solution.title}
                 description={solution.description}
-                imgSrc={diagram}
+                imgSrc={`/api/solutions/diagrams/${solution.diagram}`}
                 href={`/solution/${solution.id}`}
               />
             </Col>

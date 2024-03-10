@@ -85,7 +85,7 @@ exports.edit = async (req, res) => {
       // delete the old file
 
       const solution = await Solution.findByPk(id);
-      console.log("DELETING FILE", solution.diagram);
+      // TODO: construct a path in a better way
       fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
         console.log(err),
       );
