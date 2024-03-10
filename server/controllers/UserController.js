@@ -3,8 +3,16 @@ const User = db.User;
 
 exports.get = async (req, res) => {
     try {
-        const users = await User.findAll();
-        res.status(200).json(users);
+        //const users = await User.findAll();
+
+        const sampleUser = {
+            username: 'Alexander Apostolu',
+            preferredName: 'Alex',
+            email: 'apostolu240@gmail.com',
+            score: 100
+        };
+
+        res.status(200).json(sampleUser);
     }
 	catch (error) {
         res.status(500).json({ error: error.message });

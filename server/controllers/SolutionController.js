@@ -15,17 +15,29 @@ exports.getAll = async (req, res) => {
 
 exports.get = async (req, res) => {
   try {
-    const { id } = req.params;
-    const solutions = await Solution.findAll({
-      where: {
-        id: id,
-      },
-    });
-    res.status(200).json(solutions[0]);
-  } catch (error) {
+    // const { id } = req.params;
+    // const solutions = await Solution.findAll({
+    //   where: {
+    //     id: id,
+    //   },
+    // });
+    // res.status(200).json(solutions[0]);
+    
+    const sampleSolutions = [
+      {
+        challengeId: 1,
+        userId: "Alex Apostolu",
+        description: "Make a Factory Design Pattern",
+        title: "Factory Design Pattern"
+      }
+    ];
+
+    res.status(200).json(sampleSolutions);
+  }
+  catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 exports.getComments = async (req, res) => {
   try {

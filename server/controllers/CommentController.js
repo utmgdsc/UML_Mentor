@@ -3,17 +3,38 @@ const Comment = db.Comment;
 
 exports.get = async (req, res) => {
   try {
-    const { solutionId } = req.params;
-    const comments = await Comment.findAll({
-      where: {
-        solutionId,
+    // const { solutionId } = req.params;
+    // const comments = await Comment.findAll({
+    //   where: {
+    //     solutionId,
+    //   },
+    // });
+    // res.status(200).json(comments);
+    
+    const sampleComments = [
+      {
+        text: "Amazing Work!",
+        userId: "Alex Apostolu",
+        solutionId: 1
       },
-    });
-    res.status(200).json(comments);
-  } catch (error) {
+      {
+        text: "Great job!",
+        userId: "Alex Apostolu",
+        solutionId: 2
+      },
+      {
+        text: "jobizdan!",
+        userId: "Alex Apostolu",
+        solutionId: 3
+      },
+    ];
+
+    res.status(200).json(sampleComments);
+  }
+  catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
 exports.create = async (req, res) => {
   try {
