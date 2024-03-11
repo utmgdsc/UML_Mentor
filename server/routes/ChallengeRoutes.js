@@ -1,6 +1,6 @@
 const Challenge = require('../controllers/ChallengeController');
 const router = require("express").Router();
-
+const checkRole = require('./middleware/checkRole');
 
 // Get all challenges from the database.
 router.get("/", Challenge.findAll);

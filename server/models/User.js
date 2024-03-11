@@ -15,10 +15,18 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
+        roleId: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'Roles',
+                key: 'id',
+              }
+        },
         score: DataTypes.INTEGER
     });
     User.associate = function(models) {
         // Define associations
+        User.belongsTo(models.Role, { foreignKey: 'roleId' });
         User.hasMany(models.Solution, { foreignKey: 'userId' });
         User.hasMany(models.Comment, { foreignKey: 'userId' });
       };
