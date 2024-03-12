@@ -1,6 +1,10 @@
 function ErrorHandler(err, req, res, next) {
   console.error("Error", err);
-  res.status(500).json({
+  let code = 500;
+  if (err instanceof HandledError) {
+    code = err.code;
+  }
+  res.status(code).json({
     error: err.message,
   });
 }
@@ -20,4 +24,11 @@ function AsyncDecorator(fn) {
   };
 }
 
-module.exports = { ErrorHandler, AsyncWrapController };
+class HandledError extends Error {
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+  }
+}
+
+module.exports = { ErrorHandler, AsyncWrapController, HandledError };
