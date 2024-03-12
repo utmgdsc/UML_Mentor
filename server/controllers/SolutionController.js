@@ -62,6 +62,7 @@ exports.create = async (req, res) => {
 };
 
 exports.edit = async (req, res) => {
+  // TODO: make sure only the owner can make edits.
   try {
     const { file } = req;
     const { challengeId, userId, description, title, id } = req.body;
