@@ -1,5 +1,10 @@
+const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
+
 const Solution = require("../controllers/SolutionController");
+AsyncWrapController(Solution);
 const Challenge = require("../controllers/ChallengeController");
+AsyncWrapController(Challenge);
+
 const express = require("express");
 const STORAGE_CONFIG = require("../storage_config.json");
 

@@ -1,5 +1,8 @@
 const Comment = require("../controllers/CommentController");
 const router = require("express").Router();
+const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
+
+AsyncWrapController(Comment);
 
 // Get a comment for a solution.
 router.get("/:solutionId", Comment.get);

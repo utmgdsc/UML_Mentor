@@ -1,5 +1,8 @@
-const User = require('../controllers/UserController');
+const User = require("../controllers/UserController");
 const router = require("express").Router();
+const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
+
+AsyncWrapController(User);
 
 // Get a user from the database.
 router.get("/:id", User.get);
