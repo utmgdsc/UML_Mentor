@@ -7,6 +7,7 @@ import Challenge from "./pages/Challenge.tsx";
 import Solutions from "./pages/Solutions.tsx";
 import PostSolution from "./pages/PostSolution.tsx";
 import Solution from "./pages/Solution.tsx";
+import Profile from "./pages/Profile.tsx"
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -25,6 +26,7 @@ const NAV_CONFIG = {
     },
   ],
   profile: {
+    name: "Profile",
     href: "/profile",
   },
 };
@@ -42,12 +44,16 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "challenges",
-        element: <Challenges />,
+        path: "challenge/:id",
+        element: <Challenge />
       },
       {
-        path: "challenge/:id",
-        element: <Challenge />,
+        path: "challenges",
+        element: <Challenges />
+      },
+      {
+        path: "profile/",
+        element: <Profile />
       },
       {
         path: "solutions",

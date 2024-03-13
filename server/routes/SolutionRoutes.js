@@ -1,9 +1,26 @@
-const Solution = require("../controllers/SolutionController");
 const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
 
+const Solution = require("../controllers/SolutionController");
 AsyncWrapController(Solution);
+const Challenge = require("../controllers/ChallengeController");
+AsyncWrapController(Challenge);
 
-const router = require("express").Router();
+const express = require("express");
+const STORAGE_CONFIG = require("../storage_config.json");
+
+const router = express.Router();
+
+// Multer file upload stuff
+// Saves the uploaded files into ./file_uploads/
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: STORAGE_CONFIG.location,
+});
+const upload = multer({ storage: storage });
+
+// Serves ./file_uploads as a static file directory
+// from /api/solutions/diagrams/<filename>
+router.use("/diagrams", express.static(STORAGE_CONFIG.location));
 
 // Get solutions from the database.
 router.get("/", Solution.getAll);
@@ -16,12 +33,12 @@ router.get("/:id", Solution.get);
 // router.get("/:id", Challenge.getComments);
 
 // Create a new solution in the database.
-router.post("/", Solution.create);
+router.post("/", upload.single("diagram"), Solution.create);
 
 // Edit a solution in the database.
-router.put("/:id/edit", Solution.edit);
+router.put("/", upload.single("diagram"), Solution.edit);
 
-// Upvote a solution in the databse.
+// Upvote a solution in the database.
 // However Vlad said we shouldn't worry about upvoting a solution for now. Just
 // worry about upvoting comments.
 // router.put("/:id", Solution.upvote);

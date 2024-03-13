@@ -1,3 +1,5 @@
+const fs = require("fs");
+const STORAGE_CONFIG = require("../storage_config.json");
 const db = require("../models/index");
 const Solution = db.Solution;
 const Comment = db.Comment;
@@ -8,14 +10,25 @@ exports.getAll = async (req, res) => {
 };
 
 exports.get = async (req, res) => {
-  const { id } = req.params;
-  const solutions = await Solution.findAll({
-    where: {
-      id: id,
-    },
-  });
-  res.status(200).json(solutions[0]);
-};
+    // const { id } = req.params;
+    // const solutions = await Solution.findAll({
+    //   where: {
+    //     id: id,
+    //   },
+    // });
+    // res.status(200).json(solutions[0]);
+    
+    const sampleSolutions = [
+      {
+        challengeId: 1,
+        userId: "Alex Apostolu",
+        description: "Make a Factory Design Pattern",
+        title: "Factory Design Pattern"
+      }
+    ];
+
+    res.status(200).json(sampleSolutions);
+}
 
 exports.getComments = async (req, res) => {
   const { id } = req.params;
@@ -40,9 +53,43 @@ exports.create = async (req, res) => {
 };
 
 exports.edit = async (req, res) => {
-  const { id } = req.params;
-  const { challengeId, userId } = req.body;
-  await Solution.update({ challengeId, userId }, { where: { id } });
+  // TODO: make sure only the owner can make edits.
+  const { file } = req;
+  const { challengeId, userId, description, title, id } = req.body;
+
+  const updateData = {};
+
+  if (challengeId !== null && challengeId !== undefined) {
+    updateData.challengeId = challengeId;
+  }
+  if (userId !== null && userId !== undefined) {
+    updateData.userId = userId;
+  }
+  if (description !== null && description !== undefined) {
+    updateData.description = description;
+  }
+  if (title !== null && title !== undefined) {
+    updateData.title = title;
+  }
+
+  if (file && STORAGE_CONFIG.delete_on_edit) {
+    // delete the old file
+
+    const solution = await Solution.findByPk(id);
+    // TODO: construct a path in a better way
+    fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
+      console.log(err),
+    );
+  }
+
+  if (file) {
+    updateData.diagram = file.filename;
+  }
+
+  if (Object.keys(updateData).length > 0) {
+    await Solution.update(updateData, { where: { id } });
+  }
+
   const updatedSolution = await Solution.findByPk(id);
   res.status(200).json(updatedSolution);
 };
