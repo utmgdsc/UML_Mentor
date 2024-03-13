@@ -1,9 +1,10 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "../components/Button.tsx";
+import { useNavigate } from "react-router-dom";
 
-type FormData = {
+type PostSolutionState = {
   title: string;
   description: string;
   diagram: File | null;
@@ -13,19 +14,22 @@ type FormData = {
 // TODO: Include data about the challenge like title
 
 const PostSolution = () => {
+  const navigate = useNavigate();
   const userId = 0; // TODO: change this when auth is added!
   const { id: challengeId } = useParams();
-  const [formData, setFormData] = useState<FormData>({
-    title: "",
-    description: "",
-    diagram: null,
-  });
+  const [postSolutionState, setPostSolutionState] = useState<PostSolutionState>(
+    {
+      title: "",
+      description: "",
+      diagram: null,
+    },
+  );
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setPostSolutionState((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -34,7 +38,7 @@ const PostSolution = () => {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      setFormData((prevData) => ({
+      setPostSolutionState((prevData) => ({
         ...prevData,
         diagram: file,
       }));
@@ -44,23 +48,22 @@ const PostSolution = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: Form validation
-    console.log(formData);
-    console.log(challengeId);
+    const data = new FormData();
+    data.append("userId", `${userId}`);
+    data.append("challengeId", `${challengeId}`);
+
+    data.append("title", postSolutionState.title);
+
+    data.append("description", postSolutionState.description);
+    data.append("diagram", postSolutionState.diagram);
 
     fetch(`/api/solutions`, {
-      method: "POST", // or 'PUT'
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        challengeId: Number(challengeId),
-        userId,
-        ...formData,
-      }),
+      method: "POST",
+      body: data,
     })
       .then((resp) => resp.json())
       .then((data) => {
-        console.log(`Successfully posted solution`, data);
+        navigate(`/solution/${data.id}`);
       })
       .catch((err) => {
         console.error(err);
@@ -78,7 +81,7 @@ const PostSolution = () => {
               <Form.Control
                 type="text"
                 name="title"
-                value={formData.title}
+                value={postSolutionState.title}
                 onChange={handleChange}
                 required
               />
@@ -88,7 +91,7 @@ const PostSolution = () => {
               <Form.Control
                 as="textarea"
                 name="description"
-                value={formData.description}
+                value={postSolutionState.description}
                 onChange={handleChange}
                 rows={4}
                 required

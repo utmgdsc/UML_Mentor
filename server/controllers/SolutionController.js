@@ -1,3 +1,5 @@
+const fs = require("fs");
+const STORAGE_CONFIG = require("../storage_config.json");
 const db = require("../models/index");
 const Solution = db.Solution;
 const Comment = db.Comment;
@@ -55,13 +57,15 @@ exports.getComments = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { challengeId, userId, title, description, diagram } = req.body;
+    const { challengeId, userId, title, description } = req.body;
+    const { file } = req;
+    console.log(file);
     const newSolution = await Solution.create({
       challengeId,
       userId,
       title,
       description,
-      diagram,
+      diagram: file.filename,
     });
     res.status(201).json(newSolution);
   } catch (error) {
@@ -70,10 +74,44 @@ exports.create = async (req, res) => {
 };
 
 exports.edit = async (req, res) => {
+  // TODO: make sure only the owner can make edits.
   try {
-    const { id } = req.params;
-    const { challengeId, userId } = req.body;
-    await Solution.update({ challengeId, userId }, { where: { id } });
+    const { file } = req;
+    const { challengeId, userId, description, title, id } = req.body;
+
+    const updateData = {};
+
+    if (challengeId !== null && challengeId !== undefined) {
+      updateData.challengeId = challengeId;
+    }
+    if (userId !== null && userId !== undefined) {
+      updateData.userId = userId;
+    }
+    if (description !== null && description !== undefined) {
+      updateData.description = description;
+    }
+    if (title !== null && title !== undefined) {
+      updateData.title = title;
+    }
+
+    if (file && STORAGE_CONFIG.delete_on_edit) {
+      // delete the old file
+
+      const solution = await Solution.findByPk(id);
+      // TODO: construct a path in a better way
+      fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
+        console.log(err),
+      );
+    }
+
+    if (file) {
+      updateData.diagram = file.filename;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await Solution.update(updateData, { where: { id } });
+    }
+
     const updatedSolution = await Solution.findByPk(id);
     res.status(200).json(updatedSolution);
   } catch (error) {
