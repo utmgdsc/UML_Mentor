@@ -39,7 +39,8 @@ exports.getComments = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { username, passwordHash, preferredName, email, score } = req.body;
+  const { username, passwordHash, preferredName, email } = req.body;
+  const score = 0;
   const newUser = await User.create({
     username,
     passwordHash,

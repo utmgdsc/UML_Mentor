@@ -10,7 +10,7 @@ AsyncWrapController(User);
 router.get("/:username", User.get);
 
 // Create a new user in the database.
-router.post("/:id", User.create);
+router.post("/", User.create);
 
 // Update a user in the database.
 router.put("/:id", User.update);

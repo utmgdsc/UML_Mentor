@@ -10,6 +10,18 @@ const app = express();
 
 app.use(express.json());
 
+
+/** For testing purposes, we can mock the authenticated user by setting the headers
+ *  Note that there must be a user with userId 1 in the database.
+ */
+function mockAuthenticated(req, res, next) {
+    req.headers.utorid = 'testuser';
+    req.headers.userid = 1;
+    next();
+}
+app.use(mockAuthenticated); //FOR TESTING PURPOSES ONLY
+
+
 const PORT = process.env.PORT || 8080;
 
 // For testing purposes
@@ -43,6 +55,7 @@ db.sequelize.sync().then(async () => {
 // Set up API routes
 const challenges = require("./routes/ChallengeRoutes");
 const solutions = require("./routes/SolutionRoutes");
+const SolutionInProgress = require('./routes/SolutionInProgressRoutes');
 const users = require("./routes/UserRoutes");
 const comments = require("./routes/CommentRoutes");
 
@@ -51,10 +64,12 @@ app.use(authMiddleware);
 
 app.use("/api/challenges", challenges);
 app.use("/api/solutions", solutions);
+app.use('/api/inprogress', SolutionInProgress); //TODO: Make sure this does not cause conflicts with the solutions route (e.g. /api/solutions/:id)
 app.use("/api/users", users);
 app.use("/api/comments", comments);
 
 app.use(ErrorHandler);
+
 
 //uncomment for production
 // app.use(express.static(path.resolve(__dirname, "../client/dist")))
