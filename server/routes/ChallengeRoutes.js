@@ -1,6 +1,11 @@
-const Challenge = require('../controllers/ChallengeController');
+const Challenge = require("../controllers/ChallengeController");
+
 const router = require("express").Router();
+
 const checkRole = require('./middleware/checkRole');
+const { AsyncWrapController } = require("./ErrorHandlingMiddleware");
+
+AsyncWrapController(Challenge);
 
 // Get all challenges from the database.
 router.get("/", Challenge.findAll);

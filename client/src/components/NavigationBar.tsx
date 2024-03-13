@@ -6,6 +6,11 @@ import { NAV_CONFIG } from "../App.tsx";
 function NavigationBar() {
   const location = useLocation().pathname;
   const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    navigate(NAV_CONFIG.profile.href);
+  };
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
@@ -27,16 +32,10 @@ function NavigationBar() {
           </Nav>
         </Navbar.Collapse>
         <Nav>
-          <Nav.Link
-            onClick={() => {
-              navigate(NAV_CONFIG.profile.href);
-            }}
-          >
+          <Nav.Link onClick={handleProfileClick}>
             <PersonCircle
               size={"1.5rem"}
-              className={
-                location == NAV_CONFIG.profile.href ? "text-primary" : ""
-              }
+              className={location === NAV_CONFIG.profile.href ? "text-primary" : ""}
             />
           </Nav.Link>
         </Nav>
