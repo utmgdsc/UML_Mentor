@@ -5,7 +5,7 @@ const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
 AsyncWrapController(User);
 
 // Get a user from the database.
-router.get("/:id", User.get);
+router.get("/:username", User.get);
 
 // Create a new user in the database.
 router.post("/:id", User.create);

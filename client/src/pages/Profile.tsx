@@ -10,10 +10,10 @@ const Profile = () => {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    fetch('/api/users/1')
+    fetch('/api/users/Apostolu')
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error('Failed to fetch user data :(');
         }
         return response.json();
       })
