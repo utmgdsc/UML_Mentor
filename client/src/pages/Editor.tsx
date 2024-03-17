@@ -5,13 +5,11 @@ import { useLocation } from 'react-router-dom';
 
 
 const CONFIG = {
-    defaultEdgeStyle: {endSize: 12, startSize: 12},
-    // autosaveDelay: 10000, // 10 seconds
+    defaultEdgeStyle: {endSize: 12, startSize: 12, edgeStyle: "orthogonalEdgeStyle", rounded: 1, curved:0},
     enableCustomLibraries: false,
     appendCustomLibraries: false,
     expandLibraries: true, 
     defaultLibraries: "uml",
-    //TODO: make the lines orthogonal and sharp
     override: false
 }   
 
@@ -40,13 +38,13 @@ const Editor = () => {
     const query = useQuery();
 
 
-    //autosave (export) the diagram every 10 seconds (ONLY FOR DIAGRAMS IN PROGRESS, NOT EDITING EXISTING SOLUTIONS)
+    //autosave (export) the diagram every 20 seconds (ONLY FOR DIAGRAMS IN PROGRESS, NOT EDITING EXISTING SOLUTIONS)
     useEffect(() => {
         if (query.get("type") !== "challenge") return;
         const interval = setInterval(() => {
             // console.log("autosaving");
             doExport();
-        }, 10000);
+        }, 20000);
         return () => { clearInterval(interval) };
     }, [query]);
 
