@@ -11,7 +11,7 @@ const STORAGE_CONFIG = require("../storage_config.json");
 
 const router = express.Router();
 
-const checkRole = require('./middleware/checkRole');
+const checkRole = require('../middleware/checkRole');
 
 // Multer file upload stuff
 // Saves the uploaded files into ./file_uploads/
@@ -56,7 +56,7 @@ router.put("/:id/edit", checkRole(['user', 'admin']), upload.single("diagram"), 
 router.delete("/:id", checkRole(['user', 'admin']), Solution.delete);
 
 module.exports = router;
-outer.get("/", Solution.getAll);
+router.get("/", Solution.getAll);
 router.get("/:id", Solution.get);
 router.post("/", checkRole(['user']), Solution.create);
 

@@ -1,7 +1,7 @@
 const Comment = require("../controllers/CommentController");
 const router = require("express").Router();
 
-const checkRole = require('./middleware/checkRole');
+const checkRole = require('../middleware/checkRole');
 
 const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
 

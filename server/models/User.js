@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['user', 'admin']], // Ensures the role is either 'user' or 'admin'
             }
         },
+        hasAcceptedTerms: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },        
         score: DataTypes.INTEGER
     });
     User.associate = function(models) {

@@ -8,6 +8,9 @@ import ChallengeCard from "../components/ChallengeCard.tsx";
 import { ChallengeDifficulties } from "../types/challengeDifficulties.ts";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
 
+import React, { useState, useEffect } from 'react';
+import NewUserPopup from '../components/NewUserPopup'; 
+
 const DEMO_SOLUTION_CARDS: SolutionCardProps[] = Array(5).fill({
   title: "Example Challenge 1: Airport Management System",
   description:
@@ -27,6 +30,22 @@ const DEMO_CHALLENGE_CARDS: ChallengeDetailsShort[] = Array(3).fill({
 });
 
 function Home() {
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    // Check if the user has accepted
+    const privacyAccepted = localStorage.getItem('privacyAccepted') === 'true';
+    if (!privacyAccepted) {
+      setShowPopup(true);
+    }
+  }, []);
+
+  const handleAcceptPrivacy = () => {
+    // User accepts the privacy policy
+    localStorage.setItem('privacyAccepted', 'true');
+    setShowPopup(false);
+  };
+
   // TODO: fetch the solutions
   return (
     <section>
@@ -66,6 +85,7 @@ function Home() {
           ))}
         </Row>
       </Container>
+      <NewUserPopup show={showPopup} onAccept={handleAcceptPrivacy} />
     </section>
   );
 }
