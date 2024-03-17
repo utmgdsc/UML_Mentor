@@ -8,7 +8,7 @@ module.exports = (User) => async (req, res, next) => {
             user = await User.create({
                 username: utorid,
                 passwordHash: 'defaultPasswordHash', // i am not sure if we need this for shibboleth
-                email: req.headers.email, // can we get the email frrom shibboleth?
+                email: req.headers.http_mail, // can we get the email frrom shibboleth?
                 role: 'user',
             });
         }
