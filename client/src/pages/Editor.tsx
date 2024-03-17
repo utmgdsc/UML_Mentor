@@ -149,7 +149,7 @@ const Editor = () => {
                 body: JSON.stringify({
                     xml: diagramData.current, 
                     title: diagramNameRef.current, 
-                    challengeId: query.get("challengeId") //NOTE: This only works for challenges in progress
+                    challengeId: query.get("id") //NOTE: This only works for challenges in progress
                 }),
                 keepalive: true // To allow saves when the tab is closed
             })
@@ -181,19 +181,27 @@ const Editor = () => {
                         {
                             // ui: "atlas",
                             spin: true,
-                            modified: true,
-                            keepmodified: true,
+                            // modified: true,
+                            // keepmodified: true,
                             libraries: true,
-                            noSaveBtn: true,
+                            noSaveBtn: false,
                             saveAndExit: false,
-                            noExitBtn: true
+                            noExitBtn: false
                         }
                     }
                     onExport={(data) => {handleSave(data)}} //Note: it says the type is wrong, but it is not. 
+                    onSave={(data) => {
+                        // console.log(data);
+                        // If the save is triggered by another event, then do nothing
+                        if(data.parentEvent !== "save") {
+                            return;
+                        }
+                        doExport()
+                    }}
                     onLoad={(data) => {
                         // If the xml is null, then we need to wait and reload the diagram from diagramData
                         if (data.xml === null) {
-                            console.log("Waiting for diagramData to be initialized");
+                            // console.log("Waiting for diagramData to be initialized");
                             setTimeout(() => {
                                 if (drawioRef.current !== null && diagramData.current !== undefined){
                                     drawioRef.current?.load({
@@ -208,6 +216,11 @@ const Editor = () => {
                         }  
                     }}
                     onClose={(data) => {
+                        // console.log(data);
+                        // If the exit is triggered by another event, then do nothing
+                        if(data.parentEvent) {
+                            return;
+                        }
                         // Save and exit. Timeout to make sure the save request is sent before the tab is closed.
                         doExport();
                         setTimeout(() => {
