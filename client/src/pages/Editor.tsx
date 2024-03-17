@@ -176,6 +176,7 @@ const Editor = () => {
                 < DrawIoEmbed 
                     ref={drawioRef}
                     configuration={CONFIG}
+                    exportFormat="xmlpng"
                     urlParameters={
                         {
                             // ui: "atlas",

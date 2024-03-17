@@ -54,7 +54,7 @@ const Challenge = () => {
             return response.json() as Promise<ChallengeDetails>;
         }).then((data) => {
             setDetails(data);
-            setCompleted(true); //TODO: This value should be fetched from the server
+            setCompleted(false); //TODO: This value should be fetched from the server
             setIsLoading(false);
             // console.log(details);
             return;
@@ -112,7 +112,7 @@ const Challenge = () => {
             </ul>
           </Col>
         </Row>
-        <Row className={!completed ? "align-items-end" : ""}>
+        <Row className={!completed ? "align-items-end mb-4" : ""}>
           <Col lg={{ span: 6, offset: 0 }} xl={{ span: 5, offset: 1 }}>
             <h3 className="fs-4">Usage Scenarios</h3>
             <ul>
@@ -128,7 +128,7 @@ const Challenge = () => {
           {
             //if completed, display key patterns, otherwise display buttons
             completed ? (
-              <Col lg={{ span: 6, offset: 0 }} xl={{ span: 5, offset: 1 }}>
+              <Col lg={{ span: 6, offset: 0 }} xl={{ span: 5 }}>
                 <h3 className="fs-4 text-success">Key Design Patterns</h3>
                 <ul>
                   {details.keyPatterns.map((pattern, index) => {
@@ -141,9 +141,9 @@ const Challenge = () => {
                 </ul>
               </Col>
             ) : (
-              <Col>
-                <ButtonToolbar className="d-flex align-items-end justify-content-around">
-                  <Button className="m-1" target="_blank" href="/editor">
+              <Col lg={{ span: 6, offset: 0 }} xl={{ span: 5 }}>
+                <ButtonToolbar className="d-flex align-items-end justify-content-between">
+                  <Button className="m-1" target="_blank" href={"/editor?type=challenge&id=" + id}>
                     Open Editor
                   </Button>
                   <Button className="m-1" href={"/solutions/post/" + id}>
@@ -165,8 +165,8 @@ const Challenge = () => {
           // If completed, display buttons at the bottom
           completed && (
             <Row>
-              <ButtonToolbar className="d-flex align-items-end justify-content-around">
-                <Button className="m-1" target="_blank" href="/editor">
+              <ButtonToolbar className="d-flex align-items-end justify-content-around my-4">
+                <Button className="m-1" target="_blank" href={"/editor?type=challenge&id=" + id}>
                   Open Editor
                 </Button>
                 <Button className="m-1" href={"/solutions/post/" + id}>
