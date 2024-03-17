@@ -4,12 +4,16 @@ const User = db.User;
 exports.get = async (req, res) => {
   //const users = await User.findAll();
 
-  const sampleUser = {
-      username: 'Alexander Apostolu',
-      preferredName: 'Alex',
-      email: 'apostolu240@gmail.com',
-      score: 100
-  };
+  let user = await User.findOne({ where: { email: 'apostolu240@gmail.com' } });
+  
+  // if (!user) {
+  //   user = await User.create({
+  //     username: 'Alexander Apostolu',
+  //     preferredName: 'Alex',
+  //     email: 'apostolu240@gmail.com',
+  //     score: 100
+  //   });
+  // }
 
   res.status(200).json(sampleUser);
 }
