@@ -70,3 +70,36 @@ exports.edit = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
+
+exports.delete = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const solution = await SolutionInProgress.findByPk(id);
+        // make sure the solution userid matches the token userid
+        if (solution.userId !== req.headers.userid) {
+            return res.status(403).json({ error: "You do not have permission to delete this solution." });
+        }
+
+        await solution.destroy();
+        res.status(204).end();
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+exports.deleteAll = async (req, res) => {
+    try {
+        //make sure the request is coming from the admin
+        if (req.headers.userid !== 1) {
+            return res.status(403).json({ error: "You do not have permission to delete all solutions in progress." });
+        }
+
+        await SolutionInProgress.destroy({ where: {} });
+        
+        res.status(204).end();
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}

@@ -18,6 +18,9 @@ router.put("/:id", SolutionInProgress.edit);
 
 
 // Delete a solution from the database.
-// router.delete("/:id", Solution.delete);
+router.delete("/:id", SolutionInProgress.delete);
+
+// DEVELOPMENT ONLY!
+// router.delete("/", SolutionInProgress.deleteAll);
 
 module.exports = router;

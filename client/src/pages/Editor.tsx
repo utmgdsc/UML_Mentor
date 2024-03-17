@@ -13,6 +13,7 @@ const CONFIG = {
     override: false
 }   
 
+
 const Editor = () => {
 
     const drawioRef = useRef<DrawIoEmbedRef>(null);
@@ -53,10 +54,12 @@ const Editor = () => {
         // by challengeId and userId. If the SolutionInProgress exists, we need to load it into the editor (diagram + title).
         // Otherwise we create a new diagram + title, load it into the editor and make a SolutionInProgress entry in the db.
         if (query.get("type") === "challenge") {
+            const challengeId = query.get("id");
+            
+
             //fetch an existing diagram from the server and load it into the editor
             //If the diagram is not found, create a new diagram and save it to the server
-            const challengeId = query.get("id");
-            fetch("/api/inprogress/challenge/" + challengeId)
+            fetch("/api/inprogress/challenge/" + challengeId) //GET
             .then(response => { 
                 if(response.status === 404) {
                     throw new Error("No diagram found for this challenge");
@@ -77,30 +80,43 @@ const Editor = () => {
             .catch((error: Error) => {
                 //if the solution in progress has not been created yet, create a new entry in the database
                 if(error.message === "No diagram found for this challenge") {
-                    //create a new diagram and save it to the server
-                    fetch("/api/inprogress" , {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            title: "Challenge #" + challengeId + " Diagram", 
-                            challengeId: challengeId, 
-                            xml: ""})
-                    }).then(response => {
+
+                    //fetch the challenge details from the server to get the title
+                    fetch("/api/challenges/" + challengeId).then(response => { //GET
                         if (!response.ok) {
                             throw new Error(response.statusText);
                         }
-                        return response.json() as Promise<{id: string, title: string}>
+                        return response.json() as Promise<{title: string}>
                     }).then(data => {
-                        console.log("Created new diagram with id: " + data.id + " and title: " + data.title);
-                        diagramId.current = data.id;
-                        setDiagramName(data.title); 
-                        diagramNameRef.current = data.title; //Crutch for the handleSave function
-                    })
-                    .catch((error) => {
+                        setDiagramName(data.title + " Diagram");
+                        diagramNameRef.current = data.title + " Diagram"; //Crutch for the handleSave function
+
+                        //create a new diagram and save it to the server
+                        fetch("/api/inprogress" , { //POST
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                title: diagramNameRef.current, 
+                                challengeId: challengeId, 
+                                xml: ""})
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText);
+                            }
+                            return response.json() as Promise<{id: string, title: string}>
+                        }).then(data => {
+                            // console.log("Created new diagram with id: " + data.id + " and title: " + data.title);
+                            diagramId.current = data.id;
+                        })
+                        .catch((error) => {
+                            console.error(error);
+                        });
+                    }).catch((error) => {
                         console.error(error);
                     });
+                    
                 } else {
                     //otherwise, log the error
                     console.error(error);
@@ -109,7 +125,7 @@ const Editor = () => {
             });
         }   
         else if (query.get("type") === "solution") {
-            //TODO: Load the existing solution diagram into the editor. Not not autosave it.
+            //TODO: Load the existing solution diagram into the editor. Do not autosave it.
 
             // If query.get("type") === "solution" then we need to fetch the Solution from the server by solutionId.
             // We load the solution into the editor. The user can then confirm or drop changes.
@@ -169,7 +185,7 @@ const Editor = () => {
 
     return (
         <div>
-            <h1>{diagramName}</h1>
+            <h1 className="h2">{diagramName}</h1>
             <div style={{height: "100vh"}}>
                 < DrawIoEmbed 
                     ref={drawioRef}
