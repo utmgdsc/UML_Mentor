@@ -7,7 +7,7 @@ exports.get = async (req, res) => {
   const { username: reqUsername } = req.params;
 
   if (!reqUsername) {
-    return res.status(404).json({ message: req.params });
+    return res.status(404).json({ message: "Requested username not found" });
   }
 
   let user = await User.findOne({ where: { username: reqUsername } });
