@@ -17,7 +17,7 @@ const CONFIG = {
 const Editor = () => {
 
     const drawioRef = useRef<DrawIoEmbedRef>(null);
-    const diagramData = useRef<string | undefined>("");
+    const diagramData = useRef<string | undefined>(undefined);
     //TODO: Allow the user to change the diagram name
     const [diagramName, setDiagramName] = useState<string | null>(null);
     const diagramNameRef = useRef<string | null>(null); //Crutch for the handleSave function
@@ -78,9 +78,9 @@ const Editor = () => {
                 // console.log("Loaded diagram: " + diagramData.current + " with id: " + diagramId.current + " and name: " + diagramNameRef.current);
             })
             .catch((error: Error) => {
+                console.log("Error: " + error.message);
                 //if the solution in progress has not been created yet, create a new entry in the database
                 if(error.message === "No diagram found for this challenge") {
-
                     //fetch the challenge details from the server to get the title
                     fetch("/api/challenges/" + challengeId).then(response => { //GET
                         if (!response.ok) {
@@ -90,9 +90,8 @@ const Editor = () => {
                     }).then(data => {
                         setDiagramName(data.title + " Diagram");
                         diagramNameRef.current = data.title + " Diagram"; //Crutch for the handleSave function
-
                         //create a new diagram and save it to the server
-                        fetch("/api/inprogress" , { //POST
+                        return fetch("/api/inprogress" , { //POST
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json"
@@ -101,22 +100,18 @@ const Editor = () => {
                                 title: diagramNameRef.current, 
                                 challengeId: challengeId, 
                                 xml: ""})
-                        }).then(response => {
-                            if (!response.ok) {
-                                throw new Error(response.statusText);
-                            }
-                            return response.json() as Promise<{id: string, title: string}>
-                        }).then(data => {
-                            // console.log("Created new diagram with id: " + data.id + " and title: " + data.title);
-                            diagramId.current = data.id;
-                        })
-                        .catch((error) => {
-                            console.error(error);
                         });
+                    }).then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.json() as Promise<{id: string}>
+                    }).then(data => {
+                        // console.log("Created new diagram with id: " + data.id + " and title: " + data.title);
+                        diagramId.current = data.id;
                     }).catch((error) => {
                         console.error(error);
                     });
-                    
                 } else {
                     //otherwise, log the error
                     console.error(error);

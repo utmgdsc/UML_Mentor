@@ -21,6 +21,6 @@ router.put("/:id", SolutionInProgress.edit);
 router.delete("/:id", SolutionInProgress.delete);
 
 // DEVELOPMENT ONLY!
-// router.delete("/", SolutionInProgress.deleteAll);
+router.delete("/", SolutionInProgress.deleteAll);
 
 module.exports = router;
