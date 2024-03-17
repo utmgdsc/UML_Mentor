@@ -2,7 +2,6 @@ import { useEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { Button } from 'react-bootstrap';
 import { ActionExport, DrawIoEmbed, DrawIoEmbedRef} from 'react-drawio';
 import { useLocation } from 'react-router-dom';
-// import { redirect } from 'react-router-dom';
 
 
 const CONFIG = {
@@ -100,7 +99,6 @@ const Editor = () => {
                         diagramId.current = data.id;
                         setDiagramName(data.title); 
                         diagramNameRef.current = data.title; //Crutch for the handleSave function
-                        // doExport(); //autosave the new diagram
                     })
                     .catch((error) => {
                         console.error(error);

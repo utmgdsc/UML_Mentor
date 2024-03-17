@@ -1,4 +1,4 @@
-    module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
         username: {
             type: DataTypes.STRING,
@@ -25,8 +25,7 @@
         // Define associations
         User.hasMany(models.Solution, { foreignKey: 'userId' });
         User.hasMany(models.Comment, { foreignKey: 'userId' });
-      };
-    
+        };
+
     return User;
-  };
-  
+};
