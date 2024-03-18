@@ -15,6 +15,19 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
+        role: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'user', // default role is 'user'
+            validate: {
+                isIn: [['user', 'admin']], // Ensures the role is either 'user' or 'admin'
+            }
+        },
+        hasAcceptedTerms: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },        
         score: DataTypes.INTEGER
     });
     User.associate = function(models) {
