@@ -1,6 +1,6 @@
 const User = require("../controllers/UserController");
 const router = require("express").Router();
-const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
+const { AsyncWrapController } = require("../middleware/ErrorHandlingMiddleware");
 
 AsyncWrapController(User);
 

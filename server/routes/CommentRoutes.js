@@ -3,7 +3,7 @@ const router = require("express").Router();
 
 const checkRole = require('./middleware/checkRole');
 
-const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
+const { AsyncWrapController } = require("../middleware/ErrorHandlingMiddleware");
 
 AsyncWrapController(Comment);
 

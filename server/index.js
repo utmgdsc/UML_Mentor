@@ -2,8 +2,8 @@ const express = require("express");
 const path = require("node:path");
 const db = require("./models");
 const importChallenges = require("./scripts/importChallenges");
-const { ErrorHandler } = require("./routes/ErrorHandlingMiddleware");
-const loggingMiddleware = require("./routes/LoggingMiddleware");
+const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
+const loggingMiddleware = require("./middleware/LoggingMiddleware");
 
 const app = express();
 
