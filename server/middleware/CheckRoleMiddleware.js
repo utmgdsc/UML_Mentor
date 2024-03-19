@@ -8,3 +8,4 @@ function checkRole(roleArray) {
     }
   };
 }
+module.exports = checkRole;
