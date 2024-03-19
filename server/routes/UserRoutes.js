@@ -4,6 +4,7 @@ const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
 
 AsyncWrapController(User);
 
+router.get("headers",User.getHeaders);
 // Get a user from the database.
 router.get("/:id", checkRole(['user', 'admin']), User.get);
 
@@ -15,5 +16,6 @@ router.put("/:id", checkRole(['user', 'admin']), User.update);
 
 // Delete a User from the database.
 router.delete("/:id", checkRole(['admin']), User.delete);
+
 
 module.exports = router;

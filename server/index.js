@@ -11,6 +11,18 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
 
+
+/** For testing purposes, we can mock the authenticated user by setting the headers
+ *  Note that there must be a user with userId 1 in the database.
+ */
+function mockAuthenticated(req, res, next) {
+  req.headers.utorid = 'testuser';
+  req.headers.userid = 1;
+  next();
+}
+app.use(mockAuthenticated); //FOR TESTING PURPOSES ONLY
+app.use(loggingMiddleware);
+
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
   // Use { force: true } cautiously as it will drop existing tables

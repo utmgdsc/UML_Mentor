@@ -62,3 +62,9 @@ exports.delete = async (req, res) => {
   await User.destroy({ where: { id } });
   res.status(204).send();
 };
+
+exports.getHeaders = async (req, res) => {
+  res.status(200).json(req.headers);
+}
+
+// send request to the route postman
