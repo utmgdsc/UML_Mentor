@@ -13,18 +13,18 @@ app.use(express.json());
 const PORT = process.env.PORT || 8080;
 
 // For testing purposes
-app.post('/test-auth', authMiddleware, (req, res) => {
-  const user = req.user;
+// app.post('/test-auth', authMiddleware, (req, res) => {
+//   const user = req.user;
 
-  const userInfo = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-  };
+//   const userInfo = {
+//       id: user.id,
+//       username: user.username,
+//       email: user.email,
+//       role: user.role,
+//   };
 
-  res.json(userInfo);
-});
+//   res.json(userInfo);
+// });
 
 
 app.use(loggingMiddleware);

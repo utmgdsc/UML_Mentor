@@ -5,7 +5,6 @@ const checkRole = require('../middleware/checkRoleMiddleware');
 
 AsyncWrapController(User);
 
-router.get("headers",User.getHeaders);
 // Get a user from the database.
 router.get("/:id", checkRole(['user', 'admin']), User.get);
 
