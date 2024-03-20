@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      # Delete this line
+      - 39-setup-github-actions-for-repo
+
+jobs:
+  build-client:
+    name: Build React Client
+    runs-on: [self-hosted]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies and Build Client
+        run: |
+          node --version
+          ls
+          pwd
+
+#  start-server:
+#    name: Start Express Server
+#    runs-on: [self-hosted]
+#
+#    steps:
+#      - name: Checkout Repository
+#        uses: actions/checkout@v2
+#
+#      - name: Install Dependencies and Start Server
+#        run: |
+#          npm install
+#          npm start
