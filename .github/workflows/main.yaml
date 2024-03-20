@@ -8,19 +8,25 @@ on:
       - 39-setup-github-actions-for-repo
 
 jobs:
-  build-client:
-    name: Build React Client
+  build-deploy:
+    name: Build & Deploy
     runs-on: [self-hosted]
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install Dependencies and Build Client
+      - name: Install Client Dependencies and Build Client
+        # TODO: add npm run lint
         run: |
-          node --version
-          ls
-          pwd
+          cd client
+          npm install
+          npm run build
+
+      - name: Install Server Dependencies and Start Server
+        run: |
+          npm install
+          npm run start
 
 #  start-server:
 #    name: Start Express Server
