@@ -4,6 +4,7 @@ const db = require("./models");
 const importChallenges = require("./scripts/importChallenges");
 const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./middleware/LoggingMiddleware");
+const authMiddleware = require('./middleware/AuthenticationMiddleware');
 
 const app = express();
 
@@ -11,17 +12,23 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
 
+// For testing purposes
+app.post('/test-auth', authMiddleware, (req, res) => {
+  const user = req.user;
 
-/** For testing purposes, we can mock the authenticated user by setting the headers
- *  Note that there must be a user with userId 1 in the database.
- */
-function mockAuthenticated(req, res, next) {
-  req.headers.utorid = 'testuser';
-  req.headers.userid = 1;
-  next();
-}
-app.use(mockAuthenticated); //FOR TESTING PURPOSES ONLY
+  const userInfo = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+  };
+
+  res.json(userInfo);
+});
+
+
 app.use(loggingMiddleware);
+app.use(authMiddleware);
 
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
