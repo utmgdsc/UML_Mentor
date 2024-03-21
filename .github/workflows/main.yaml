@@ -17,7 +17,7 @@ jobs:
         # TODO: git checkout to main
         run: |
           cd ~/UML_Mentor
-          git checkout origin/39-setup-github-actions-for-repo
+          git switch 39-setup-github-actions-for-repo
           git pull
 
       - name: Build Client
