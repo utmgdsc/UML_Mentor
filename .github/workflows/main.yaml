@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      # Delete this line
-      - 39-setup-github-actions-for-repo
 
 jobs:
   build-deploy:
@@ -14,10 +12,9 @@ jobs:
 
     steps:
       - name: Checkout
-        # TODO: git checkout to main
         run: |
           cd ~/UML_Mentor
-          git switch 39-setup-github-actions-for-repo
+          git switch main
           git pull
 
       - name: Build Client

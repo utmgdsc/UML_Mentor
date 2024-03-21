@@ -32,7 +32,7 @@ function Home() {
     <section>
       {/* Recent Solutions */}
       <Container className={"mt-5"}>
-        <h2 className={"mb-3"}>HELLOOO</h2>
+        <h2 className={"mb-3"}>Recent Solutions</h2>
         <Row sm={1} lg={3} className={"gx-4 gy-4"}>
           {DEMO_SOLUTION_CARDS.map((solutionCardProps) => (
             <Col key={solutionCardProps.href}>
