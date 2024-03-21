@@ -40,6 +40,10 @@ app.use("/api/comments", comments);
 
 app.use(ErrorHandler);
 
+// ENV FILE SPECIFICATION
+// PROD=prod|dev -> prod runs in production mode
+//
+
 if ("ENV" in process.env && process.env.ENV === "prod") {
   console.log("!!! RUNNING IN PRODUCTION MODE !!!");
   app.use(express.static(path.resolve(__dirname, "../client/dist")));

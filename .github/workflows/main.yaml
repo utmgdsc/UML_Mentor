@@ -28,7 +28,8 @@ jobs:
       - name: Start Server
         run: |
           cd ~/UML_Mentor
-          cp ~/.env .
+          cp ~/env_file .env
+          pm2 start npm --name "UML Mentor" -- start
           
           
 
