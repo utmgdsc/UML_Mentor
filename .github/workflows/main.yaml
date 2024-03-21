@@ -23,6 +23,7 @@ jobs:
         run: |
           pwd
           cd ~/UML_Mentor
+          pwd
 
       - name: Start Server
         run: |
