@@ -14,16 +14,18 @@ jobs:
 
     steps:
       - name: Checkout
-        # TODO: add npm run lint
+        # TODO: git checkout to main
         run: |
           cd ~/UML_Mentor
+          git checkout origin/39-setup-github-actions-for-repo
           git pull
 
       - name: Build Client
         run: |
-          pwd
-          cd ~/UML_Mentor
-          pwd
+          cd ~/UML_Mentor/client
+          npm install && npm run build
+          
+          
 
       - name: Start Server
         run: |
