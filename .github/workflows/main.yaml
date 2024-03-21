@@ -26,8 +26,7 @@ jobs:
 
       - name: Start Server
         run: |
-          cp * ~/UML_Mentor
-          pm2 restart all
+          pwd
           
 
 #  start-server:
