@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 39-setup-github-actions-for-repo
 
 jobs:
   build-deploy:
@@ -27,4 +28,4 @@ jobs:
           cd ~/UML_Mentor
           cp ~/env_file .env
 
-#r
+#a
