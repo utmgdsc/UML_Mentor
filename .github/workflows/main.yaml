@@ -31,18 +31,3 @@ jobs:
           cp ~/env_file .env
           pm2 kill
           pm2 start npm --name "UML Mentor" -- start
-          
-          
-
-#  start-server:
-#    name: Start Express Server
-#    runs-on: [self-hosted]
-#
-#    steps:
-#      - name: Checkout Repository
-#        uses: actions/checkout@v2
-#
-#      - name: Install Dependencies and Start Server
-#        run: |
-#          npm install
-#          npm start
