@@ -30,4 +30,4 @@ jobs:
           cd ~/UML_Mentor
           cp ~/env_file .env
           pm2 kill
-          pm2 start npm --name "UML Mentor" -- start
+          pm2 reload all
