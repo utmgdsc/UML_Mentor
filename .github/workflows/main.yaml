@@ -24,12 +24,12 @@ jobs:
         run: |
           cd ~/UML_Mentor/client
           npm install && npm run build
-          
-          
 
       - name: Start Server
         run: |
-          pwd
+          cd ~/UML_Mentor
+          cp ~/.env .
+          
           
 
 #  start-server:
