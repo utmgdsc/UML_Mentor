@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 39-setup-github-actions-for-repo
 
 jobs:
   build-deploy:
