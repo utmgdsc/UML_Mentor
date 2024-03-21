@@ -13,20 +13,22 @@ jobs:
     runs-on: [self-hosted]
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Install Client Dependencies and Build Client
+      - name: Checkout
         # TODO: add npm run lint
         run: |
-          cd client
-          npm install
-          npm run build
+          cd ~/UML_Mentor
+          git pull
 
-      - name: Install Server Dependencies and Start Server
+      - name: Build Client
         run: |
-          npm install
-          npm run start
+          pwd
+          cd ~/UML_Mentor
+
+      - name: Start Server
+        run: |
+          cp * ~/UML_Mentor
+          pm2 restart all
+          
 
 #  start-server:
 #    name: Start Express Server

@@ -41,10 +41,10 @@ app.use("/api/comments", comments);
 app.use(ErrorHandler);
 
 //uncomment for production
-// app.use(express.static(path.resolve(__dirname, "../client/dist")))
+app.use(express.static(path.resolve(__dirname, "../client/dist")));
 
 //Send all non-api requests to the React app.
 //uncomment for production
-// app.get("*", (req, res) => {
-//   res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"))
-// })
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
+});
