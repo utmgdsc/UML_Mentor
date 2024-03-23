@@ -1,7 +1,7 @@
 const db = require('../models'); 
 
 async function authMiddleware(req, res, next) {
-    try {
+    try {   
         const utorid = req.headers.utorid;
         const http_mail = req.headers.http_mail;
 
