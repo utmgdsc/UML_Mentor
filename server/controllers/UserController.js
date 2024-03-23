@@ -63,5 +63,3 @@ exports.delete = async (req, res) => {
   res.status(204).send();
 };
 
-
-// send request to the route postman
