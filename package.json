@@ -6,12 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --env-file=.env server/index.js",
-    "devStart": "nodemon server/index.js"
+    "devStart": "env $(cat .env) nodemon server/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@langchain/community": "^0.0.41",
+    "@langchain/openai": "^0.0.23",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.4",
     "express": "^4.18.2",
