@@ -1,15 +1,16 @@
 const Challenge = require("../controllers/ChallengeController");
 
 const router = require("express").Router();
-const { AsyncWrapController } = require("./ErrorHandlingMiddleware");
+const { AsyncWrapController } = require("../middleware/ErrorHandlingMiddleware");
+const checkRole = require("../middleware/CheckRoleMiddleware");
 
 AsyncWrapController(Challenge);
 
 // Get all challenges from the database.
-router.get("/", Challenge.findAll);
+router.get("/", checkRole(['user', 'admin']), Challenge.findAll);
 
 // Get a challenge from the database.
-router.get("/:id", Challenge.findOne);
+router.get("/:id", checkRole(['user', 'admin']), Challenge.findOne);
 
 // Get all solutions from a challenge. NOT GOING TO WORK AS IS
 // Sorting (by date or upvote) happens on the client side.

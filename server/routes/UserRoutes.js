@@ -1,19 +1,12 @@
 const User = require("../controllers/UserController");
 const router = require("express").Router();
-const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
-
+const { AsyncWrapController } = require("../middleware/ErrorHandlingMiddleware");
+const checkRole = require("../middleware/CheckRoleMiddleware");
 AsyncWrapController(User);
 
-// Get a user from the database.
 router.get("/:id", User.get);
-
-// Create a new user in the database.
-router.post("/:id", User.create);
-
-// Update a user in the database.
-router.put("/:id", User.update);
-
-// Delete a User from the database.
-router.delete("/:id", User.delete);
+router.post("/:id", checkRole(['admin']), User.create);
+router.put("/:id", checkRole(['admin']), User.update);
+router.delete("/:id", checkRole(['admin']), User.delete);
 
 module.exports = router;
