@@ -92,6 +92,11 @@ const { ChatPromptTemplate } = require("@langchain/core/prompts");
 const { StringOutputParser } = require("@langchain/core/output_parsers");
 
 exports.getAIFeedback = async (req, res) => {
+  // TODO: rescale the image
+  // TODO: webrtc streaming back to the user
+  // TODO: add feedback to the database
+  // TODO: discuss possible extension like chat, global chat, RAG /w course documents
+
   const { id } = req.params;
   const solution = await Solution.findByPk(id);
 
@@ -100,8 +105,6 @@ exports.getAIFeedback = async (req, res) => {
     `${STORAGE_CONFIG.location}/${solution.diagram}`,
   );
   const diagramb64 = diagramBuffer.toString("base64");
-
-  console.log("Diagram:", diagramb64);
 
   const prompt = ChatPromptTemplate.fromMessages([
     [
@@ -114,8 +117,11 @@ exports.getAIFeedback = async (req, res) => {
     ],
     [
       "user",
-      "Challenge: {challenge_title}\n{challenge_description}\n" +
-        "\nSolution: {solution_title}\n{solution_description}",
+      [
+        "Challenge: {challenge_title}\n{challenge_description}\n" +
+          "\nSolution: {solution_title}\n{solution_description}",
+        { image_url: `data:image/jpeg;base64,${diagramb64}` },
+      ],
     ],
   ]);
   const model = new ChatOpenAI({ modelName: "gpt-4-vision-preview" });
