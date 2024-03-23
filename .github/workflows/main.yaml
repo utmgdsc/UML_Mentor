@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    name: Build & Deploy
+    runs-on: [self-hosted]
+
+    steps:
+      - name: Checkout
+        run: |
+          cd ~/UML_Mentor
+          git switch main
+          git pull
+
+      - name: Build Client
+        run: |
+          cd ~/UML_Mentor/client
+          npm install && npm run build
+
+      - name: Start Server
+        run: |
+          cd ~/UML_Mentor
+          cp ~/env_file .env
+
+#a

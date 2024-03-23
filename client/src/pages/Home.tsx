@@ -42,7 +42,7 @@ function Home() {
         </Row>
         {/* See more solutions button */}
         <Button variant={"outline-primary"} className={"mt-3"} href={"/home"}>
-					See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
+          See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
         </Button>
       </Container>
 

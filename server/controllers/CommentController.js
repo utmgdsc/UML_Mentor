@@ -2,34 +2,16 @@ const db = require("../models/index");
 const Comment = db.Comment;
 
 exports.get = async (req, res) => {
-    // const { solutionId } = req.params;
-    // const comments = await Comment.findAll({
-    //   where: {
-    //     solutionId,
-    //   },
-    // });
-    // res.status(200).json(comments);
-    
-    const sampleComments = [
-      {
-        text: "Amazing Work!",
-        userId: "Alex Apostolu",
-        solutionId: 1
-      },
-      {
-        text: "Great job!",
-        userId: "Alex Apostolu",
-        solutionId: 2
-      },
-      {
-        text: "jobizdan!",
-        userId: "Alex Apostolu",
-        solutionId: 3
-      },
-    ];
+  const { solutionId } = req.params;
+  const comments = await Comment.findAll({
+    where: {
+      solutionId,
+    },
+  });
+  res.status(200).json(comments);
 
-    res.status(200).json(sampleComments);
-}
+  res.status(200).json(sampleComments);
+};
 
 exports.create = async (req, res) => {
   const { text, userId, solutionId } = req.body;
