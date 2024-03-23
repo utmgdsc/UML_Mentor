@@ -67,3 +67,16 @@ app.use(ErrorHandler);
 // app.get("*", (req, res) => {
 //   res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"))
 // })
+
+// ENV FILE SPECIFICATION
+// PROD=prod|dev -> prod runs in production mode
+//
+
+if ("ENV" in process.env && process.env.ENV === "prod") {
+  console.log("!!! RUNNING IN PRODUCTION MODE !!!");
+  app.use(express.static(path.resolve(__dirname, "../client/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
+  });
+}
+

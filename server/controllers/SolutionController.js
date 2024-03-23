@@ -10,25 +10,14 @@ exports.getAll = async (req, res) => {
 };
 
 exports.get = async (req, res) => {
-    // const { id } = req.params;
-    // const solutions = await Solution.findAll({
-    //   where: {
-    //     id: id,
-    //   },
-    // });
-    // res.status(200).json(solutions[0]);
-    
-    const sampleSolutions = [
-      {
-        challengeId: 1,
-        userId: "Alex Apostolu",
-        description: "Make a Factory Design Pattern",
-        title: "Factory Design Pattern"
-      }
-    ];
-
-    res.status(200).json(sampleSolutions);
-}
+  const { id } = req.params;
+  const solutions = await Solution.findAll({
+    where: {
+      id: id,
+    },
+  });
+  res.status(200).json(solutions[0]);
+};
 
 exports.getComments = async (req, res) => {
   const { id } = req.params;
@@ -41,7 +30,9 @@ exports.getComments = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { challengeId, userId, title, description, diagram } = req.body;
+  const { challengeId, userId, title, description } = req.body;
+  const { filename: diagram } = req.file;
+
   const newSolution = await Solution.create({
     challengeId,
     userId,
