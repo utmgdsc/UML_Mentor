@@ -2,14 +2,33 @@ const express = require("express");
 const path = require("node:path");
 const db = require("./models");
 const importChallenges = require("./scripts/importChallenges");
-const { ErrorHandler } = require("./routes/ErrorHandlingMiddleware");
-const loggingMiddleware = require("./routes/LoggingMiddleware");
+const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
+const loggingMiddleware = require("./middleware/LoggingMiddleware");
+const authMiddleware = require('./middleware/AuthenticationMiddleware');
 
 const app = express();
 
 app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
+
+// For testing purposes
+// app.post('/test-auth', authMiddleware, (req, res) => {
+//   const user = req.user;
+
+//   const userInfo = {
+//       id: user.id,
+//       username: user.username,
+//       email: user.email,
+//       role: user.role,
+//   };
+
+//   res.json(userInfo);
+// });
+
+
+app.use(loggingMiddleware);
+app.use(authMiddleware);
 
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
@@ -40,6 +59,15 @@ app.use("/api/comments", comments);
 
 app.use(ErrorHandler);
 
+//uncomment for production
+// app.use(express.static(path.resolve(__dirname, "../client/dist")))
+
+//Send all non-api requests to the React app.
+//uncomment for production
+// app.get("*", (req, res) => {
+//   res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"))
+// })
+
 // ENV FILE SPECIFICATION
 // PROD=prod|dev -> prod runs in production mode
 //
@@ -51,3 +79,4 @@ if ("ENV" in process.env && process.env.ENV === "prod") {
     res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
   });
 }
+
