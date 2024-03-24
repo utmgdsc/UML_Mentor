@@ -10,7 +10,7 @@ const Profile = () => {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    fetch('/api/users/Apostolu')
+    fetch('/api/users/', { credentials: 'include' })
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch user data :(');
