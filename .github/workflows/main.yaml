@@ -26,5 +26,4 @@ jobs:
         run: |
           cd ~/UML_Mentor
           cp ~/env_file .env
-
-#a
+          pm2 restart "UML Mentor"
