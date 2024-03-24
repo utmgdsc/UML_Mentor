@@ -9,8 +9,6 @@ exports.get = async (req, res) => {
     },
   });
   res.status(200).json(comments);
-
-  res.status(200).json(sampleComments);
 };
 
 exports.create = async (req, res) => {

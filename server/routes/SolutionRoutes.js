@@ -1,4 +1,6 @@
-const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
+const {
+  AsyncWrapController,
+} = require("../middleware/ErrorHandlingMiddleware");
 
 const Solution = require("../controllers/SolutionController");
 AsyncWrapController(Solution);

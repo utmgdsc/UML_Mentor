@@ -1,6 +1,8 @@
 const Comment = require("../controllers/CommentController");
 const router = require("express").Router();
-const { AsyncWrapController } = require("../routes/ErrorHandlingMiddleware");
+const {
+  AsyncWrapController,
+} = require("../middleware/ErrorHandlingMiddleware");
 
 AsyncWrapController(Comment);
 

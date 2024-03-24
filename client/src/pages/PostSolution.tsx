@@ -15,7 +15,6 @@ type PostSolutionState = {
 
 const PostSolution = () => {
   const navigate = useNavigate();
-  const userId = 0; // TODO: change this when auth is added!
   const { id: challengeId } = useParams();
   const [postSolutionState, setPostSolutionState] = useState<PostSolutionState>(
     {
@@ -49,7 +48,6 @@ const PostSolution = () => {
     e.preventDefault();
     // TODO: Form validation
     const data = new FormData();
-    data.append("userId", `${userId}`);
     data.append("challengeId", `${challengeId}`);
 
     data.append("title", postSolutionState.title);
@@ -69,7 +67,6 @@ const PostSolution = () => {
         console.error(err);
       });
   };
-
   return (
     <Container>
       <Row className={"my-5 justify-content-center"}>

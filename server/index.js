@@ -4,7 +4,7 @@ const db = require("./models");
 const importChallenges = require("./scripts/importChallenges");
 const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./middleware/LoggingMiddleware");
-const authMiddleware = require('./middleware/AuthenticationMiddleware');
+const authMiddleware = require("./middleware/AuthenticationMiddleware");
 
 const app = express();
 
@@ -25,10 +25,6 @@ const PORT = process.env.PORT || 8080;
 
 //   res.json(userInfo);
 // });
-
-
-app.use(loggingMiddleware);
-app.use(authMiddleware);
 
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
@@ -51,6 +47,7 @@ const users = require("./routes/UserRoutes");
 const comments = require("./routes/CommentRoutes");
 
 app.use(loggingMiddleware);
+app.use(authMiddleware);
 
 app.use("/api/challenges", challenges);
 app.use("/api/solutions", solutions);
@@ -72,11 +69,10 @@ app.use(ErrorHandler);
 // PROD=prod|dev -> prod runs in production mode
 //
 
-if ("ENV" in process.env && process.env.ENV === "prod") {
+if (process.env?.ENV === "prod") {
   console.log("!!! RUNNING IN PRODUCTION MODE !!!");
   app.use(express.static(path.resolve(__dirname, "../client/dist")));
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
   });
 }
-

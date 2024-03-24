@@ -30,8 +30,13 @@ exports.getComments = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { challengeId, userId, title, description } = req.body;
+  const { challengeId, title, description } = req.body;
   const { filename: diagram } = req.file;
+
+  let userId = undefined;
+  if (req.user) {
+    userId = req.user.id;
+  }
 
   const newSolution = await Solution.create({
     challengeId,
