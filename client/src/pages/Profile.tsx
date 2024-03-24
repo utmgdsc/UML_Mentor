@@ -12,7 +12,7 @@ const Profile = () => {
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    fetch('/api/users/${utorid}')
+    fetch(`/api/users/${utorid}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch user data:(');
