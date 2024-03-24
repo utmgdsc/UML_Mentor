@@ -12,7 +12,13 @@ exports.get = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { text, userId, solutionId } = req.body;
+  const { text, solutionId } = req.body;
+
+  let userId = undefined;
+  if (req.user) {
+    userId = req.user.id;
+  }
+
   const newComment = await Comment.create({ text, userId, solutionId });
   res.status(201).json(newComment);
 };

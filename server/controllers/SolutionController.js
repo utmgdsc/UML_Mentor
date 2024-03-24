@@ -51,15 +51,15 @@ exports.create = async (req, res) => {
 exports.edit = async (req, res) => {
   // TODO: make sure only the owner can make edits.
   const { file } = req;
-  const { challengeId, userId, description, title, id } = req.body;
+  const { challengeId, description, title, id } = req.body;
 
   const updateData = {};
 
   if (challengeId !== null && challengeId !== undefined) {
     updateData.challengeId = challengeId;
   }
-  if (userId !== null && userId !== undefined) {
-    updateData.userId = userId;
+  if (req.user) {
+    updateData.userId = req.user.id;
   }
   if (description !== null && description !== undefined) {
     updateData.description = description;
