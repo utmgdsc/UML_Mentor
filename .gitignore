@@ -2,6 +2,8 @@
 UML_Mentor_Proposal.pdf
 *.sqlite
 file_uploads/
+.env
+
 
 # Logs
 logs
