@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom'; 
 import { Container, Row, Button, Col, Card } from 'react-bootstrap';
 import SolutionCard from '../components/SolutionCard';
 import { User } from '../../../server/models/User';
 import "./Profile.css";
 
 const Profile = () => {
+  const { utorid } = useParams();
   const [user, setUser] = useState(null);
   const [solutions, setSolutions] = useState([]);
   const [comments, setComments] = useState([]);
 
   useEffect(() => {
-    fetch('/api/users/1')
+    fetch(`/api/users/${utorid}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error('Failed to fetch user data:(');
         }
         return response.json();
       })

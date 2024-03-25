@@ -4,14 +4,18 @@ const User = db.User;
 exports.get = async (req, res) => {
   //const users = await User.findAll();
 
-  const sampleUser = {
-      username: 'Alexander Apostolu',
-      preferredName: 'Alex',
-      email: 'apostolu240@gmail.com',
-      score: 100
-  };
+  const { username: reqUsername } = req.params;
 
-  res.status(200).json(sampleUser);
+  if (!reqUsername) {
+    return res.status(404).json({ message: "Requested username not found" });
+  }
+
+  let user = await User.findOne({ where: { username: reqUsername } });
+  if (!user) {
+    return res.status(500).json({ message: "User not found" });
+  }
+  
+  res.status(200).json(user);
 }
 
 exports.getSolutions = async (req, res) => {
