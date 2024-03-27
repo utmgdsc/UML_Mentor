@@ -6,9 +6,8 @@ router.get("/", SolutionInProgress.findAll);
 // Get a solution in progress by its challenge id and (and user id) from the database.
 router.get("/challenge/:challengeId", SolutionInProgress.findOneByChallengeId);
 
-// Get a solution in progress by its id from the database.
-router.get("/:id", SolutionInProgress.findOne);
-
+// NOT USED CURRENTLY
+// router.get("/:id", SolutionInProgress.findOne);
 
 // Create a new solution in the database.
 router.post("/", SolutionInProgress.create);
@@ -21,6 +20,7 @@ router.put("/:id", SolutionInProgress.edit);
 router.delete("/:id", SolutionInProgress.delete);
 
 // DEVELOPMENT ONLY!
+// Delete all solutions from the database.
 router.delete("/", SolutionInProgress.deleteAll);
 
 module.exports = router;

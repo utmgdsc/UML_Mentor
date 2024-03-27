@@ -11,15 +11,15 @@ const app = express();
 app.use(express.json());
 
 
-/** For testing purposes, we can mock the authenticated user by setting the headers
- *  Note that there must be a user with userId 1 in the database.
- */
-function mockAuthenticated(req, res, next) {
-    req.headers.utorid = 'testuser';
-    req.headers.userid = 1;
-    next();
-}
-app.use(mockAuthenticated); //FOR TESTING PURPOSES ONLY
+// /** For testing purposes, we can mock the authenticated user by setting the headers
+//  *  Note that there must be a user with userId 1 in the database.
+//  */
+// function mockAuthenticated(req, res, next) {
+//     req.headers.utorid = 'testuser';
+//     req.headers.userid = 1;
+//     next();
+// }
+// app.use(mockAuthenticated); //FOR TESTING PURPOSES ONLY
 
 
 const PORT = process.env.PORT || 8080;
@@ -64,7 +64,7 @@ app.use(authMiddleware);
 
 app.use("/api/challenges", challenges);
 app.use("/api/solutions", solutions);
-app.use('/api/inprogress', SolutionInProgress); //TODO: Make sure this does not cause conflicts with the solutions route (e.g. /api/solutions/:id)
+app.use('/api/inprogress', SolutionInProgress);
 app.use("/api/users", users);
 app.use("/api/comments", comments);
 

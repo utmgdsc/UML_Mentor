@@ -18,7 +18,7 @@ const Editor = () => {
 
     const drawioRef = useRef<DrawIoEmbedRef>(null);
     const diagramData = useRef<string | undefined>(undefined);
-    //TODO: Allow the user to change the diagram name
+    //TODO: Allow the user to change the diagram name (super low proirity)
     const [diagramName, setDiagramName] = useState<string | null>(null);
     const diagramNameRef = useRef<string | null>(null); //Crutch for the handleSave function
     const diagramId = useRef<string | null>(null);

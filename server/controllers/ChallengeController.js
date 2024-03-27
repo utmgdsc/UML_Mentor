@@ -16,6 +16,11 @@ function diffToNum(difficulty) {
 
 exports.findAll = async (req, res) => {
   const challengesData = await Challenge.findAll();
+
+  if(challengesData.length === 0) {
+    return res.status(404).json({ error: "No challenges found." });
+  }
+
   const challenges = challengesData.map((challengeData) => {
     const challengeDescription = JSON.parse(challengeData.description);
     return {
@@ -34,12 +39,13 @@ exports.findAll = async (req, res) => {
 };
 
 exports.findOne = async (req, res) => {
+  // TODO: Check the Solutions table for if the user has already solved the challenge
+  // Append `completed: true` to the challenge object if they have
   const challenge_id = req.params.id;
 
   const challengeData = await Challenge.findOne({
     where: {
       id: challenge_id,
-      // userId: req.user.id //Set up properly after done authentication
     },
   });
 
