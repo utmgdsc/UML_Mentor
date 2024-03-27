@@ -221,13 +221,13 @@ const Editor = () => {
                                 else {
                                     console.log("No diagram data found");
                                 }
-                            }, 100);
+                            }, 10);
                         }  
                     }}
                     onClose={(data) => {
-                        // console.log(data);
+                        console.log(data);
                         // If the exit is triggered by another event, then do nothing
-                        if(data.parentEvent) {
+                        if(data.parentEvent || data.modified === true) {
                             return;
                         }
                         // Save and exit. Timeout to make sure the save request is sent before the tab is closed.
