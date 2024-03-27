@@ -9,13 +9,13 @@ AsyncWrapController(User);
 // Get a user from the database.
 router.get("/:username", User.get);
 
-// Create a new user in the database.
-router.post("/:id", User.create);
+// USE FOR ADDING ADMINS
+router.post("/", User.create);
 
 // Update a user in the database.
-router.put("/:id", User.update);
+router.put("/:username", User.update);
 
 // Delete a User from the database.
-router.delete("/:id", User.delete);
+router.delete("/:username", User.delete);
 
 module.exports = router;

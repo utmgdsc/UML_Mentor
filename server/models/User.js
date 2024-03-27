@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
         username: {
             type: DataTypes.STRING,
+            primaryKey: true,
             allowNull: false,
             unique: true
         },
@@ -25,8 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         // Define associations
         User.hasMany(models.Solution, { foreignKey: 'userId' });
         User.hasMany(models.Comment, { foreignKey: 'userId' });
-      };
-    
+        };
+
     return User;
-  };
-  
+};

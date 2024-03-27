@@ -6,14 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --env-file=.env server/index.js",
-    "dev": "env $(cat .env) nodemon server/index.js"
+    "dev": "nodemon -r dotenv/config server/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
-    "dotenv": "^16.4.4",
+    "dotenv": "^16.4.5",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",

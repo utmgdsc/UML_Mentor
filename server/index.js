@@ -12,20 +12,6 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
 
-// For testing purposes
-// app.post('/test-auth', authMiddleware, (req, res) => {
-//   const user = req.user;
-
-//   const userInfo = {
-//       id: user.id,
-//       username: user.username,
-//       email: user.email,
-//       role: user.role,
-//   };
-
-//   res.json(userInfo);
-// });
-
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
   // Use { force: true } cautiously as it will drop existing tables
@@ -43,6 +29,7 @@ db.sequelize.sync().then(async () => {
 // Set up API routes
 const challenges = require("./routes/ChallengeRoutes");
 const solutions = require("./routes/SolutionRoutes");
+const SolutionInProgress = require('./routes/SolutionInProgressRoutes');
 const users = require("./routes/UserRoutes");
 const comments = require("./routes/CommentRoutes");
 
@@ -51,10 +38,12 @@ app.use(authMiddleware);
 
 app.use("/api/challenges", challenges);
 app.use("/api/solutions", solutions);
+app.use('/api/inprogress', SolutionInProgress);
 app.use("/api/users", users);
 app.use("/api/comments", comments);
 
 app.use(ErrorHandler);
+
 
 //uncomment for production
 // app.use(express.static(path.resolve(__dirname, "../client/dist")))

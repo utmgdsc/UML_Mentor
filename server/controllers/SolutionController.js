@@ -11,12 +11,8 @@ exports.getAll = async (req, res) => {
 
 exports.get = async (req, res) => {
   const { id } = req.params;
-  const solutions = await Solution.findAll({
-    where: {
-      id: id,
-    },
-  });
-  res.status(200).json(solutions[0]);
+  const solution = await Solution.findByPk(id);
+  res.status(200).json(solution);
 };
 
 exports.getComments = async (req, res) => {
@@ -33,10 +29,7 @@ exports.create = async (req, res) => {
   const { challengeId, title, description } = req.body;
   const { filename: diagram } = req.file;
 
-  let userId = undefined;
-  if (req.user) {
-    userId = req.user.id;
-  }
+  const userId = req.user.username;
 
   const newSolution = await Solution.create({
     challengeId,
