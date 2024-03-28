@@ -12,6 +12,15 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
 
+// Set up API routes
+const challenges = require("./routes/ChallengeRoutes");
+const solutions = require("./routes/SolutionRoutes");
+const users = require("./routes/UserRoutes");
+const comments = require("./routes/CommentRoutes");
+const SolutionInProgress = require("./routes/SolutionInProgressRoutes");
+
+app.use(loggingMiddleware);
+
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
   // Use { force: true } cautiously as it will drop existing tables
@@ -27,18 +36,11 @@ db.sequelize.sync().then(async () => {
 });
 
 // Set up API routes
-const challenges = require("./routes/ChallengeRoutes");
-const solutions = require("./routes/SolutionRoutes");
-const SolutionInProgress = require('./routes/SolutionInProgressRoutes');
-const users = require("./routes/UserRoutes");
-const comments = require("./routes/CommentRoutes");
-
-app.use(loggingMiddleware);
 app.use(authMiddleware);
 
 app.use("/api/challenges", challenges);
 app.use("/api/solutions", solutions);
-app.use('/api/inprogress', SolutionInProgress);
+app.use("/api/inprogress", SolutionInProgress);
 app.use("/api/users", users);
 app.use("/api/comments", comments);
 
