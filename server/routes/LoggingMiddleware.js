@@ -1,5 +1,5 @@
 function LoggingMiddleware(req, res, next) {
-  console.log(`Requesting ${req.originalUrl} /w`, req.params, req.body);
+  console.log(`Requesting ${req.originalUrl} /w`, req.body);
   next();
 }
 

@@ -11,6 +11,14 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
 
+// Set up API routes
+const challenges = require("./routes/ChallengeRoutes");
+const solutions = require("./routes/SolutionRoutes");
+const users = require("./routes/UserRoutes");
+const comments = require("./routes/CommentRoutes");
+
+app.use(loggingMiddleware);
+
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
   // Use { force: true } cautiously as it will drop existing tables
@@ -24,14 +32,6 @@ db.sequelize.sync().then(async () => {
     console.log(`Server is running on port ${PORT}.`);
   });
 });
-
-// Set up API routes
-const challenges = require("./routes/ChallengeRoutes");
-const solutions = require("./routes/SolutionRoutes");
-const users = require("./routes/UserRoutes");
-const comments = require("./routes/CommentRoutes");
-
-app.use(loggingMiddleware);
 
 app.use("/api/challenges", challenges);
 app.use("/api/solutions", solutions);
