@@ -18,7 +18,7 @@ db.sequelize.sync().then(async () => {
   console.log("Database synced");
 
   // import the challenges into the db. Comment out after first run
-  // await importChallenges();
+  await importChallenges();
 
   // Start listening for requests after the database is ready
   app.listen(PORT, () => {

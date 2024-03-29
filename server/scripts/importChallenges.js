@@ -1,6 +1,6 @@
 const db = require("../models/index");
 const Challenge = db.Challenge;
-const challenges = require("../../challenges.json"); // Import the challenges data
+const challenges = require("../../challenges.json");
 
 
 // Sync the challenges data with the database
@@ -11,7 +11,14 @@ const challenges = require("../../challenges.json"); // Import the challenges da
 module.exports = async function importChallenges(dropTable = false) {
     // Drop the existing Challenge table
     if (dropTable)
-    await Challenge.drop();
+        await Challenge.drop();
+
+    //check if the table has any entries, if yes, do not import
+    const existingChallenges = await Challenge.findAll();
+    if (existingChallenges.length > 0) {
+        console.log("Challenges already exist in the database. Skipping import.");
+        return;
+    }
 
     // Break down by difficulty
     const easyChallenges = challenges.challenges.easy;
