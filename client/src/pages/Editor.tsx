@@ -1,6 +1,5 @@
 import { useEffect, useRef, useMemo, useState, useCallback } from 'react';
-import { Button } from 'react-bootstrap';
-import { ActionExport, DrawIoEmbed, DrawIoEmbedRef} from 'react-drawio';
+import { DrawIoEmbed, DrawIoEmbedRef} from 'react-drawio';
 import { useLocation } from 'react-router-dom';
 
 
@@ -239,7 +238,7 @@ const Editor = () => {
                     />
             </div>
             {/* TESTING ONLY
-            <Button onClick={ () => {
+            <button onClick={ () => {
                 if (drawioRef.current !== null && diagramData.current !== undefined){
                     drawioRef.current?.load({
                         xmlpng: diagramData.current
@@ -249,7 +248,7 @@ const Editor = () => {
                 else {
                     console.log("No diagram data found");
                 }
-            }}>Import Diagram</Button> */}
+            }}>Import Diagram</button> */}
         </div>
     );
 };
