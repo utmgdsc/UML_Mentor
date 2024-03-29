@@ -38,8 +38,6 @@ router.post("/", upload.single("diagram"), Solution.create);
 // Edit a solution in the database.
 router.put("/", upload.single("diagram"), Solution.edit);
 
-router.get("/:id/feedback", Solution.getAIFeedback);
-
 // Upvote a solution in the database.
 // However Vlad said we shouldn't worry about upvoting a solution for now. Just
 // worry about upvoting comments.
