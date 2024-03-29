@@ -7,15 +7,6 @@ import Card from "react-bootstrap/Card";
 import Button from "../components/Button.tsx";
 import Comment from "../components/Comment.tsx";
 
-type UnprocessedComment = {
-  text: string;
-  id: number;
-  upVotes: number;
-  replies: string;
-  userId: number;
-  solutionId: number;
-};
-
 function loadSolution(
   id: string,
   setter: React.Dispatch<React.SetStateAction<SolutionData | undefined>>,
@@ -30,75 +21,14 @@ function loadSolution(
     });
 }
 
-function formatComments(comments: UnprocessedComment[]): CommentData[] {
-  const convertedReplies = comments.map((c) => ({
-    ...c,
-    replies: c.replies
-      .split(",")
-      .filter((r) => r.length !== 0)
-      .map((r) => Number(r)),
-  }));
-
-  console.log("Converted Replies", convertedReplies);
-
-  const replyIds = [];
-
-  function replaceReplies(cms: UnprocessedComment[], cm: UnprocessedComment) {
-    console.log(`Calling replaceReplies for ${cm.id}`, cms);
-    if (cm.replies.length === 0) {
-      // Leaf Node
-      console.log("LEAF NODE", cm);
-      return cm;
-    }
-
-    if (typeof cm.replies[0] === "object") {
-      // Already replaced, skip
-      console.log("Skipping", cm);
-      return cm;
-    }
-
-    console.log("Before replacing", cm);
-
-    // Replace replies of the current node
-    cm.replies = cm.replies.map((r: number) => {
-      const out = cms.filter((c) => c.id === r)[0];
-      replyIds.push(out.id);
-      console.log(`Reply for ${cm.text} found: ${out.id}.`);
-      return replaceReplies(cms, out);
-    });
-
-    console.log(cm);
-    return cm;
-  }
-
-  const convertedRepliesCopy = JSON.parse(JSON.stringify(convertedReplies));
-
-  const repliesIntegrated = convertedRepliesCopy.map((c) =>
-    replaceReplies(convertedRepliesCopy, c),
-  );
-  //
-  console.log(replyIds);
-
-  const repliesIntegratedPurged = repliesIntegrated.filter(
-    (c) => !replyIds.includes(c.id),
-  );
-
-  return repliesIntegratedPurged;
-}
-
 function loadComments(
   id: string,
   setter: React.Dispatch<React.SetStateAction<CommentData[] | undefined>>,
 ) {
   fetch(`/api/comments/${id}`)
     .then((resp) => resp.json())
-    .then((data: UnprocessedComment[]) => {
-      // TODO: reformat comments to fit the new CommentData type
-
-      const formatted = formatComments(data);
-      console.log("Formatted", formatted);
-
-      setter(formatted);
+    .then((data: CommentData[]) => {
+      setter(data);
     })
     .catch((err) => {
       console.error(err);

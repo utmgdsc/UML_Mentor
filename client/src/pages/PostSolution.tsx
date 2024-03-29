@@ -10,9 +10,6 @@ type PostSolutionState = {
   diagram: File | null;
 };
 
-// TODO: Add form validation
-// TODO: Include data about the challenge like title
-
 const PostSolution = () => {
   const navigate = useNavigate();
   const { id: challengeId } = useParams();

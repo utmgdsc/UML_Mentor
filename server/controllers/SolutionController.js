@@ -2,6 +2,7 @@ const fs = require("fs").promises;
 const STORAGE_CONFIG = require("../storage_config.json");
 const db = require("../models/index");
 const { HandledError } = require("../routes/ErrorHandlingMiddleware");
+const { AITA } = require("../AI/AITA.js");
 const Solution = db.Solution;
 const Comment = db.Comment;
 const Challenge = db.Challenge;
@@ -35,12 +36,22 @@ exports.create = async (req, res) => {
 
   const newSolution = await Solution.create({
     challengeId,
-    userId,
+    userId: 0,
     title,
     description,
     diagram,
   });
-  res.status(201).json(newSolution);
+  res.status(201).json(newSolution).send();
+
+  // Prepare AI feedback and submit it as a comment!
+  const challenge = await Challenge.findByPk(challengeId);
+  const feedback = await AITA.feedback_for_post(
+    newSolution,
+    challenge,
+    `${STORAGE_CONFIG.location}/${diagram}`,
+  );
+  Comment.create({ text: feedback, userId: -13, solutionId: newSolution.id });
+  console.log("AITA gave feedback!");
 };
 
 exports.edit = async (req, res) => {
@@ -87,59 +98,4 @@ exports.delete = async (req, res) => {
   const { id } = req.params;
   await Solution.destroy({ where: { id } });
   res.status(204).send();
-};
-
-const { ChatOpenAI } = require("@langchain/openai");
-const { ChatPromptTemplate } = require("@langchain/core/prompts");
-const { StringOutputParser } = require("@langchain/core/output_parsers");
-
-exports.getAIFeedback = async (req, res) => {
-  // TODO: rescale the image
-  // TODO: webrtc streaming back to the user
-  // TODO: add feedback to the database
-  // TODO: discuss possible extension like chat, global chat, RAG /w course documents
-
-  const { id } = req.params;
-  const solution = await Solution.findByPk(id);
-
-  const challenge = await Challenge.findByPk(solution.challengeId);
-  const diagramBuffer = await fs.readFile(
-    `${STORAGE_CONFIG.location}/${solution.diagram}`,
-  );
-  const diagramb64 = diagramBuffer.toString("base64");
-
-  const prompt = ChatPromptTemplate.fromMessages([
-    [
-      "system",
-      "You are a teaching assistant for a software architecture course. You are excellent at providing" +
-        " feedback to solutions written by users to software architecture challenges, including questions about UML" +
-        " diagrams, software architecture patterns and SOLID principles. The images you receive will be of UML" +
-        " diagrams. Provide" +
-        " extensive and helpful feedback as a teaching assistant.",
-    ],
-    [
-      "user",
-      [
-        "Challenge: {challenge_title}\n{challenge_description}\n" +
-          "\nSolution: {solution_title}\n{solution_description}",
-        { image_url: `data:image/jpeg;base64,${diagramb64}` },
-      ],
-    ],
-  ]);
-  const model = new ChatOpenAI({ modelName: "gpt-4-vision-preview" });
-  const outputParser = new StringOutputParser();
-
-  const chain = prompt.pipe(model).pipe(outputParser);
-
-  const response = await chain.invoke({
-    challenge_title: challenge.title,
-    challenge_description: challenge.description,
-    solution_title: solution.title,
-    solution_description: solution.description,
-  });
-
-  res.status(200).json({
-    status: "ok",
-    response,
-  });
 };
