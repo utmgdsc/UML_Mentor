@@ -4,12 +4,12 @@ module.exports = (sequelize, DataTypes) => {
         text: {
             type: DataTypes.TEXT,
             allowNull: false
-        },
+        },  
         userId: {
             type: DataTypes.INTEGER,
             references: {
               model: 'Users',
-              key: 'id',
+              key: 'username',
             }
         },
         solutionId: {

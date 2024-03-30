@@ -2,17 +2,11 @@ const db = require("../models/index");
 const User = db.User;
 
 exports.get = async (req, res) => {
-  //const users = await User.findAll();
+  const { username } = req.params;
 
-  const { username: reqUsername } = req.params;
-
-  if (!reqUsername) {
-    return res.status(404).json({ message: "Requested username not found" });
-  }
-
-  let user = await User.findOne({ where: { username: reqUsername } });
+  const user = await User.findByPk(username);
   if (!user) {
-    return res.status(500).json({ message: "User not found" });
+    return res.status(404).json({ message: "User not found" });
   }
   
   res.status(200).json(user);
@@ -21,49 +15,54 @@ exports.get = async (req, res) => {
 exports.getSolutions = async (req, res) => {
   const { id } = req.params;
   const user = await User.findByPk(id);
+
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
   const solutions = await user.getSolutions();
+
   res.status(200).json(solutions);
 };
 
 exports.getComments = async (req, res) => {
   const { id } = req.params;
   const user = await User.findByPk(id);
+
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
   const comments = await user.getComments();
+
   res.status(200).json(comments);
 };
 
+// USE FOR ADDING ADMINS
 exports.create = async (req, res) => {
-  const { username, passwordHash, preferredName, email, score } = req.body;
+  const { username, role, email } = req.body;
   const newUser = await User.create({
     username,
-    passwordHash,
-    preferredName,
     email,
-    score,
+    role
   });
   res.status(201).json(newUser);
 };
 
 exports.update = async (req, res) => {
-  const { id } = req.params;
-  const { username, passwordHash, preferredName, email, score } = req.body;
-  await User.update(
-    { username, passwordHash, preferredName, email, score },
-    { where: { id } },
-  );
-  const updatedUser = await User.findByPk(id);
-  res.status(200).json(updatedUser);
+  const { username } = req.params;
+  const { email, role } = req.body;
+  
+  const user = await User.findByPk(username);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.update({ email, role });
+  res.status(200).json(user);
 };
 
 exports.delete = async (req, res) => {
-  const { id } = req.params;
-  await User.destroy({ where: { id } });
+  const { username } = req.params;
+  await User.destroy({ where: { username } });
   res.status(204).send();
 };
 
