@@ -1,10 +1,13 @@
+import { useState , useEffect} from 'react';
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PersonCircle } from "react-bootstrap-icons";
 import { NAV_CONFIG } from "../App.tsx";
-import { useEffect, useState } from "react";
+import InstructionsPopup from './InstructionsPopup'; // Make sure this path is correct
+import { QuestionCircle } from "react-bootstrap-icons";
 
 function NavigationBar() {
+  const [showInstructions, setShowInstructions] = useState(false);
   const location = useLocation().pathname;
   const [username, setUsername] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -31,36 +34,39 @@ function NavigationBar() {
     navigate(NAV_CONFIG.profile.href + "/" + username);
   };
 
+  const toggleInstructions = () => setShowInstructions(!showInstructions);
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
-      <Container>
-        <Navbar.Brand href={"/"}>{NAV_CONFIG.brand}</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            {NAV_CONFIG.routes.map((route) => (
-              <Nav.Link
-                onClick={() => {
-                  navigate(route.href);
-                }}
-                key={route.href}
-                className={location === route.href ? "text-primary" : ""}
-              >
-                {route.name}
+    <>
+      <Navbar expand="lg" className="bg-body-tertiary">
+        <Container>
+          <Navbar.Brand href={"/"}>{NAV_CONFIG.brand}</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              {NAV_CONFIG.routes.map((route) => (
+                <Nav.Link
+                  onClick={() => navigate(route.href)}
+                  key={route.href}
+                  className={location === route.href ? "text-primary" : ""}
+                >
+                  {route.name}
+                </Nav.Link>
+              ))}
+            </Nav>
+            <Nav className="align-items-center">
+              {/* "Instructions" button */}
+              <QuestionCircle size={20} onClick={toggleInstructions} style={{ cursor: 'pointer' }} />
+              {/* Profile button */}
+              <Nav.Link onClick={handleProfileClick} className="d-flex align-items-center">
+                <PersonCircle size={20} className={location === NAV_CONFIG.profile.href ? "text-primary" : ""} />
               </Nav.Link>
-            ))}
-          </Nav>
-        </Navbar.Collapse>
-        <Nav>
-          <Nav.Link onClick={handleProfileClick}>
-            <PersonCircle
-              size={"1.5rem"}
-              className={location === NAV_CONFIG.profile.href ? "text-primary" : ""}
-            />
-          </Nav.Link>
-        </Nav>
-      </Container>
-    </Navbar>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <InstructionsPopup show={showInstructions} handleClose={toggleInstructions} />
+    </>
   );
 }
 
