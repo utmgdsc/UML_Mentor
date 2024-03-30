@@ -3,11 +3,11 @@ import { Container, Nav, Navbar } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PersonCircle } from "react-bootstrap-icons";
 import { NAV_CONFIG } from "../App.tsx";
-import InstructionsPopup from './InstructionsPopup'; // Make sure this path is correct
+import NewUserPopup from './NewUserPopup'; // Make sure this path is correct
 import { QuestionCircle } from "react-bootstrap-icons";
 
 function NavigationBar() {
-  const [showInstructions, setShowInstructions] = useState(false);
+  const [showNewUserPopup, setShowNewUserPopup] = useState(false);
   const location = useLocation().pathname;
   const [username, setUsername] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ function NavigationBar() {
     navigate(NAV_CONFIG.profile.href + "/" + username);
   };
 
-  const toggleInstructions = () => setShowInstructions(!showInstructions);
+  const toggleNewUserPopup = () => setShowNewUserPopup(!showNewUserPopup);
 
   return (
     <>
@@ -55,8 +55,8 @@ function NavigationBar() {
               ))}
             </Nav>
             <Nav className="align-items-center">
-              {/* "Instructions" button */}
-              <QuestionCircle size={20} onClick={toggleInstructions} style={{ cursor: 'pointer' }} />
+              {/* "NewUserPopup" button */}
+              <QuestionCircle size={20} onClick={toggleNewUserPopup} style={{ cursor: 'pointer' }} />
               {/* Profile button */}
               <Nav.Link onClick={handleProfileClick} className="d-flex align-items-center">
                 <PersonCircle size={20} className={location === NAV_CONFIG.profile.href ? "text-primary" : ""} />
@@ -65,7 +65,7 @@ function NavigationBar() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <InstructionsPopup show={showInstructions} handleClose={toggleInstructions} />
+      <NewUserPopup show={showNewUserPopup} handleClose={toggleNewUserPopup} />
     </>
   );
 }
