@@ -3,9 +3,12 @@ const STORAGE_CONFIG = require("../storage_config.json");
 const db = require("../models/index");
 const Solution = db.Solution;
 const Comment = db.Comment;
+const User = db.User;
 
 exports.getAll = async (req, res) => {
-  const solutions = await Solution.findAll();
+  // eager load the user data
+  const solutions = await Solution.findAll({ limit: 50, include: {model: User, as: "User"}});
+  
   res.status(200).json(solutions);
 };
 

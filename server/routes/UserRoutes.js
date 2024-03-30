@@ -6,6 +6,9 @@ const {
 
 AsyncWrapController(User);
 
+// Get the currently logged in user.
+router.get("/whoami", User.getMe);
+
 // Get a user from the database.
 router.get("/:username", User.get);
 

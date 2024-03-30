@@ -10,6 +10,7 @@ const Solutions = () => {
     fetch("/api/solutions")
       .then((resp) => resp.json())
       .then((data: SolutionData[]) => {
+        console.log(data);
         setSolutions(data);
       })
       .catch((err) => {
@@ -29,6 +30,7 @@ const Solutions = () => {
                 description={solution.description}
                 imgSrc={`/api/solutions/diagrams/${solution.diagram}`}
                 href={`/solution/${solution.id}`}
+                author={solution.User.username}
               />
             </Col>
           ))}

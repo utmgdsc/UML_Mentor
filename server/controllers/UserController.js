@@ -1,6 +1,10 @@
 const db = require("../models/index");
 const User = db.User;
 
+exports.getMe = async (req, res) => {
+  res.status(200).json({ username: req.user.username});
+}
+
 exports.get = async (req, res) => {
   const { username } = req.params;
 
