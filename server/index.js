@@ -7,17 +7,12 @@ const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./middleware/LoggingMiddleware");
 const authMiddleware = require("./middleware/AuthenticationMiddleware");
 const createAITAUser = require("./scripts/createAITAUser");
+const authMiddleware = require('./middleware/AuthenticationMiddleware');
+const checkRole = require("./middleware/CheckRoleMiddleware");
 
 const app = express();
 
 app.use(express.json());
-
-app.use(session({
-  secret: 'yourSecretKey', // A secret key used for signing the session ID cookie
-  resave: false,          // Forces the session to be saved back to the session store, even if the session was never modified
-  saveUninitialized: false, // Forces a session that is "uninitialized" to be saved to the store
-  cookie: { secure: true }   // Ensures cookies are only used over HTTPS
-}));
 
 const PORT = process.env.PORT || 8080;
 
@@ -42,6 +37,12 @@ const SolutionInProgress = require("./routes/SolutionInProgressRoutes");
 
 //   res.json(userInfo);
 // });
+
+//For testing purposes - admin
+app.get('/test-protected', checkRole(['admin']), (req, res) => {
+  res.send('Welcome, admin!');
+});
+
 
 
 app.use(loggingMiddleware);
@@ -85,8 +86,8 @@ if (process.env?.ENV === "prod") {
   });
 }
 
+
 if (process.env?.ENV === "dev") {
   console.log("===[ Running in Dev Mode ]===");
 }
-
 
