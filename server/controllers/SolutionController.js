@@ -5,10 +5,17 @@ const Solution = db.Solution;
 const Comment = db.Comment;
 const User = db.User;
 
+exports.getNrecent = async (req, res) => {
+  const { n } = req.params;
+  const solutions = await Solution.findAll({ limit: n, include: {model: User, as: "User"}, order: [['createdAt', 'DESC']]});
+  
+  res.status(200).json(solutions);
+}
+
 exports.getAll = async (req, res) => {
   // eager load the user data
   const solutions = await Solution.findAll({ limit: 50, include: {model: User, as: "User"}});
-  
+
   res.status(200).json(solutions);
 };
 
