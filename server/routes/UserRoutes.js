@@ -23,4 +23,5 @@ router.put("/:username", checkRole(["admin"]), User.update);
 // Delete a User from the database.
 router.delete("/:username", checkRole(["admin"]), User.delete);
 
+
 module.exports = router;

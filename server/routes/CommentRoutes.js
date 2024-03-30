@@ -20,6 +20,7 @@ router.put("/:id",  Comment.edit);
 // Delete a comment for a solution from the database.
 router.delete("/:id", checkRole(['admin']), Comment.delete);
 
+
 // Reply to a comment
 router.post("/reply/:parentId", Comment.reply);
 
