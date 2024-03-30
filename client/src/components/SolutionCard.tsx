@@ -11,11 +11,14 @@ type SolutionCardProps = {
 };
 
 
-function timeAgo(dateString) {
+function timeAgo(dateString: string) {
   const date = new Date(dateString);
   const now = new Date();
 
-  let diff = Math.abs(now - date); // difference in milliseconds
+  let diff = Math.abs(now.getTime() - date.getTime()); // difference in milliseconds
+
+  const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+  diff -= years * (1000 * 60 * 60 * 24 * 365);
 
   const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
   diff -= months * (1000 * 60 * 60 * 24 * 30);
@@ -29,16 +32,29 @@ function timeAgo(dateString) {
   const minutes = Math.floor(diff / (1000 * 60)) || 1; // Default to at least 1 minute
 
   let result = '';
-  if (months > 0) {
+  if (years === 1) {
+    result += `${years} year `;
+  } else if (years > 1) {
+    result += `${years} years `;
+  } else if (months === 1) {
+    result += `${months} month `;
+  } else if (months > 1) {
     result += `${months} months `;
-  } else if (days > 0) {
+  } else if (days === 1) {
+    result += `${days} day `;
+  } else if (days > 1) {
     result += `${days} days `;
-  } else if (hours > 0) {
+  } else if (hours === 1) {
+    result += `${hours} hour `;
+  } else if (hours > 1) {
     result += `${hours} hours `;
+  } else if (minutes === 1) {
+    result += `${minutes} minute `;
   } else {
     result += `${minutes} minutes `;
   }
   result += "ago";
+
 
   return result.trim();
 }

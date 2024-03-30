@@ -17,7 +17,7 @@ function Home() {
 
     //fetch the recent solutions
     useEffect(() => {
-        fetch("/api/solutions/recent/10")
+        fetch("/api/solutions/recent/3")
             .then((resp) => resp.json() as Promise<SolutionData[]>)
             .then((data: SolutionData[]) => {
                 setSolutions(data);
@@ -27,6 +27,17 @@ function Home() {
             });
     }, []);
 
+    //fetch the suggested challenges
+    useEffect(() => {
+        fetch("/api/challenges/suggested")
+            .then((resp) => resp.json() as Promise<ChallengeDetailsShort[]>)
+            .then((data: ChallengeDetailsShort[]) => {
+                setChallenges(data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }, []);
 
     return (
         <section>
@@ -56,7 +67,7 @@ function Home() {
             </Container>
 
             {/* Suggested Challenges */}
-            <Container className={"mt-5"}>
+            <Container className={"my-5"}>
                 <Stack
                     direction={"horizontal"}
                     className={"justify-content-between mb-3"}
@@ -68,7 +79,18 @@ function Home() {
                     </Button>
                 </Stack>
                 <Row sm={1} lg={3} className={"gx-4 gy-4"}>
-                    
+                    {challenges.map((challenge: ChallengeDetailsShort) => {
+                        return (
+                            <Col key={challenge.id}>
+                                <ChallengeCard
+                                    title={challenge.title}
+                                    difficulty={challenge.difficulty}
+                                    generalDescription={challenge.generalDescription}
+                                    id={challenge.id}
+                                />
+                            </Col>
+                        );
+                    })}
                 </Row>
             </Container>
         </section>

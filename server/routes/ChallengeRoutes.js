@@ -10,6 +10,8 @@ AsyncWrapController(Challenge);
 // Get all challenges from the database.
 router.get("/", Challenge.findAll);
 
+router.get("/suggested", Challenge.findSuggested);
+
 // Get a challenge from the database.
 router.get("/:id", Challenge.findOne);
 
