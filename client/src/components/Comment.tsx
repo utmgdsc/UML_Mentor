@@ -76,7 +76,9 @@ const EditableComment = ({ onSubmit, parentId }: EditableCommentProps) => {
     <Card>
       <Card.Body>
         <Form
-          onSubmit={() => {
+          onSubmit={(e) => {
+            e.preventDefault();
+            setNewComment("");
             onSubmit(parentId, newComment);
           }}
         >

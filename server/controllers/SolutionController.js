@@ -36,11 +36,12 @@ exports.create = async (req, res) => {
 
   const newSolution = await Solution.create({
     challengeId,
-    userId: 0,
+    userId: "0",
     title,
     description,
     diagram,
   });
+
   res.status(201).json(newSolution).send();
 
   // Prepare AI feedback and submit it as a comment!

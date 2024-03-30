@@ -2,9 +2,15 @@ const express = require("express");
 const path = require("node:path");
 const db = require("./models");
 const importChallenges = require("./scripts/importChallenges");
+<<<<<<< HEAD
 const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./middleware/LoggingMiddleware");
 const authMiddleware = require("./middleware/AuthenticationMiddleware");
+=======
+const createAITAUser = require("./scripts/createAITAUser");
+const { ErrorHandler } = require("./routes/ErrorHandlingMiddleware");
+const loggingMiddleware = require("./routes/LoggingMiddleware");
+>>>>>>> 298f9dd (createAIuser script + some refactorings)
 
 const app = express();
 
@@ -26,8 +32,10 @@ db.sequelize.sync().then(async () => {
   // Use { force: true } cautiously as it will drop existing tables
   console.log("Database synced");
 
-  // import the challenges into the db.
-  await importChallenges();
+  // import the challenges into the db. Comment out after first run
+  // Also create the AI user
+  // await importChallenges();
+  // await createAITAUser();
 
   // Start listening for requests after the database is ready
   app.listen(PORT, () => {
