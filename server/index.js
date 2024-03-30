@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("node:path");
 const db = require("./models");
 const importChallenges = require("./scripts/importChallenges");
+const createAITAUser = require("./scripts/createAITAUser");
 const { ErrorHandler } = require("./routes/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./routes/LoggingMiddleware");
 
@@ -26,6 +27,7 @@ db.sequelize.sync().then(async () => {
 
   // import the challenges into the db. Comment out after first run
   // await importChallenges();
+  // await createAITAUser();
 
   // Start listening for requests after the database is ready
   app.listen(PORT, () => {

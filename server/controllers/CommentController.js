@@ -104,12 +104,13 @@ exports.delete = async (req, res) => {
   res.status(204).send();
 };
 
-async function reply_to_comment(parentId, text) {
+async function reply_to_comment(parentId, text, userId) {
   const parent = await Comment.findByPk(parentId);
   const { solutionId: parentSolutionId, replies: parentReplies } = parent;
   const to_add = {
     text,
     solutionId: parentSolutionId,
+    userId: userId,
   };
   const newComment = await Comment.create(to_add);
 
@@ -148,7 +149,7 @@ exports.reply = async (req, res) => {
   // Comment that it's in reply to
   const { parentId } = req.params;
   const { text } = req.body;
-  const [parent, comment] = await reply_to_comment(parentId, text);
+  const [parent, comment] = await reply_to_comment(parentId, text, 0);
 
   res.status(204).send();
 
@@ -176,6 +177,6 @@ exports.reply = async (req, res) => {
     challenge,
     solution,
   );
-  await reply_to_comment(comment.id, feedback);
+  await reply_to_comment(comment.id, feedback, -13);
   console.log(`AI TA commented on comment ${comment.id}`);
 };
