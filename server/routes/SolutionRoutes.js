@@ -1,6 +1,7 @@
 const {
   AsyncWrapController,
 } = require("../middleware/ErrorHandlingMiddleware");
+const checkRole = require("../middleware/CheckRoleMiddleware");
 
 const Solution = require("../controllers/SolutionController");
 AsyncWrapController(Solution);
@@ -25,19 +26,19 @@ const upload = multer({ storage: storage });
 router.use("/diagrams", express.static(STORAGE_CONFIG.location));
 
 // Get solutions from the database.
-router.get("/", Solution.getAll);
+router.get("/", checkRole(['user', 'admin']), Solution.getAll);
 
 router.get("/recent/:n", Solution.getNrecent);
 
 // Get individual solution by id
-router.get("/:id", Solution.get);
+router.get("/:id", checkRole(['user', 'admin']), Solution.get);
 
 // Get all comments for a solutions.
 // Sorting (by date or upvote) happens on the client side.
 // router.get("/:id", Challenge.getComments);
 
 // Create a new solution in the database.
-router.post("/", upload.single("diagram"), Solution.create);
+router.post("/", checkRole(['user', 'admin']), upload.single("diagram"), Solution.create);
 
 // Edit a solution in the database.
 router.put("/:id", upload.single("diagram"), Solution.edit);
@@ -48,6 +49,6 @@ router.put("/:id", upload.single("diagram"), Solution.edit);
 // router.put("/:id", Solution.upvote);
 
 // Delete a solution from the database.
-router.delete("/:id", Solution.delete);
+router.delete("/:id", checkRole(['user', 'admin']), Solution.delete);
 
 module.exports = router;
