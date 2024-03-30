@@ -6,12 +6,26 @@ import { ArrowUpRightSquare } from "react-bootstrap-icons";
 import ChallengeCard from "../components/ChallengeCard.tsx";
 import { SolutionData } from "../types/SolutionData.ts";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
-
+import NewUserPopup from '../components/NewUserPopup';
 
 function Home() {
     const [solutions, setSolutions] = useState<SolutionData[]>([]);
     const [challenges, setChallenges] = useState<ChallengeDetailsShort[]>([]);
+    const [showPopup, setShowPopup] = useState(false);
 
+    useEffect(() => {
+      // Check if the user has accepted
+      const privacyAccepted = localStorage.getItem('privacyAccepted') === 'true';
+      if (!privacyAccepted) {
+        setShowPopup(true);
+      }
+    }, []);
+  
+    const handleAcceptPrivacy = () => {
+      // User accepts the privacy policy
+      localStorage.setItem('privacyAccepted', 'true');
+      setShowPopup(false);
+    };
     //fetch the recent solutions
     useEffect(() => {
         fetch("/api/solutions/recent/3")
@@ -90,6 +104,7 @@ function Home() {
                     })}
                 </Row>
             </Container>
+            <NewUserPopup show={showPopup} onAccept={handleAcceptPrivacy} />
         </section>
     );
 }
