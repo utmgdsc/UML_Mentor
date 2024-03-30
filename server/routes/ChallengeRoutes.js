@@ -11,12 +11,12 @@ const checkRole = require("../middleware/CheckRoleMiddleware");
 AsyncWrapController(Challenge);
 
 // Get all challenges from the database.
-router.get("/", checkRole(['user', 'admin']), Challenge.findAll);
+router.get("/", Challenge.findAll);
 
 router.get("/suggested", Challenge.findSuggested);
 
 // Get a challenge from the database.
-router.get("/:id", checkRole(['user', 'admin']), Challenge.findOne);
+router.get("/:id", Challenge.findOne);
 
 // Get all solutions from a challenge. NOT GOING TO WORK AS IS
 // Sorting (by date or upvote) happens on the client side.

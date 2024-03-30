@@ -1,3 +1,4 @@
+const session = require('express-session');
 const express = require("express");
 const path = require("node:path");
 const db = require("./models");
@@ -11,7 +12,15 @@ const app = express();
 
 app.use(express.json());
 
+app.use(session({
+  secret: 'yourSecretKey', // A secret key used for signing the session ID cookie
+  resave: false,          // Forces the session to be saved back to the session store, even if the session was never modified
+  saveUninitialized: false, // Forces a session that is "uninitialized" to be saved to the store
+  cookie: { secure: true }   // Ensures cookies are only used over HTTPS
+}));
+
 const PORT = process.env.PORT || 8080;
+
 
 // Set up API routes
 const challenges = require("./routes/ChallengeRoutes");
@@ -20,7 +29,23 @@ const users = require("./routes/UserRoutes");
 const comments = require("./routes/CommentRoutes");
 const SolutionInProgress = require("./routes/SolutionInProgressRoutes");
 
+//For testing purposes
+// app.post('/test-auth', authMiddleware, (req, res) => {
+//   const user = req.user;
+
+//   const userInfo = {
+//       id: user.id,
+//       username: user.username,
+//       email: user.email,
+//       role: user.role,
+//   };
+
+//   res.json(userInfo);
+// });
+
+
 app.use(loggingMiddleware);
+app.use(authMiddleware);
 
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
@@ -63,3 +88,5 @@ if (process.env?.ENV === "prod") {
 if (process.env?.ENV === "dev") {
   console.log("===[ Running in Dev Mode ]===");
 }
+
+
