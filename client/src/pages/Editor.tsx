@@ -61,7 +61,7 @@ const Editor = () => {
             fetch("/api/inprogress/challenge/" + challengeId) //GET
             .then(response => { 
                 if(response.status === 404) {
-                    throw new Error("No diagram found for this challenge");
+                    throw new Error("404");
                 }
                 if (!response.ok) {
                     throw new Error(response.statusText);
@@ -72,14 +72,14 @@ const Editor = () => {
                 // console.log(data);
                 diagramData.current = data.diagram;
                 diagramId.current = data.id;
-                setDiagramName(data.title);
+                setDiagramName(data.title); // IMPORTANT: This state update is required to actually load the diagram
                 diagramNameRef.current = data.title; //Crutch for the handleSave function
                 // console.log("Loaded diagram: " + diagramData.current + " with id: " + diagramId.current + " and name: " + diagramNameRef.current);
             })
             .catch((error: Error) => {
-                console.log("Error: " + error.message);
+                // console.log("Error: " + error.message);
                 //if the solution in progress has not been created yet, create a new entry in the database
-                if(error.message === "No diagram found for this challenge") {
+                if(error.message === "404") {
                     //fetch the challenge details from the server to get the title
                     fetch("/api/challenges/" + challengeId).then(response => { //GET
                         if (!response.ok) {
@@ -104,10 +104,13 @@ const Editor = () => {
                         if (!response.ok) {
                             throw new Error(response.statusText);
                         }
-                        return response.json() as Promise<{id: string}>
+                        return response.json() as Promise<{diagram: string, title: string, id: string}>
                     }).then(data => {
                         // console.log("Created new diagram with id: " + data.id + " and title: " + data.title);
+                        diagramData.current = data.diagram;
                         diagramId.current = data.id;
+                        setDiagramName(data.title);
+                        diagramNameRef.current = data.title;
                     }).catch((error) => {
                         console.error(error);
                     });
@@ -204,7 +207,7 @@ const Editor = () => {
                         if(data.parentEvent !== "save") {
                             return;
                         }
-                        doExport()
+                        doExport();
                     }}
                     onLoad={(data) => {
                         // If the xml is null, then we need to wait and reload the diagram from diagramData
@@ -212,21 +215,24 @@ const Editor = () => {
                             // console.log("Waiting for diagramData to be initialized");
                             setTimeout(() => {
                                 if (drawioRef.current !== null && diagramData.current !== undefined){
+                                    doExport();
+
                                     drawioRef.current?.load({
                                         xmlpng: diagramData.current
                                     });
+                                    
                                     console.log("Loaded diagram from stash");
                                 }
                                 else {
                                     console.log("No diagram data found");
                                 }
-                            }, 10);
+                            }, 100);
                         }  
                     }}
                     onClose={(data) => {
                         console.log(data);
                         // If the exit is triggered by another event, then do nothing
-                        if(data.parentEvent || data.modified === true) {
+                        if(data.parentEvent) {
                             return;
                         }
                         // Save and exit. Timeout to make sure the save request is sent before the tab is closed.

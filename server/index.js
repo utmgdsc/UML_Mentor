@@ -17,7 +17,7 @@ db.sequelize.sync().then(async () => {
   // Use { force: true } cautiously as it will drop existing tables
   console.log("Database synced");
 
-  // import the challenges into the db. Comment out after first run
+  // import the challenges into the db.
   await importChallenges();
 
   // Start listening for requests after the database is ready
@@ -44,20 +44,9 @@ app.use("/api/comments", comments);
 
 app.use(ErrorHandler);
 
-
-//uncomment for production
-// app.use(express.static(path.resolve(__dirname, "../client/dist")))
-
-//Send all non-api requests to the React app.
-//uncomment for production
-// app.get("*", (req, res) => {
-//   res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"))
-// })
-
 // ENV FILE SPECIFICATION
 // PROD=prod|dev -> prod runs in production mode
 //
-
 if (process.env?.ENV === "prod") {
   console.log("!!! RUNNING IN PRODUCTION MODE !!!");
   app.use(express.static(path.resolve(__dirname, "../client/dist")));

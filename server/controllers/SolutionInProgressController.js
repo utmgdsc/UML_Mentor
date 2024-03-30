@@ -64,7 +64,7 @@ exports.delete = async (req, res) => {
 
 exports.deleteAll = async (req, res) => {
     //make sure the request is coming from the admin
-    if (req.user.name !== "admin") {
+    if (req.user.username !== "admin") {
         return res.status(403).json({ error: "You do not have permission to delete all solutions in progress." });
     }
 
