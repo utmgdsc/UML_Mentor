@@ -10,7 +10,7 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
     return (
         <Modal show={show} onHide={handleClose} centered size="lg" scrollable>
             <Card>
-                <Card.Header><strong>Data Privacy Agreement</strong></Card.Header>
+                <Card.Header><strong>UML Mentor</strong></Card.Header>
                 <Card.Body style={{ maxHeight: '400px', overflowY: 'scroll' }}>
                     <Accordion defaultActiveKey="0">
                         <Accordion.Item eventKey="0">
