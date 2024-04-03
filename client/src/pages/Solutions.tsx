@@ -10,6 +10,7 @@ const Solutions = () => {
     fetch("/api/solutions")
       .then((resp) => resp.json())
       .then((data: SolutionData[]) => {
+        console.log(data);
         setSolutions(data);
       })
       .catch((err) => {
@@ -27,8 +28,10 @@ const Solutions = () => {
               <SolutionCard
                 title={solution.title}
                 description={solution.description}
-                imgSrc={`/api/solutions/diagrams/${solution.diagram}`}
-                href={`/solution/${solution.id}`}
+                imgSrc={solution.diagram}
+                id={solution.id.toString()}
+                author={solution.User.username}
+                createdAt={solution.createdAt}
               />
             </Col>
           ))}

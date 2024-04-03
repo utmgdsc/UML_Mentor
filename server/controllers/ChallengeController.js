@@ -14,15 +14,8 @@ function diffToNum(difficulty) {
   }
 }
 
-exports.findAll = async (req, res) => {
-  const challengesData = await Challenge.findAll();
-
-  if(challengesData.length === 0) {
-    return res.status(404).json({ error: "No challenges found." });
-  }
-
-  const challenges = challengesData.map((challengeData) => {
-    const challengeDescription = JSON.parse(challengeData.description);
+function formatChallenge(challengeData) {
+  const challengeDescription = JSON.parse(challengeData.description);
     return {
       id: challengeData.id,
       title: challengeData.title,
@@ -32,8 +25,70 @@ exports.findAll = async (req, res) => {
       generalDescription: challengeDescription.generalDescription,
       usageScenarios: challengeDescription.usageScenarios,
       expectedFunctionality: challengeDescription.expectedFunctionality,
-    };
+    }
+  }
+    
+
+exports.findSuggested = async (req, res) => {
+  const username = req.user.username;
+  // see how many solutions the user has solved
+  const userSolutions = await db.Solution.findAll({ 
+    where: {
+      userId: username,
+    },
   });
+
+  const userLevel = userSolutions.length;
+  let challenges = [];
+
+  if (userLevel < 6) {
+    // return easy challenges
+    challenges = await Challenge.findAll({
+      order: db.sequelize.random(),
+      where: {
+        difficulty: "easy",
+      },
+    });
+  } else if (userLevel < 15) {
+    // get medium challenges
+    challenges = await Challenge.findAll({
+      order: db.sequelize.random(),
+      limit: 3,
+      where: {
+        difficulty: "medium",
+      },
+    });
+  } else {
+    // get hard challenges
+    challenges = await Challenge.findAll({
+      order: db.sequelize.random(),
+      limit: 3,
+      where: {
+        difficulty: "hard",
+      },
+    });
+  }
+  
+  // make sure none of the challenges are already solved by the user
+  const unsolvedChallenges = challenges.filter((challenge) => {
+    return !userSolutions.some((solution) => solution.challengeId === challenge.id);
+  });
+
+  // take the first 3 challenges and format them
+  const formattedChallenges = unsolvedChallenges.slice(0, 3).map(formatChallenge);
+
+  return res.status(200).json(formattedChallenges);
+}
+
+
+exports.findAll = async (req, res) => {
+  const challengesData = await Challenge.findAll();
+
+  if(challengesData.length === 0) {
+    return res.status(404).json({ error: "No challenges found." });
+  }
+
+  const challenges = challengesData.map(formatChallenge);
 
   res.status(200).json(challenges);
 };
@@ -49,19 +104,7 @@ exports.findOne = async (req, res) => {
     },
   });
 
-  const challengeDescription = JSON.parse(challengeData.description);
-
-  // Convert the challenge into proper format
-  const challenge = {
-    id: challengeData.id,
-    title: challengeData.title,
-    difficulty: diffToNum(challengeData.difficulty),
-    outcome: challengeDescription.outcome,
-    keyPatterns: challengeDescription.keyPatterns,
-    generalDescription: challengeDescription.generalDescription,
-    usageScenarios: challengeDescription.usageScenarios,
-    expectedFunctionality: challengeDescription.expectedFunctionality,
-  };
+  const challenge = formatChallenge(challengeData);
 
   res.status(200).json(challenge);
 };

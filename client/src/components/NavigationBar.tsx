@@ -2,13 +2,33 @@ import { Container, Nav, Navbar } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PersonCircle } from "react-bootstrap-icons";
 import { NAV_CONFIG } from "../App.tsx";
+import { useEffect, useState } from "react";
 
 function NavigationBar() {
   const location = useLocation().pathname;
+  const [username, setUsername] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  //fetch the username from the server
+  useEffect(() => {
+    fetch("/api/users/whoami")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json() as Promise<{username: string}>;
+      })
+      .then((data) => {
+        console.log("Fetched username: " + data.username);
+        setUsername(data.username);
+      })
+      .catch((err: Error) => { // Add the error type 'Error'
+        console.error("Failed fetching the username\nError message: " + err.message);
+      });
+  }, [username]);
+
   const handleProfileClick = () => {
-    navigate(NAV_CONFIG.profile.href);
+    navigate(NAV_CONFIG.profile.href + "/" + username);
   };
 
   return (
