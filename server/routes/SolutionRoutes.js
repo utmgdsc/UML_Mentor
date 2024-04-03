@@ -27,6 +27,8 @@ router.use("/diagrams", express.static(STORAGE_CONFIG.location));
 // Get solutions from the database.
 router.get("/", Solution.getAll);
 
+router.get("/recent/:n", Solution.getNrecent);
+
 // Get individual solution by id
 router.get("/:id", Solution.get);
 

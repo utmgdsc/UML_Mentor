@@ -53,7 +53,7 @@ const router = createBrowserRouter([
         element: <Challenges />
       },
       {
-        path: "profile/",
+        path: "profile/:username",
         element: <Profile />
       },
       {
