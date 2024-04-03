@@ -1,6 +1,4 @@
 module.exports = (sequelize, DataTypes) => {
-
-  //TODO: add proper spacing and indentation
   const SolutionInProgress = sequelize.define('SolutionInProgress', {
       challengeId: {
           type: DataTypes.INTEGER,
