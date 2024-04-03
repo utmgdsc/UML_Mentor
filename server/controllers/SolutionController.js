@@ -1,7 +1,7 @@
 const fs = require("fs").promises;
 const STORAGE_CONFIG = require("../storage_config.json");
 const db = require("../models/index");
-const { HandledError } = require("../routes/ErrorHandlingMiddleware");
+const { HandledError } = require("../middleware/ErrorHandlingMiddleware");
 const { AITA } = require("../AI/AITA.js");
 const Solution = db.Solution;
 const Comment = db.Comment;
