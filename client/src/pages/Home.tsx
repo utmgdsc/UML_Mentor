@@ -4,14 +4,11 @@ import Button from "../components/Button.tsx";
 import SolutionCard from "../components/SolutionCard.tsx";
 import { ArrowUpRightSquare } from "react-bootstrap-icons";
 import ChallengeCard from "../components/ChallengeCard.tsx";
-
-//import the solution data type
 import { SolutionData } from "../types/SolutionData.ts";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
 
 
 function Home() {
-    // TODO: fetch the solutions and challenges 
     const [solutions, setSolutions] = useState<SolutionData[]>([]);
     const [challenges, setChallenges] = useState<ChallengeDetailsShort[]>([]);
 
