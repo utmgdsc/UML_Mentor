@@ -60,3 +60,7 @@ if (process.env?.ENV === "prod") {
     res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
   });
 }
+
+if (process.env?.ENV === "dev") {
+  console.log("===[ Running in Dev Mode ]===");
+}
