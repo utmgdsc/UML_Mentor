@@ -1,4 +1,5 @@
 const db = require("../models/index");
+const { use } = require("../routes/ChallengeRoutes");
 const Challenge = db.Challenge;
 
 function diffToNum(difficulty) {
@@ -14,17 +15,47 @@ function diffToNum(difficulty) {
   }
 }
 
-function formatChallenge(challengeData) {
+/**
+ * Extracts the challenge description from the challengeData object
+ * Add the completion status based on whether the user has solved the challenge
+ * @param {*} challengeData 
+ * @returns 
+ */
+async function formatChallenge(challengeData, userId) {
   const challengeDescription = JSON.parse(challengeData.description);
-    return {
-      id: challengeData.id,
-      title: challengeData.title,
-      difficulty: diffToNum(challengeData.difficulty),
-      outcome: challengeDescription.outcome,
-      keyPatterns: challengeDescription.keyPatterns,
-      generalDescription: challengeDescription.generalDescription,
-      usageScenarios: challengeDescription.usageScenarios,
-      expectedFunctionality: challengeDescription.expectedFunctionality,
+  // fetch the user's solutions
+  const challengeSolutions = await db.Solution.findAll(
+    { where: { 
+        challengeId: challengeData.id, 
+        userId: userId
+      } 
+    });    
+
+    // check if the user has solved the challenge
+    if (challengeSolutions.length > 0) {
+      return {
+        id: challengeData.id,
+        title: challengeData.title,
+        difficulty: diffToNum(challengeData.difficulty),
+        outcome: challengeDescription.outcome,
+        keyPatterns: challengeDescription.keyPatterns,
+        generalDescription: challengeDescription.generalDescription,
+        usageScenarios: challengeDescription.usageScenarios,
+        expectedFunctionality: challengeDescription.expectedFunctionality,
+        completed: true,
+      }
+    } else {
+      return {
+        id: challengeData.id,
+        title: challengeData.title,
+        difficulty: diffToNum(challengeData.difficulty),
+        outcome: challengeDescription.outcome,
+        keyPatterns: challengeDescription.keyPatterns,
+        generalDescription: challengeDescription.generalDescription,
+        usageScenarios: challengeDescription.usageScenarios,
+        expectedFunctionality: challengeDescription.expectedFunctionality,
+        completed: false,
+      }
     }
   }
     
@@ -75,7 +106,8 @@ exports.findSuggested = async (req, res) => {
   });
 
   // take the first 3 challenges and format them
-  const formattedChallenges = unsolvedChallenges.slice(0, 3).map(formatChallenge);
+  const formattedChallenges = await Promise.all(unsolvedChallenges.slice(0, 3).map(async (challenge) => 
+    { return await formatChallenge(challenge, username)} ));
 
   return res.status(200).json(formattedChallenges);
 }
@@ -88,7 +120,8 @@ exports.findAll = async (req, res) => {
     return res.status(404).json({ error: "No challenges found." });
   }
 
-  const challenges = challengesData.map(formatChallenge);
+  const challenges = await Promise.all(challengesData.map(async (challenge) => 
+    { return await formatChallenge(challenge, req.user.username) }));
 
   res.status(200).json(challenges);
 };
@@ -104,7 +137,7 @@ exports.findOne = async (req, res) => {
     },
   });
 
-  const challenge = formatChallenge(challengeData);
+  const challenge = await formatChallenge(challengeData, req.user.username);
 
   res.status(200).json(challenge);
 };

@@ -5,4 +5,5 @@ export type ChallengeDetailsShort = {
     difficulty: ChallengeDifficulties;
     generalDescription: string;
     id: number;
+    completed: boolean;
 }

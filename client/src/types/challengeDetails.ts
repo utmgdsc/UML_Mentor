@@ -8,4 +8,5 @@ export type ChallengeDetails = {
     keyPatterns: Array<string>;
     expectedFunctionality: object;
     usageScenarios: object;
+    completed: boolean;
 }
