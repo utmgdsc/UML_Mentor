@@ -84,7 +84,6 @@ exports.findSuggested = async (req, res) => {
     // get medium challenges
     challenges = await Challenge.findAll({
       order: db.sequelize.random(),
-      limit: 3,
       where: {
         difficulty: "medium",
       },
@@ -93,7 +92,6 @@ exports.findSuggested = async (req, res) => {
     // get hard challenges
     challenges = await Challenge.findAll({
       order: db.sequelize.random(),
-      limit: 3,
       where: {
         difficulty: "hard",
       },
