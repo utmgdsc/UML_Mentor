@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
     },
+    usersWhoUpvoted: {
+      type: DataTypes.TEXT,
+      defaultValue: "",
+    },
     replies: {
       type: DataTypes.TEXT,
       defaultValue: "",

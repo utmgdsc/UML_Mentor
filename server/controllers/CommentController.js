@@ -5,18 +5,7 @@ const Solution = db.Solution;
 const User = db.User;
 const { AITA } = require("../AI/AITA");
 
-function formatComments(comments) {
-  const extracted = comments.map(
-    ({ id, text, userId, solutionId, upVotes, replies }) => ({
-      id,
-      text,
-      userId,
-      solutionId,
-      upVotes,
-      replies,
-    }),
-  );
-
+function formatComments(extracted) {
   const convertedReplies = extracted.map((c) => ({
     ...c,
     replies: c.replies
@@ -80,7 +69,19 @@ exports.get = async (req, res) => {
     },
   });
 
-  const formatted = formatComments(comments);
+  const extracted = comments.map(
+    ({ id, text, userId, solutionId, upVotes, replies, usersWhoUpvoted }) => ({
+      id,
+      text,
+      userId,
+      solutionId,
+      upVotes,
+      replies,
+      hasUserUpvoted: usersWhoUpvoted.includes(req.user.username),
+    }),
+  );
+
+  const formatted = formatComments(extracted);
 
   res.status(200).json(formatted);
 };
@@ -191,18 +192,30 @@ exports.reply = async (req, res) => {
 
 exports.upvote = async (req, res) => {
   const { commentId } = req.params;
-  await Comment.increment(
+
+  const comment = await Comment.findByPk(commentId);
+
+  const upvotedUsersList = comment.usersWhoUpvoted
+    .split(",")
+    .filter((v) => v.length !== 0);
+
+  if (upvotedUsersList.includes(`${req.user.username}`)) {
+    console.log("Invalid upvote.");
+    res.status(409).send();
+    return;
+  }
+
+  Comment.update(
     {
-      upVotes: 1,
+      upVotes: comment.upVotes + 1,
+      usersWhoUpvoted: [...upvotedUsersList, `${req.user.username}`].join(","),
     },
     {
       where: {
-        id: commentId,
+        id: comment.id,
       },
     },
   );
-
-  const comment = await Comment.findByPk(commentId);
 
   if (comment.userId === "AITA") {
     await AITA.upvote(comment.runId);

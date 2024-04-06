@@ -3,7 +3,7 @@ import Button from "./Button.tsx";
 import { CommentData } from "../types/CommentData.ts";
 import { Form } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { CaretUpFill } from "react-bootstrap-icons";
+import { CaretUpFill, CaretUp } from "react-bootstrap-icons";
 import { useRemark } from "react-remark";
 
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
@@ -12,6 +12,7 @@ type NonEditableCommentProps = {
   comment: CommentData;
   onSubmit: (parentId: number, text: string) => void;
   editable: false;
+  hasUserUpvoted: boolean;
 };
 
 type EditableCommentProps = {
@@ -23,11 +24,12 @@ type EditableCommentProps = {
 type UpvoterProps = {
   commentId: number;
   upVotes: number;
-  onUpvote: () => null;
+  hasUpvoted: boolean;
 };
 
-const Upvoter = ({ commentId, upVotes }: UpvoterProps) => {
+const Upvoter = ({ commentId, upVotes, hasUpvoted }: UpvoterProps) => {
   const [upVotesState, setUpVotesState] = useState(upVotes);
+  const [hasUpvotedState, setHasUpvotedState] = useState(hasUpvoted);
   return (
     <Button
       style={{
@@ -41,9 +43,11 @@ const Upvoter = ({ commentId, upVotes }: UpvoterProps) => {
         console.log(`Upvoting ${commentId}`);
         fetch(`/api/comments/upvote/${commentId}`).catch(() => {});
         setUpVotesState((p) => p + 1);
+        setHasUpvotedState(true);
       }}
+      disabled={hasUpvotedState}
     >
-      <CaretUpFill />
+      {hasUpvotedState ? <CaretUpFill /> : <CaretUp />}
       {upVotesState}
     </Button>
   );
@@ -60,13 +64,19 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
     setMarkdownSource(comment.text);
   }, []);
 
+  console.log(comment);
+
   return (
     <>
       <Card className="mt-3">
         <Card.Body>
           <Card.Text>{renderedMarkdown}</Card.Text>
           <div>
-            <Upvoter commentId={comment.id} upVotes={comment.upVotes} />
+            <Upvoter
+              commentId={comment.id}
+              upVotes={comment.upVotes}
+              hasUpvoted={comment.hasUserUpvoted}
+            />
             <Button
               variant="primary"
               onClick={() => {
