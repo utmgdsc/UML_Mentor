@@ -1,17 +1,18 @@
-import { Stack } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Stack, Button } from "react-bootstrap";
+import NewUserPopup from '../components/NewUserPopup';
 
-function Footer() {
+function Footer() {  
   return (
-    <Stack
-      as={"footer"}
-      style={{
-        padding: "6rem 0",
-        flexGrow: "0",
-      }}
-      className={"bg-dark text-white text-center"}
-    >
-      <p className={"m-0"}>UML Mentor 2024</p>
-    </Stack>
+    <>
+      <Stack
+        as={"footer"}
+        className={"bg-dark text-white text-center p-3"}
+      >
+        <p>© UML Mentor 2024</p>
+        {/* Button to review privacy terms */}
+      </Stack>
+    </>
   );
 }
 

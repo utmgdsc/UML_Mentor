@@ -16,8 +16,16 @@ const Challenge = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
     // Setting the state true initally to show the instructions
-    const [showInstructions, setShowInstructions] = useState(true);
+    const [showInstructions, setShowInstructions] = useState(false);
 
+    useEffect(() => {
+      const instructionsShown = localStorage.getItem('instructionsShown');
+      if (!instructionsShown) {
+        setShowInstructions(true);
+        localStorage.setItem('instructionsShown', 'true');
+      }
+    }, []);
+     
   useEffect(() => {
     //fetch data about the challenge with the provided "id"
     fetch("/api/challenges/" + id)
@@ -64,7 +72,6 @@ const Challenge = () => {
             console.error("Failed fetching the challenge number: " + id + "\nError message: " + err.message)
         });
    }, [id]);
-
 
   const difficultyStars = useMemo(
     () =>
@@ -143,6 +150,9 @@ const Challenge = () => {
             ) : (
               <Col lg={{ span: 6, offset: 0 }} xl={{ span: 5 }}>
                 <ButtonToolbar className="d-flex align-items-end justify-content-between">
+                <Button className="m-1" onClick={() => setShowInstructions(true)}>
+                    Instructions
+                  </Button>
                   <Button className="m-1" target="_blank" href={"/editor?type=challenge&id=" + id}>
                     Open Editor
                   </Button>

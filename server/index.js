@@ -5,7 +5,6 @@ const db = require("./models");
 const importChallenges = require("./scripts/importChallenges");
 const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./middleware/LoggingMiddleware");
-const authMiddleware = require("./middleware/AuthenticationMiddleware");
 const createAITAUser = require("./scripts/createAITAUser");
 const authMiddleware = require('./middleware/AuthenticationMiddleware');
 const checkRole = require("./middleware/CheckRoleMiddleware");
@@ -62,6 +61,20 @@ db.sequelize.sync().then(async () => {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}.`);
   });
+});
+
+//For testing purposes
+app.post('/test-auth', authMiddleware, (req, res) => {
+  const user = req.user;
+
+  const userInfo = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+  };
+
+  res.json(userInfo);
 });
 
 // Set up API routes
