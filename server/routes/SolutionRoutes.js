@@ -1,6 +1,7 @@
 const {
   AsyncWrapController,
 } = require("../middleware/ErrorHandlingMiddleware");
+const checkRole = require("../middleware/CheckRoleMiddleware");
 
 const Solution = require("../controllers/SolutionController");
 AsyncWrapController(Solution);
@@ -48,6 +49,6 @@ router.put("/:id", upload.single("diagram"), Solution.edit);
 // router.put("/:id", Solution.upvote);
 
 // Delete a solution from the database.
-router.delete("/:id", Solution.delete);
+router.delete("/:id", checkRole(["admin"]), Solution.delete);
 
 module.exports = router;

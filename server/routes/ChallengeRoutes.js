@@ -1,9 +1,12 @@
 const Challenge = require("../controllers/ChallengeController");
 
 const router = require("express").Router();
+
 const {
   AsyncWrapController,
 } = require("../middleware/ErrorHandlingMiddleware");
+
+const checkRole = require("../middleware/CheckRoleMiddleware");
 
 AsyncWrapController(Challenge);
 

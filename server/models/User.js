@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
-        // preferredName: DataTypes.STRING,
         email: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -15,9 +14,9 @@ module.exports = (sequelize, DataTypes) => {
         role: {
             type: DataTypes.STRING,
             allowNull: false,
-            defaultValue: 'user', // default role is 'user'
+            defaultValue: 'user', 
             validate: {
-                isIn: [['user', 'admin']], // Ensures the role is either 'user' or 'admin'
+                isIn: [['user', 'admin']], 
             }
         },
         score: DataTypes.INTEGER

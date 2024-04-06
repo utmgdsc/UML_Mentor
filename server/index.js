@@ -1,3 +1,4 @@
+const session = require('express-session');
 const express = require("express");
 const path = require("node:path");
 const db = require("./models");
@@ -6,12 +7,15 @@ const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./middleware/LoggingMiddleware");
 const authMiddleware = require("./middleware/AuthenticationMiddleware");
 const createAITAUser = require("./scripts/createAITAUser");
+const authMiddleware = require('./middleware/AuthenticationMiddleware');
+const checkRole = require("./middleware/CheckRoleMiddleware");
 
 const app = express();
 
 app.use(express.json());
 
 const PORT = process.env.PORT || 8080;
+
 
 // Set up API routes
 const challenges = require("./routes/ChallengeRoutes");
@@ -20,7 +24,29 @@ const users = require("./routes/UserRoutes");
 const comments = require("./routes/CommentRoutes");
 const SolutionInProgress = require("./routes/SolutionInProgressRoutes");
 
+//For testing purposes
+// app.post('/test-auth', authMiddleware, (req, res) => {
+//   const user = req.user;
+
+//   const userInfo = {
+//       id: user.id,
+//       username: user.username,
+//       email: user.email,
+//       role: user.role,
+//   };
+
+//   res.json(userInfo);
+// });
+
+//For testing purposes - admin
+app.get('/test-protected', checkRole(['admin']), (req, res) => {
+  res.send('Welcome, admin!');
+});
+
+
+
 app.use(loggingMiddleware);
+app.use(authMiddleware);
 
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
@@ -60,6 +86,8 @@ if (process.env?.ENV === "prod") {
   });
 }
 
+
 if (process.env?.ENV === "dev") {
   console.log("===[ Running in Dev Mode ]===");
 }
+
