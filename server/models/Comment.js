@@ -29,6 +29,9 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: "",
       // This is a comma separated list of comment ids
     },
+    runId: {
+      type: DataTypes.TEXT,
+    },
   });
   return Comment;
 };

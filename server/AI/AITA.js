@@ -6,6 +6,9 @@ const {
 } = require("@langchain/core/prompts");
 const { HumanMessage, AIMessage } = require("@langchain/core/messages");
 const { StringOutputParser } = require("@langchain/core/output_parsers");
+const { Client } = require("langsmith");
+
+const langsmithClient = new Client();
 
 class AITA {
   static async feedback_for_post(solution, challenge, diagramLocation) {
@@ -39,14 +42,26 @@ class AITA {
 
     const chain = prompt.pipe(model).pipe(outputParser);
 
-    const feedback = await chain.invoke({
-      challenge_title: challenge.title,
-      challenge_description: challenge.description,
-      solution_title: solution.title,
-      solution_description: solution.description,
-    });
+    let chainRunId;
+    const feedback = await chain.invoke(
+      {
+        challenge_title: challenge.title,
+        challenge_description: challenge.description,
+        solution_title: solution.title,
+        solution_description: solution.description,
+      },
+      {
+        callbacks: [
+          {
+            handleChainStart(_llm, _prompt, runId, parentRunId) {
+              chainRunId = parentRunId;
+            },
+          },
+        ],
+      },
+    );
 
-    return feedback;
+    return [chainRunId, feedback];
   }
   static async feedback_for_comment(comment_chain, challenge, solution) {
     // console.log(comment_chain);
@@ -86,15 +101,33 @@ class AITA {
 
     const chain = prompt.pipe(model).pipe(outputParser);
 
-    const feedback = await chain.invoke({
-      challenge_title: challenge.title,
-      challenge_description: challenge.description,
-      solution_title: solution.title,
-      solution_description: solution.description,
-      comments,
-    });
+    let chainRunId;
+    const feedback = await chain.invoke(
+      {
+        challenge_title: challenge.title,
+        challenge_description: challenge.description,
+        solution_title: solution.title,
+        solution_description: solution.description,
+        comments,
+      },
+      {
+        callbacks: [
+          {
+            handleChainStart(_llm, _prompt, runId, parentRunId) {
+              chainRunId = parentRunId;
+            },
+          },
+        ],
+      },
+    );
 
-    return feedback;
+    return [chainRunId, feedback];
+  }
+
+  static async upvote(runId) {
+    await langsmithClient.createFeedback(runId, "user_upvote", {
+      feedbackSourceType: "app",
+    });
   }
 }
 

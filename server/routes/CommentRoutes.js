@@ -21,4 +21,7 @@ router.delete("/:id", Comment.delete);
 // Reply to a comment
 router.post("/reply/:parentId", Comment.reply);
 
+// Upvote a comment
+router.get("/upvote/:commentId", Comment.upvote);
+
 module.exports = router;

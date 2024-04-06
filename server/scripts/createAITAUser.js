@@ -6,10 +6,14 @@ module.exports = async () => {
   if (AITA) {
     return;
   }
-  await User.create({
-    id: -13,
-    username: "AITA",
-    passwordHash: "02",
-    email: "AITA - email",
+  await User.findOrCreate({
+    where: {
+      username: "AITA",
+    },
+    defaults: {
+      username: "AITA",
+      passwordHash: "02",
+      email: "AITA - email",
+    },
   });
 };

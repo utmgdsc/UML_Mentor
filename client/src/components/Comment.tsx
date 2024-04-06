@@ -3,6 +3,7 @@ import Button from "./Button.tsx";
 import { CommentData } from "../types/CommentData.ts";
 import { Form } from "react-bootstrap";
 import { useState } from "react";
+import { CaretUpFill } from "react-bootstrap-icons";
 
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
 
@@ -18,6 +19,35 @@ type EditableCommentProps = {
   editable: true;
 };
 
+type UpvoterProps = {
+  commentId: number;
+  upVotes: number;
+  onUpvote: () => null;
+};
+
+const Upvoter = ({ commentId, upVotes }: UpvoterProps) => {
+  const [upVotesState, setUpVotesState] = useState(upVotes);
+  return (
+    <Button
+      style={{
+        display: "inline-flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+      className={"me-3"}
+      variant={"outline-secondary"}
+      onClick={() => {
+        console.log(`Upvoting ${commentId}`);
+        fetch(`/api/comments/upvote/${commentId}`).catch(() => {});
+        setUpVotesState((p) => p + 1);
+      }}
+    >
+      <CaretUpFill />
+      {upVotesState}
+    </Button>
+  );
+};
+
 const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
   const [isReplying, setIsReplying] = useState(false);
   const [repliesOpen, setRepliesOpen] = useState(false);
@@ -28,14 +58,15 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
       <Card className="mt-3">
         <Card.Body>
           <Card.Text>{comment.text}</Card.Text>
-          <div className="">
+          <div>
+            <Upvoter commentId={comment.id} upVotes={comment.upVotes} />
             <Button
               variant="primary"
               onClick={() => {
                 setIsReplying((p) => !p);
               }}
             >
-              Reply
+              {isReplying ? "Stop Replying" : "Reply"}
             </Button>
             {repliesAvailable && (
               <Button

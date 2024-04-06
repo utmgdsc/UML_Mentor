@@ -2,6 +2,7 @@ const db = require("../models/index");
 const Comment = db.Comment;
 const Challenge = db.Challenge;
 const Solution = db.Solution;
+const User = db.User;
 const { AITA } = require("../AI/AITA");
 
 function formatComments(comments) {
@@ -107,13 +108,14 @@ exports.delete = async (req, res) => {
   res.status(204).send();
 };
 
-async function reply_to_comment(parentId, text, userId) {
+async function reply_to_comment(parentId, text, userId, runId = "") {
   const parent = await Comment.findByPk(parentId);
   const { solutionId: parentSolutionId, replies: parentReplies } = parent;
   const to_add = {
     text,
     solutionId: parentSolutionId,
-    userId: userId,
+    userId,
+    runId,
   };
   const newComment = await Comment.create(to_add);
 
@@ -148,8 +150,6 @@ function getCommentChain(comment, id) {
 }
 
 exports.reply = async (req, res) => {
-  // TODO: add userId!!!!
-  // Comment that it's in reply to
   const { parentId } = req.params;
   const { text } = req.body;
   const [parent, comment] = await reply_to_comment(
@@ -179,11 +179,37 @@ exports.reply = async (req, res) => {
   const challenge = await Challenge.findByPk(solution.challengeId);
 
   console.log("Calling AI TA....");
-  const feedback = await AITA.feedback_for_comment(
+  const [chainRunId, feedback] = await AITA.feedback_for_comment(
     comment_chain,
     challenge,
     solution,
   );
-  await reply_to_comment(comment.id, feedback, "AITA");
+
+  console.log(`Chain run id is ${chainRunId}`);
+
+  await reply_to_comment(comment.id, feedback, "AITA", chainRunId);
   console.log(`AI TA commented on comment ${comment.id}`);
+};
+
+exports.upvote = async (req, res) => {
+  const { commentId } = req.params;
+  await Comment.increment(
+    {
+      upVotes: 1,
+    },
+    {
+      where: {
+        id: commentId,
+      },
+    },
+  );
+
+  const comment = await Comment.findByPk(commentId);
+
+  if (comment.userId === "AITA") {
+    await AITA.upvote(comment.runId);
+    console.log("AI upvoted.");
+  }
+
+  res.status(204).send();
 };
