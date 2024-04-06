@@ -64,6 +64,16 @@ function formatComments(extracted) {
   return repliesIntegratedPurged;
 }
 
+exports.getUserComments = async (req, res) => {
+  const userId = req.params.username;
+  const comments = await Comment.findAll({
+    where: {
+      userId,
+    },
+  });
+  res.status(200).json(comments);
+}
+
 exports.get = async (req, res) => {
   const { solutionId } = req.params;
   const comments = await Comment.findAll({

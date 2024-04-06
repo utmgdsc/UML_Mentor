@@ -3,13 +3,20 @@ import { useParams } from 'react-router-dom';
 import { Container, Row, Button, Col, Card } from 'react-bootstrap';
 import { UserData } from '../types/UserData';
 import { SolutionData } from '../types/SolutionData';
+import { CommentData } from '../types/CommentData';
+import { ChallengeDetailsShort } from '../types/ChallengeDetailsShort';
+import SolutionCard from '../components/SolutionCard';
+import ChallengeCard from '../components/ChallengeCard';
 
 const Profile = () => {
   const { username } = useParams();
   const [user, setUser] = useState<UserData>();
-  const [solutions, setSolutions] = useState<SolutionData>();
-  const [comments, setComments] = useState([]);
+  const [myProfile, setMyProfile] = useState<boolean>(false);
+  const [solutions, setSolutions] = useState<SolutionData[]>([]);
+  const [comments, setComments] = useState<CommentData[]>([]);
+  const [challenges, setChallenges] = useState<ChallengeDetailsShort[]>([]);
 
+  // Fetch user data
   useEffect(() => {
     fetch(`/api/users/${username}`)
       .then(response => {
@@ -24,34 +31,74 @@ const Profile = () => {
       .catch(error => {
         console.error('Error fetching user data: ', error);
       });
+  }, [username]);
 
-    // fetch('/api/solutions/1')
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch solution data');
-    //     }
-    //     return response.json() as SolutionData[];
-    //   })
-    //   .then(data => {
-    //     setSolutions(data);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error fetching solution data:', error);
-    //   });
+  // Check if the profile is the user's own profile
+  useEffect(() => {
+    fetch('/api/users/whoami').then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data:(');
+      }
+      return response.json() as Promise<{username: string}>;
+    }
+    ).then(data => {
+      if (data.username === username) {
+        setMyProfile(true);
+      }
+    }).catch(error => {
+      console.error('Error fetching user data: ', error);
+    });
+  }, [username]);
 
-    // fetch('/api/comments/1')
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch comment data :(');
-    //     }
-    //     return response.json();
-    //   })
-    //   .then(data => {
-    //     setComments(data);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error fetching comment data:', error);
-    //   });
+  // Fetch user solutions
+  useEffect(() => {
+    fetch(`/api/solutions/user/${username}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch solutions:(');
+        }
+        return response.json() as Promise<SolutionData[]>;
+      })
+      .then(data => {
+        setSolutions(data);
+      })
+      .catch(error => {
+        console.error('Error fetching solutions: ', error);
+      });
+  }, [username]);
+
+  // Fetch user comments
+  useEffect(() => {
+    fetch(`/api/comments/user/${username}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch comments:(');
+        }
+        return response.json() as Promise<CommentData[]>;
+      })
+      .then(data => {
+        setComments(data);
+      })
+      .catch(error => {
+        console.error('Error fetching comments: ', error);
+      });
+  }, [username]);
+
+  // Fetch user challenges for which a diagram exists
+  useEffect(() => {
+    fetch(`/api/challenges/inprogress/user/${username}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch challenges:(');
+        }
+        return response.json() as Promise<ChallengeDetailsShort[]>;
+      })
+      .then(data => {
+        setChallenges(data);
+      })
+      .catch(error => {
+        console.error('Error fetching challenges: ', error);
+      });
   }, [username]);
 
   return (
@@ -62,49 +109,57 @@ const Profile = () => {
             <h1 className="">{user.username}</h1>
             <h2 className="fs-5">{user.email}</h2>
           </Col>
-          <Col>
-            {/* <h3>Score: {user.score}</h3> */}
-          </Col>
         </Row>
       )}
-      {/* <Row className="mb-5 border-0 rounded-3 overflow-hidden shadow-sm">
-        <Col>
-          <h2 className="mb-4">Solutions</h2>
-          <Row xs={1} md={2} lg={3} className="g-4">
-            {solutions.map(solution => (
-              <Col key={solution.challengeId}>
-                <Card className="transition-hover">
-                  <Card.Img variant="top" src={solution.imgSrc} />
-                  <Card.Body>
-                    <Card.Title>{solution.title}</Card.Title>
-                    <Card.Text>
-                      {solution.description}
-                    </Card.Text>
-                    <Button variant="primary" href={`/solution/${solution.id}`}>View Solution</Button>
-                  </Card.Body>
-                </Card>
+      {
+        myProfile && 
+        <>
+          <h2 className="mb-4">My Challenges in Progress</h2>
+          <Row sm={1} lg={3}>
+            {challenges.map(challenge => (
+              <Col key={challenge.id} className="mb-4">
+                <ChallengeCard
+                  key={challenge.id}
+                  title={challenge.title}
+                  difficulty={challenge.difficulty}
+                  generalDescription={challenge.generalDescription}
+                  id={challenge.id}
+                  completed={challenge.completed}
+                />
               </Col>
             ))}
           </Row>
-        </Col>
-      </Row> */}
-      {/* <Row className="border-0 rounded-3 overflow-hidden shadow-sm">
-        <Col>
-          <h2 className="mb-4">Comments</h2>
-          <Row xs={1} md={2} lg={3} className="g-4">
-            {comments.map(comment => (
-              <Col key={comment.name}>
-                <Card className="mb-3 transition-hover">
-                  <Card.Body>
-                    <Card.Title className="">{comment.solutionId}</Card.Title>
-                    <Card.Text className="">{comment.text}</Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        </Col>
-      </Row> */}
+        </>
+      }
+      <h2 className="mb-4">Solutions</h2>
+      <Row sm={1} lg={3}>
+        {solutions.map(solution => (
+          <Col key={solution.id} className="mb-4">
+            <SolutionCard
+              key={solution.id}
+              title={solution.title}
+              description={solution.description}
+              imgSrc={solution.diagram}
+              id={solution.id.toString()}
+              author={solution.User.username}
+              createdAt={solution.createdAt}
+            />
+          </Col>
+        ))}
+      </Row>
+      <h2 className="mb-4">Comments</h2>          
+      <Row sm={1} lg={3}>
+        {comments.map(comment => (
+          // TODO: MAKE A COMMENT COMPONENT
+          <Col key={comment.id} className="mb-4">
+            <Card key={comment.id}> 
+              <Card.Body>
+                <Card.Text>{comment.text}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </Container>
   );
 };

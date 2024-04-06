@@ -43,8 +43,25 @@ async function formatChallenge(challengeData, userId) {
       expectedFunctionality: challengeDescription.expectedFunctionality,
       completed: completed,
     };
-  }
-    
+}
+  
+exports.findUserInProgress = async (req, res) => {
+  const username = req.params.username;
+  const solutions = await db.SolutionInProgress.findAll({
+    where: {
+      userId: username,
+    },
+    include: [{ model: db.Challenge }],
+  });
+
+  // extract the challenge data from the solutions
+  const challenges = await Promise.all(solutions.map(async (solution) => {
+    return await formatChallenge(solution.Challenge, username);
+  }));
+
+  res.status(200).json(challenges);
+}
+
 
 exports.findSuggested = async (req, res) => {
   const username = req.user.username;

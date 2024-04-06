@@ -25,10 +25,14 @@ const upload = multer({ storage: storage });
 // from /api/solutions/diagrams/<filename>
 router.use("/diagrams", express.static(STORAGE_CONFIG.location));
 
+// Get n most recent solutions from the database.
+router.get("/recent/:n", Solution.getNrecent);
+
+// Get all solutions for the user
+router.get("/user/:username", Solution.getUserSolutions);
+
 // Get solutions from the database.
 router.get("/", Solution.getAll);
-
-router.get("/recent/:n", Solution.getNrecent);
 
 // Get individual solution by id
 router.get("/:id", Solution.get);

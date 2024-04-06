@@ -1,6 +1,13 @@
 const db = require("../models/index");
 const SolutionInProgress = db.SolutionInProgress;
 
+exports.findMyInProgress = async (req, res) => {
+    const userId = req.user.username;
+    const solutions = await SolutionInProgress.findAll({ where: { userId } });
+    res.status(200).json(solutions);
+}
+
+
 // NOTE: This method is used only for testing. Do not run in production!
 exports.findAll = async (req, res) => {
     //NOTE: in the future we will need to pass the offset for the limit
@@ -8,7 +15,7 @@ exports.findAll = async (req, res) => {
     res.status(200).json(solutions);
 }
 
-//TODO: Implement this method
+//NOTE: This method is not to be used in the current version of the app.
 // exports.findOne = async (req, res) => {
 
 // }
@@ -69,6 +76,5 @@ exports.deleteAll = async (req, res) => {
     }
 
     await SolutionInProgress.destroy({ where: {} });
-    
     res.status(204).end();
 }

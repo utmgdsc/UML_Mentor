@@ -10,10 +10,14 @@ const checkRole = require("../middleware/CheckRoleMiddleware");
 
 AsyncWrapController(Challenge);
 
+// Get all challenges for which SolutionsInProgress exist for the user.
+router.get("/inprogress/user/:username", Challenge.findUserInProgress);
+
+// Get the suggested challenges for the currently logged in user.
+router.get("/suggested", Challenge.findSuggested);
+
 // Get all challenges from the database.
 router.get("/", Challenge.findAll);
-
-router.get("/suggested", Challenge.findSuggested);
 
 // Get a challenge from the database.
 router.get("/:id", Challenge.findOne);
