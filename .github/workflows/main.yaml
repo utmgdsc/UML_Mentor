@@ -16,6 +16,7 @@ jobs:
           cd ~/UML_Mentor
           git switch main
           git pull
+          npm install
 
       - name: Build Client
         run: |
