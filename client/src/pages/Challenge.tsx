@@ -150,9 +150,6 @@ const Challenge = () => {
             ) : (
               <Col lg={{ span: 6, offset: 0 }} xl={{ span: 5 }}>
                 <ButtonToolbar className="d-flex align-items-end justify-content-between">
-                <Button className="m-1" onClick={() => setShowInstructions(true)}>
-                    Instructions
-                  </Button>
                   <Button className="m-1" target="_blank" href={"/editor?type=challenge&id=" + id}>
                     Open Editor
                   </Button>
@@ -162,9 +159,11 @@ const Challenge = () => {
                   <Button
                     className="m-1"
                     target="_blank"
-                    href={"/solutions/challenge/" + id}
-                  >
+                    href={"/solutions/challenge/" + id}>
                     View Solutions
+                  </Button>
+                  <Button className="m-1" onClick={() => setShowInstructions(true)}>
+                    Instructions
                   </Button>
                 </ButtonToolbar>
               </Col>
