@@ -5,6 +5,7 @@ import { SolutionData } from "../types/SolutionData.ts";
 import { CommentData } from "../types/CommentData.ts";
 import Card from "react-bootstrap/Card";
 import Button from "../components/Button.tsx";
+import Comment from "../components/Comment.tsx";
 
 function loadSolution(
   id: string,
@@ -35,41 +36,43 @@ function loadComments(
 }
 
 const Solution = () => {
-  // TODO: replace this once auth is available.
-  const userId = 0;
-
-  const { id } = useParams();
+  const { id } = useParams(); // Id is the solution id
   const [solutionData, setSolutionData] = useState<SolutionData>();
   const [comments, setComments] = useState<CommentData[]>();
-  const [newComment, setNewComment] = useState("");
 
-  const handleCommentChange = (event) => {
-    setNewComment(event.target.value);
-  };
+  const handleSubmit = (parentId: number, text: string) => {
+    let promise = null;
+    if (parentId) {
+      promise = fetch(`/api/comments/reply/${parentId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          solutionId: solutionData?.id,
+          text,
+        }),
+      });
+    } else {
+      promise = fetch(`/api/comments/${solutionData?.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          solutionId: solutionData?.id,
+          text,
+        }),
+      });
+    }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    fetch(`/api/comments/${solutionData?.id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId,
-        solutionId: solutionData?.id,
-        text: newComment,
-      }),
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
+    promise
+      .then(() => {
         loadComments(id, setComments);
       })
       .catch((err) => {
         console.error(err);
       });
-
-    setNewComment("");
   };
 
   useEffect(() => {
@@ -79,15 +82,10 @@ const Solution = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    console.log("solution data", solutionData);
-    console.log("comments", comments);
-  }, [solutionData, comments]);
-
   return (
-    <Container>
-      <Row sm={2} className="mt-4 pb-4">
-        <Col>
+    <Container className={"my-5"} fluid={"sm"}>
+      <Row md={12} className={"justify-content-center"}>
+        <Col md={6}>
           <h2>Solution</h2>
           {solutionData && (
             <Card>
@@ -105,38 +103,19 @@ const Solution = () => {
             </Card>
           )}
         </Col>
-        <Col
-          style={{
-            maxHeight: "66vh",
-            overflowY: "scroll",
-          }}
-        >
+      </Row>
+      <Row className={"mt-5 justify-content-center"} md={12}>
+        <Col md={6}>
           <h2>Comments</h2>
-          <Card>
-            <Card.Body>
-              <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="commentForm">
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={newComment}
-                    onChange={handleCommentChange}
-                  />
-                </Form.Group>
-                <Button variant="primary" type="submit" className={"mt-2"}>
-                  Submit
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
+          <Comment editable={true} onSubmit={handleSubmit} />
           {comments &&
             comments.map((comment) => (
-              <Card key={comment.id} className="mt-3">
-                <Card.Body>
-                  <Card.Text>{comment.text}</Card.Text>
-                  <Button variant="success">Helpful</Button>
-                </Card.Body>
-              </Card>
+              <Comment
+                key={comment.id}
+                comment={comment}
+                editable={false}
+                onSubmit={handleSubmit}
+              />
             ))}
         </Col>
       </Row>

@@ -3,5 +3,6 @@ export type CommentData = {
   solutionId: number;
   userId: number;
   text: string;
-  helpful: boolean;
+  upVotes: number;
+  replies: CommentData[];
 };
