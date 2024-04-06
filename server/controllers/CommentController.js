@@ -178,17 +178,15 @@ exports.reply = async (req, res) => {
   const solution = await Solution.findByPk(parent.solutionId);
   const challenge = await Challenge.findByPk(solution.challengeId);
 
-  console.log("Calling AI TA....");
+  console.log("Calling AITA....");
   const [chainRunId, feedback] = await AITA.feedback_for_comment(
     comment_chain,
     challenge,
     solution,
   );
 
-  console.log(`Chain run id is ${chainRunId}`);
-
   await reply_to_comment(comment.id, feedback, "AITA", chainRunId);
-  console.log(`AI TA commented on comment ${comment.id}`);
+  console.log(`AITA commented on comment ${comment.id}`);
 };
 
 exports.upvote = async (req, res) => {

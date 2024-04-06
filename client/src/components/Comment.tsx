@@ -2,8 +2,9 @@ import Card from "react-bootstrap/Card";
 import Button from "./Button.tsx";
 import { CommentData } from "../types/CommentData.ts";
 import { Form } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CaretUpFill } from "react-bootstrap-icons";
+import { useRemark } from "react-remark";
 
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
 
@@ -53,11 +54,17 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
   const [repliesOpen, setRepliesOpen] = useState(false);
   const repliesAvailable = comment.replies.length !== 0;
 
+  const [renderedMarkdown, setMarkdownSource] = useRemark();
+
+  useEffect(() => {
+    setMarkdownSource(comment.text);
+  }, []);
+
   return (
     <>
       <Card className="mt-3">
         <Card.Body>
-          <Card.Text>{comment.text}</Card.Text>
+          <Card.Text>{renderedMarkdown}</Card.Text>
           <div>
             <Upvoter commentId={comment.id} upVotes={comment.upVotes} />
             <Button
