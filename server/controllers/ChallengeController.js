@@ -30,6 +30,7 @@ function formatChallenge(challengeData) {
     
 
 exports.findSuggested = async (req, res) => {
+  console.log(req.user)
   const username = req.user.username;
   // see how many solutions the user has solved
   const userSolutions = await db.Solution.findAll({ 

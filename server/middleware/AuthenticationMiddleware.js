@@ -2,7 +2,6 @@ const db = require("../models");
 const { HandledError } = require("./ErrorHandlingMiddleware");
 
 async function authMiddleware(req, res, next) {
-  next();
     try {
       const utorid = req.headers.utorid;
       const http_mail = req.headers.http_mail;
@@ -18,6 +17,7 @@ async function authMiddleware(req, res, next) {
       }
 
       req.user = user;
+      console.log(user);
       next();
     } catch (error) {
       next(new HandledError(500, "Shibboleth headers not found."));

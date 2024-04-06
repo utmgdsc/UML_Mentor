@@ -1,8 +1,8 @@
 const db = require("../models/index");
 const User = db.User;
-
+//change
 exports.getMe = async (req, res) => {
-  res.status(200).json({ username: req.user.username });
+  res.status(200).json({ username: req.headers.utorid });
 };
 
 exports.get = async (req, res) => {
