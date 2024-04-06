@@ -37,7 +37,10 @@ function formatComments(extracted) {
     // Replace replies of the current node
     cm.replies = cm.replies.map((r) => {
       const out = cms.filter((c) => c.id === r)[0];
-      replyIds.push(out.id);
+      // console.log(out);
+      if (out) {
+        replyIds.push(out.id);
+      }
       // console.log(`Reply for ${cm.text} found: ${out.id}.`);
       return replaceReplies(cms, out);
     });
@@ -75,9 +78,9 @@ exports.get = async (req, res) => {
       text,
       userId,
       solutionId,
+      hasUserUpvoted: usersWhoUpvoted.includes(req.user.username),
       upVotes,
       replies,
-      hasUserUpvoted: usersWhoUpvoted.includes(req.user.username),
     }),
   );
 
@@ -165,13 +168,28 @@ exports.reply = async (req, res) => {
   // This is a reply to an AI generated comment.
 
   console.log("Generating AI reply...");
-  const comments = formatComments(
-    await Comment.findAll({
-      where: {
-        solutionId: parent.solutionId,
-      },
+
+  const fetchedComments = await Comment.findAll({
+    where: {
+      solutionId: parent.solutionId,
+    },
+  });
+
+  const extracted = fetchedComments.map(
+    ({ id, text, userId, solutionId, upVotes, replies, usersWhoUpvoted }) => ({
+      id,
+      text,
+      userId,
+      solutionId,
+      hasUserUpvoted: usersWhoUpvoted.includes(req.user.username),
+      upVotes,
+      replies,
     }),
   );
+
+  const comments = formatComments(extracted);
+
+  // console.log(comments);
 
   const comment_chain = comments
     .map((c) => getCommentChain(c, comment.id))
@@ -217,10 +235,10 @@ exports.upvote = async (req, res) => {
     },
   );
 
+  res.status(204).send();
+
   if (comment.userId === "AITA") {
     await AITA.upvote(comment.runId);
     console.log("AI upvoted.");
   }
-
-  res.status(204).send();
 };
