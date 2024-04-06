@@ -10,14 +10,21 @@ const User = db.User;
 
 exports.getNrecent = async (req, res) => {
   const { n } = req.params;
-  const solutions = await Solution.findAll({ limit: n, include: {model: User, as: "User"}, order: [['createdAt', 'DESC']]});
-  
+  const solutions = await Solution.findAll({
+    limit: n,
+    include: { model: User, as: "User" },
+    order: [["createdAt", "DESC"]],
+  });
+
   res.status(200).json(solutions);
-}
+};
 
 exports.getAll = async (req, res) => {
   // eager load the user data
-  const solutions = await Solution.findAll({ limit: 50, include: {model: User, as: "User"}});
+  const solutions = await Solution.findAll({
+    limit: 50,
+    include: { model: User, as: "User" },
+  });
 
   res.status(200).json(solutions);
 };
@@ -40,14 +47,15 @@ exports.getComments = async (req, res) => {
 
 exports.create = async (req, res) => {
   const { challengeId, title, description } = req.body;
-  // TODO: fix user id
   const { filename: diagram } = req.file;
 
   const userId = req.user.username;
 
+  console.log(`Creating Solution /w ${challengeId}m ${userId}`);
+
   const newSolution = await Solution.create({
     challengeId,
-    userId: "0",
+    userId: userId,
     title,
     description,
     diagram,
@@ -62,7 +70,11 @@ exports.create = async (req, res) => {
     challenge,
     `${STORAGE_CONFIG.location}/${diagram}`,
   );
-  Comment.create({ text: feedback, userId: -13, solutionId: newSolution.id });
+  Comment.create({
+    text: feedback,
+    userId: "AITA",
+    solutionId: newSolution.id,
+  });
   console.log("AITA gave feedback!");
 };
 
@@ -86,7 +98,8 @@ exports.edit = async (req, res) => {
     updateData.title = title;
   }
 
-  if (file && STORAGE_CONFIG.delete_on_edit) { //TODO: Copy paste to delete
+  if (file && STORAGE_CONFIG.delete_on_edit) {
+    //TODO: Copy paste to delete
     // delete the old file
 
     const solution = await Solution.findByPk(id);
@@ -111,7 +124,7 @@ exports.delete = async (req, res) => {
   const { id } = req.params;
   await Solution.destroy({ where: { id } });
   fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
-      console.log(err),
-    ); 
+    console.log(err),
+  );
   res.status(204).send();
 };

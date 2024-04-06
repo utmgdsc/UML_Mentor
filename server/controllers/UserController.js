@@ -2,8 +2,8 @@ const db = require("../models/index");
 const User = db.User;
 
 exports.getMe = async (req, res) => {
-  res.status(200).json({ username: req.user.username});
-}
+  res.status(200).json({ username: req.user.username });
+};
 
 exports.get = async (req, res) => {
   const { username } = req.params;
@@ -12,9 +12,9 @@ exports.get = async (req, res) => {
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
-  
+
   res.status(200).json(user);
-}
+};
 
 exports.getSolutions = async (req, res) => {
   const { id } = req.params;
@@ -46,7 +46,7 @@ exports.create = async (req, res) => {
   const newUser = await User.create({
     username,
     email,
-    role
+    role,
   });
   res.status(201).json(newUser);
 };
@@ -54,7 +54,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   const { username } = req.params;
   const { email, role } = req.body;
-  
+
   const user = await User.findByPk(username);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
@@ -69,4 +69,3 @@ exports.delete = async (req, res) => {
   await User.destroy({ where: { username } });
   res.status(204).send();
 };
-

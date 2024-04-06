@@ -152,11 +152,15 @@ exports.reply = async (req, res) => {
   // Comment that it's in reply to
   const { parentId } = req.params;
   const { text } = req.body;
-  const [parent, comment] = await reply_to_comment(parentId, text, 0);
+  const [parent, comment] = await reply_to_comment(
+    parentId,
+    text,
+    req.user.username,
+  );
 
   res.status(204).send();
 
-  if (parent.userId !== -13) return;
+  if (parent.userId !== "AITA") return;
   // This is a reply to an AI generated comment.
 
   console.log("Generating AI reply...");
@@ -180,6 +184,6 @@ exports.reply = async (req, res) => {
     challenge,
     solution,
   );
-  await reply_to_comment(comment.id, feedback, -13);
+  await reply_to_comment(comment.id, feedback, "AITA");
   console.log(`AI TA commented on comment ${comment.id}`);
 };

@@ -82,11 +82,6 @@ const Solution = () => {
     }
   }, [id]);
 
-  // useEffect(() => {
-  //   console.log("solution data", solutionData);
-  //   console.log("comments", comments);
-  // }, [solutionData, comments]);
-
   return (
     <Container className={"my-5"} fluid={"sm"}>
       <Row md={12} className={"justify-content-center"}>
