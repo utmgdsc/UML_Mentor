@@ -82,10 +82,10 @@ function Challenges() {
         continue;
       }
 
-      // if(hideComplete && challenge.completed) { //TODO: add completed field to challengeDetailsShort
-      //     // console.log("Filtering out: " + challenge.title);
-      //     continue;
-      // }
+      if(hideComplete && challenge.completed) {
+          // console.log("Filtering out: " + challenge.title);
+          continue;
+      }
 
       row.push(
         <Col lg={4} key={i} className="mb-4">
@@ -187,13 +187,13 @@ function Challenges() {
               <Button
                 className={
                   "mt-4 float-end " +
-                  (hideComplete ? "btn-primary" : "btn-danger")
+                  (!hideComplete ? "btn-primary" : "btn-danger")
                 }
                 onClick={() => {
                   setHideComplete(!hideComplete);
                 }}
               >
-                {hideComplete ? "Showing Completed" : "Hiding Completed"}
+                {!hideComplete ? "Showing Completed" : "Hiding Completed"}
               </Button>
             </Col>
           </Row>

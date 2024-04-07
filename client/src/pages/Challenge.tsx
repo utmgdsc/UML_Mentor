@@ -9,9 +9,7 @@ import InstructionsPopup from '../components/InstructionsPopup';
 
 
 const Challenge = () => {
-    //TODO: Fetch this value from the server. 
     // We can query the db for solutions with the current user id and the challenge id
-    const [completed, setCompleted] = useState(false);
     const [details, setDetails] = useState<ChallengeDetails>();
     const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
@@ -41,7 +39,7 @@ const Challenge = () => {
         // console.log(details);
         return;
       })
-      .catch((err) => {
+      .catch((err: Error) => {
         console.log();
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         console.error(
@@ -62,7 +60,6 @@ const Challenge = () => {
             return response.json() as Promise<ChallengeDetails>;
         }).then((data) => {
             setDetails(data);
-            setCompleted(false); //TODO: This value should be fetched from the server
             setIsLoading(false);
             // console.log(details);
             return;
@@ -92,7 +89,7 @@ const Challenge = () => {
             <h1 className="fw-bold">{details.title}</h1>
             <h2 className=" text-dark fw-semibold fs-3">{details.outcome}</h2>
             <div className="mt-4 me-n4 float-start ">{difficultyStars}</div>
-            {completed && (
+            {details.completed && (
               <span className=" mt-4 float-end text-success">
                 <strong>Completed</strong>
               </span>
@@ -119,7 +116,7 @@ const Challenge = () => {
             </ul>
           </Col>
         </Row>
-        <Row className={!completed ? "align-items-end mb-4" : ""}>
+        <Row className={!details.completed ? "align-items-end mb-4" : ""}>
           <Col lg={{ span: 6, offset: 0 }} xl={{ span: 5, offset: 1 }}>
             <h3 className="fs-4">Usage Scenarios</h3>
             <ul>
@@ -134,7 +131,7 @@ const Challenge = () => {
           </Col>
           {
             //if completed, display key patterns, otherwise display buttons
-            completed ? (
+            details.completed ? (
               <Col lg={{ span: 6, offset: 0 }} xl={{ span: 5 }}>
                 <h3 className="fs-4 text-success">Key Design Patterns</h3>
                 <ul>
@@ -172,7 +169,7 @@ const Challenge = () => {
         </Row>
         {
           // If completed, display buttons at the bottom
-          completed && (
+          details.completed && (
             <Row>
               <ButtonToolbar className="d-flex align-items-end justify-content-around my-4">
                 <Button className="m-1" target="_blank" href={"/editor?type=challenge&id=" + id}>
@@ -193,7 +190,7 @@ const Challenge = () => {
           )
         }
       </section>
-        <InstructionsPopup show={showInstructions} handleClose={() => setShowInstructions(false)} />
+        <InstructionsPopup show={showInstructions} handleClose={() => { setShowInstructions(false) }} />
     </Container>
   );
 };

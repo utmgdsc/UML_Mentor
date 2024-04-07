@@ -9,6 +9,7 @@ function ChallengeCard({
   generalDescription,
   id,
   difficulty,
+  completed
 }: ChallengeDetailsShort) {
   const difficultyStars = useMemo(
     () =>
@@ -16,9 +17,13 @@ function ChallengeCard({
     [difficulty],
   );
 
+  const backgroundColor = completed ? "bg-success-subtle" : "";
+
   return (
     <Card>
-      <Card.Header>{difficultyStars}</Card.Header>
+      <Card.Header className={backgroundColor}>
+        {difficultyStars}
+      </Card.Header>
       <Card.Body>
         <Card.Title>{title}</Card.Title>
         <Card.Text>{generalDescription}</Card.Text>
