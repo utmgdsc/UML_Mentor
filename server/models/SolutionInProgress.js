@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       diagram: {
-        type: DataTypes.STRING,
+        type: "TEXT",
         allowNull: false, //NOTE: SUBJECT TO CHANGE -> may need to be true, because when we create a new diagram, we need a dummy value, before we save it for the first time
       },
   }, {
