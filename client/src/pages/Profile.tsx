@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom'; 
-import { Container, Row, Button, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import { UserData } from '../types/UserData';
 import { SolutionData } from '../types/SolutionData';
 import { CommentData } from '../types/CommentData';
@@ -117,7 +117,6 @@ const Profile = () => {
         <>
           <h2 className="mt-4 mb-2">My Challenges in Progress</h2>
           <Row>
-            {/* <Col> */}
             <MasonryGrid sm={1} lg={3}>
               {challenges.map(challenge => (
                   <ChallengeCard
@@ -130,7 +129,6 @@ const Profile = () => {
                   />
               ))}
             </MasonryGrid>
-            {/* </Col> */}
           </Row>
         </>
       }
@@ -151,7 +149,8 @@ const Profile = () => {
       <h2 className="mt-4 mb-2">Comments</h2>          
       <MasonryGrid sm={1} lg={3} className="mb-4">
         {comments.map(comment => (
-          // TODO: MAKE A COMMENT COMPONENT
+          // NOTE: This is a temporary solution to display comments
+          // I will wait for Eren to refactor the Comment component before I properly implement this
             <Card key={comment.id}> 
               <Card.Body>
                 <Card.Text>{comment.text}</Card.Text>
