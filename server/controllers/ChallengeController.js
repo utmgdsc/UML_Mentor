@@ -31,32 +31,18 @@ async function formatChallenge(challengeData, userId) {
       } 
     });    
 
-    // check if the user has solved the challenge
-    if (challengeSolutions.length > 0) {
-      return {
-        id: challengeData.id,
-        title: challengeData.title,
-        difficulty: diffToNum(challengeData.difficulty),
-        outcome: challengeDescription.outcome,
-        keyPatterns: challengeDescription.keyPatterns,
-        generalDescription: challengeDescription.generalDescription,
-        usageScenarios: challengeDescription.usageScenarios,
-        expectedFunctionality: challengeDescription.expectedFunctionality,
-        completed: true,
-      }
-    } else {
-      return {
-        id: challengeData.id,
-        title: challengeData.title,
-        difficulty: diffToNum(challengeData.difficulty),
-        outcome: challengeDescription.outcome,
-        keyPatterns: challengeDescription.keyPatterns,
-        generalDescription: challengeDescription.generalDescription,
-        usageScenarios: challengeDescription.usageScenarios,
-        expectedFunctionality: challengeDescription.expectedFunctionality,
-        completed: false,
-      }
-    }
+    const completed = challengeSolutions.length > 0;
+    return {
+      id: challengeData.id,
+      title: challengeData.title,
+      difficulty: diffToNum(challengeData.difficulty),
+      outcome: challengeDescription.outcome,
+      keyPatterns: challengeDescription.keyPatterns,
+      generalDescription: challengeDescription.generalDescription,
+      usageScenarios: challengeDescription.usageScenarios,
+      expectedFunctionality: challengeDescription.expectedFunctionality,
+      completed: completed,
+    };
   }
     
 

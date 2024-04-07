@@ -9,9 +9,7 @@ import InstructionsPopup from '../components/InstructionsPopup';
 
 
 const Challenge = () => {
-    //TODO: Fetch this value from the server. 
     // We can query the db for solutions with the current user id and the challenge id
-    // const [completed, setCompleted] = useState(false);
     const [details, setDetails] = useState<ChallengeDetails>();
     const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
