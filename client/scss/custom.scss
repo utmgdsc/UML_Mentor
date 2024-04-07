@@ -18,3 +18,258 @@ $enable-negative-margins: true;
 
 // Import the rest of Bootstrap
 @import "../node_modules/bootstrap/scss/bootstrap";
+
+
+// CUSTOM STYLES
+.masonry-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 1.5em;
+}
+
+.masonry-column {
+    column-count: 1;
+}
+
+.masonry-item {
+    break-inside: avoid; /* Prevent items from splitting across columns */
+    // margin-bottom: 16px; /* Space between items */
+}
+
+// media queries for size classes
+@include media-breakpoint-up(sm) {
+    .masonry-grid.sm-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .masonry-grid.sm-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .masonry-grid.sm-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .masonry-grid.sm-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .masonry-grid.sm-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .masonry-grid.sm-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    .masonry-grid.sm-7 {
+        grid-template-columns: repeat(7, 1fr);
+    }
+    .masonry-grid.sm-8 {
+        grid-template-columns: repeat(8, 1fr);
+    }
+    .masonry-grid.sm-9 {
+        grid-template-columns: repeat(9, 1fr);
+    }
+    .masonry-grid.sm-10 {
+        grid-template-columns: repeat(10, 1fr);
+    }
+    .masonry-grid.sm-11 {
+        grid-template-columns: repeat(11, 1fr);
+    }
+    .masonry-grid.sm-12 {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+
+@include media-breakpoint-up(sm) {
+    .masonry-grid.sm-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .masonry-grid.sm-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .masonry-grid.sm-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .masonry-grid.sm-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .masonry-grid.sm-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .masonry-grid.sm-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    .masonry-grid.sm-7 {
+        grid-template-columns: repeat(7, 1fr);
+    }
+    .masonry-grid.sm-8 {
+        grid-template-columns: repeat(8, 1fr);
+    }
+    .masonry-grid.sm-9 {
+        grid-template-columns: repeat(9, 1fr);
+    }
+    .masonry-grid.sm-10 {
+        grid-template-columns: repeat(10, 1fr);
+    }
+    .masonry-grid.sm-11 {
+        grid-template-columns: repeat(11, 1fr);
+    }
+    .masonry-grid.sm-12 {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .masonry-grid.md-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .masonry-grid.md-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .masonry-grid.md-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .masonry-grid.md-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .masonry-grid.md-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .masonry-grid.md-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    .masonry-grid.md-7 {
+        grid-template-columns: repeat(7, 1fr);
+    }
+    .masonry-grid.md-8 {
+        grid-template-columns: repeat(8, 1fr);
+    }
+    .masonry-grid.md-9 {
+        grid-template-columns: repeat(9, 1fr);
+    }
+    .masonry-grid.md-10 {
+        grid-template-columns: repeat(10, 1fr);
+    }
+    .masonry-grid.md-11 {
+        grid-template-columns: repeat(11, 1fr);
+    }
+    .masonry-grid.md-12 {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .masonry-grid.lg-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .masonry-grid.lg-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .masonry-grid.lg-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .masonry-grid.lg-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .masonry-grid.lg-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .masonry-grid.lg-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    .masonry-grid.lg-7 {
+        grid-template-columns: repeat(7, 1fr);
+    }
+    .masonry-grid.lg-8 {
+        grid-template-columns: repeat(8, 1fr);
+    }
+    .masonry-grid.lg-9 {
+        grid-template-columns: repeat(9, 1fr);
+    }
+    .masonry-grid.lg-10 {
+        grid-template-columns: repeat(10, 1fr);
+    }
+    .masonry-grid.lg-11 {
+        grid-template-columns: repeat(11, 1fr);
+    }
+    .masonry-grid.lg-12 {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .masonry-grid.xl-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .masonry-grid.xl-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .masonry-grid.xl-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .masonry-grid.xl-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .masonry-grid.xl-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .masonry-grid.xl-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    .masonry-grid.xl-7 {
+        grid-template-columns: repeat(7, 1fr);
+    }
+    .masonry-grid.xl-8 {
+        grid-template-columns: repeat(8, 1fr);
+    }
+    .masonry-grid.xl-9 {
+        grid-template-columns: repeat(9, 1fr);
+    }
+    .masonry-grid.xl-10 {
+        grid-template-columns: repeat(10, 1fr);
+    }
+    .masonry-grid.xl-11 {
+        grid-template-columns: repeat(11, 1fr);
+    }
+    .masonry-grid.xl-12 {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+@include media-breakpoint-up(xxl) {
+    .masonry-grid.xxl-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    .masonry-grid.xxl-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .masonry-grid.xxl-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .masonry-grid.xxl-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .masonry-grid.xxl-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    .masonry-grid.xxl-6 {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    .masonry-grid.xxl-7 {
+        grid-template-columns: repeat(7, 1fr);
+    }
+    .masonry-grid.xxl-8 {
+        grid-template-columns: repeat(8, 1fr);
+    }
+    .masonry-grid.xxl-9 {
+        grid-template-columns: repeat(9, 1fr);
+    }
+    .masonry-grid.xxl-10 {
+        grid-template-columns: repeat(10, 1fr);
+    }
+    .masonry-grid.xxl-11 {
+        grid-template-columns: repeat(11, 1fr);
+    }
+    .masonry-grid.xxl-12 {
+        grid-template-columns: repeat(12, 1fr);
+    }
+}
+
+

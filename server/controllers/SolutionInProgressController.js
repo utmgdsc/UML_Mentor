@@ -33,18 +33,23 @@ exports.findOneByChallengeId = async (req, res) => {
 }
 
 exports.create = async (req, res) => {
-    const userId = req.user.username;
-    const { xml, title, challengeId  } = req.body;
+    try {
+        const userId = req.user.username;
+        const { xml, title, challengeId  } = req.body;
 
-    // Verify that the combination of challengeId and userId is unique
-    // (i.e. the user has not started a solution for this challenge)
-    const oldSolution = await SolutionInProgress.findOne({ where: { challengeId: challengeId, userId: userId } });
-    if (oldSolution !== null) {
-        return res.status(400).json({ error: "A solution in progress already exists for this user and challenge." });
+        // Verify that the combination of challengeId and userId is unique
+        // (i.e. the user has not started a solution for this challenge)
+        const oldSolution = await SolutionInProgress.findOne({ where: { challengeId: challengeId, userId: userId } });
+        if (oldSolution !== null) {
+            return res.status(400).json({ error: "A solution in progress already exists for this user and challenge." });
+        }
+
+        const newSolution = await SolutionInProgress.create({ challengeId, userId, title, diagram: xml});
+        res.status(201).json(newSolution);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "An error occurred while creating the solution." });
     }
-
-    const newSolution = await SolutionInProgress.create({ challengeId, userId, title, diagram: xml});
-    res.status(201).json(newSolution);
 }
 
 exports.edit = async (req, res) => {

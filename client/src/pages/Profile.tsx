@@ -7,6 +7,7 @@ import { CommentData } from '../types/CommentData';
 import { ChallengeDetailsShort } from '../types/ChallengeDetailsShort';
 import SolutionCard from '../components/SolutionCard';
 import ChallengeCard from '../components/ChallengeCard';
+import MasonryGrid from '../components/MasonryGrid';
 
 const Profile = () => {
   const { username } = useParams();
@@ -104,7 +105,7 @@ const Profile = () => {
   return (
     <Container>
       {user && (
-        <Row className="bg-secondary-subtle text-dark p-4 mb-5">
+        <Row className="bg-secondary-subtle text-dark p-4">
           <Col>
             <h1 className="">{user.username}</h1>
             <h2 className="fs-5">{user.email}</h2>
@@ -114,27 +115,28 @@ const Profile = () => {
       {
         myProfile && 
         <>
-          <h2 className="mb-4">My Challenges in Progress</h2>
-          <Row sm={1} lg={3}>
-            {challenges.map(challenge => (
-              <Col key={challenge.id} className="mb-4">
-                <ChallengeCard
-                  key={challenge.id}
-                  title={challenge.title}
-                  difficulty={challenge.difficulty}
-                  generalDescription={challenge.generalDescription}
-                  id={challenge.id}
-                  completed={challenge.completed}
-                />
-              </Col>
-            ))}
+          <h2 className="mt-4 mb-2">My Challenges in Progress</h2>
+          <Row>
+            {/* <Col> */}
+            <MasonryGrid sm={1} lg={3}>
+              {challenges.map(challenge => (
+                  <ChallengeCard
+                    key={challenge.id}
+                    title={challenge.title}
+                    difficulty={challenge.difficulty}
+                    generalDescription={challenge.generalDescription}
+                    id={challenge.id}
+                    completed={challenge.completed}
+                  />
+              ))}
+            </MasonryGrid>
+            {/* </Col> */}
           </Row>
         </>
       }
-      <h2 className="mb-4">Solutions</h2>
-      <Row sm={1} lg={3}>
+      <h2 className="mt-4 mb-2">Solutions</h2>
+      <MasonryGrid sm={1} lg={3}>
         {solutions.map(solution => (
-          <Col key={solution.id} className="mb-4">
             <SolutionCard
               key={solution.id}
               title={solution.title}
@@ -144,22 +146,19 @@ const Profile = () => {
               author={solution.User.username}
               createdAt={solution.createdAt}
             />
-          </Col>
         ))}
-      </Row>
-      <h2 className="mb-4">Comments</h2>          
-      <Row sm={1} lg={3}>
+      </MasonryGrid>
+      <h2 className="mt-4 mb-2">Comments</h2>          
+      <MasonryGrid sm={1} lg={3} className="mb-4">
         {comments.map(comment => (
           // TODO: MAKE A COMMENT COMPONENT
-          <Col key={comment.id} className="mb-4">
             <Card key={comment.id}> 
               <Card.Body>
                 <Card.Text>{comment.text}</Card.Text>
               </Card.Body>
             </Card>
-          </Col>
         ))}
-      </Row>
+      </MasonryGrid>
     </Container>
   );
 };
