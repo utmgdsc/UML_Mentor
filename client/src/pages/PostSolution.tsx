@@ -43,14 +43,23 @@ const PostSolution = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: Form validation
+    // Form validation
+    if (!postSolutionState.title.trim() || !postSolutionState.description.trim()) {
+      console.error('Title and description are required.');
+      return;
+    }
+  
+    if (!postSolutionState.diagram) {
+      // If there is no diagram
+      console.error('Diagram file is required.');
+      return;
+    }
+  
     const data = new FormData();
-    data.append("challengeId", `${challengeId}`);
-
+    data.append("challengeId", challengeId || '');
     data.append("title", postSolutionState.title);
-
     data.append("description", postSolutionState.description);
-    data.append("diagram", postSolutionState.diagram);
+    data.append("diagram", postSolutionState.diagram); // Safe to append now.
 
     fetch(`/api/solutions`, {
       method: "POST",

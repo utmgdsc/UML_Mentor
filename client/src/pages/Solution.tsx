@@ -7,6 +7,10 @@ import Card from "react-bootstrap/Card";
 import Button from "../components/Button.tsx";
 import Comment from "../components/Comment.tsx";
 
+type RouteParams = {
+  id: string;
+};
+
 function loadSolution(
   id: string,
   setter: React.Dispatch<React.SetStateAction<SolutionData | undefined>>,
@@ -36,9 +40,15 @@ function loadComments(
 }
 
 const Solution = () => {
-  const { id } = useParams(); // Id is the solution id
+  const { id } = useParams<RouteParams>();
   const [solutionData, setSolutionData] = useState<SolutionData>();
   const [comments, setComments] = useState<CommentData[]>();
+  useEffect(() => {
+    if (id) {
+      loadSolution(id, setSolutionData);
+      loadComments(id, setComments);
+    }
+  }, [id]);
 
   const handleSubmit = (parentId: number, text: string) => {
     let promise = null;
@@ -68,19 +78,14 @@ const Solution = () => {
 
     promise
       .then(() => {
+        if(id){
         loadComments(id, setComments);
+        }
       })
       .catch((err) => {
         console.error(err);
       });
   };
-
-  useEffect(() => {
-    if (id) {
-      loadSolution(id, setSolutionData);
-      loadComments(id, setComments);
-    }
-  }, [id]);
 
   return (
     <Container className={"my-5"} fluid={"sm"}>
