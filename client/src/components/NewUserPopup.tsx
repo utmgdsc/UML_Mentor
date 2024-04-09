@@ -105,7 +105,7 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
                     </Accordion>
                 </Card.Body>
                 <Card.Footer>
-                    <Button variant="primary" onClick={handleClose}>Accept</Button>
+                    <Button variant="primary" onClick={handleClose}>Proceed</Button>
                 </Card.Footer>
             </Card>
         </Modal>
