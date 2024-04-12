@@ -125,8 +125,7 @@ const Solution = () => {
                   editable={false}
                   onSubmit={handleSubmit}
                 />
-                {/* Place the delete button next to each comment */}
-                <Button onClick={() => handleDelete(comment.id)}>Delete</Button>
+                <Button variant="danger" onClick={() => handleDelete(comment.id)}>Delete</Button>
               </div>
             ))}
         </Col>

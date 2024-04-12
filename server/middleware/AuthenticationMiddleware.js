@@ -12,7 +12,7 @@ async function authMiddleware(req, res, next) {
         user = await db.User.create({
           username: utorid,
           email: http_mail,
-          role: "user",
+          role: "admin",
         });
       }
 
