@@ -22,10 +22,9 @@ module.exports = (sequelize, DataTypes) => {
         score: DataTypes.INTEGER
     });
     User.associate = function(models) {
-        // Define associations
         User.hasMany(models.Solution, { foreignKey: 'userId' });
-        User.hasMany(models.Comment, { foreignKey: 'userId' });
-        };
+        User.hasMany(models.Comment, { foreignKey: 'userId', as: 'Comments' });
+      };
 
     return User;
 };

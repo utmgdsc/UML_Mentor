@@ -6,10 +6,11 @@ const { AITA } = require("../AI/AITA");
 
 function formatComments(comments) {
   const extracted = comments.map(
-    ({ id, text, userId, solutionId, upVotes, replies }) => ({
+    ({ id, text, User, userId, solutionId, upVotes, replies }) => ({
       id,
       text,
       userId,
+      username: User.username,
       solutionId,
       upVotes,
       replies,
@@ -73,16 +74,24 @@ function formatComments(comments) {
 
 exports.get = async (req, res) => {
   const { solutionId } = req.params;
-  const comments = await Comment.findAll({
-    where: {
-      solutionId,
-    },
-  });
+  try {
+    const comments = await Comment.findAll({
+      where: { solutionId },
+      include: [{
+        model: db.User,
+        attributes: ['username'],  
+        as: 'User'
+      }]
+    });
 
-  const formatted = formatComments(comments);
-
-  res.status(200).json(formatted);
+    const formatted = formatComments(comments);
+    res.status(200).json(formatted);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching comments");
+  }
 };
+
 
 exports.create = async (req, res) => {
   const { text, solutionId } = req.body;

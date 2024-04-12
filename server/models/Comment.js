@@ -30,5 +30,11 @@ module.exports = (sequelize, DataTypes) => {
       // This is a comma separated list of comment ids
     },
   });
+  Comment.associate = function(models) {
+    Comment.belongsTo(models.User, {
+      foreignKey: 'userId',
+      as: 'User'  
+    });
+  };
   return Comment;
 };

@@ -3,6 +3,7 @@ import Button from "./Button.tsx";
 import { CommentData } from "../types/CommentData.ts";
 import { Form } from "react-bootstrap";
 import { useState } from "react";
+import dayjs from 'dayjs'; // Make sure to import dayjs for formatting dates
 
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
 
@@ -26,24 +27,26 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
   return (
     <>
       <Card className="mt-3">
+        <Card.Header>
+          <div className="d-flex justify-content-between align-items-center">
+            <strong>{comment.username}</strong>  {/* Displaying username */}
+            <small>{dayjs(comment.createdAt).format('MMM D, YYYY')}</small>  {/* Formatting and displaying date */}
+          </div>
+        </Card.Header>
         <Card.Body>
           <Card.Text>{comment.text}</Card.Text>
           <div className="">
             <Button
               variant="primary"
-              onClick={() => {
-                setIsReplying((p) => !p);
-              }}
+              onClick={() => setIsReplying(prev => !prev)}
             >
               Reply
             </Button>
             {repliesAvailable && (
               <Button
-                variant={"secondary"}
-                className={"ms-3"}
-                onClick={() => {
-                  setRepliesOpen((p) => !p);
-                }}
+                variant="secondary"
+                className="ms-3"
+                onClick={() => setRepliesOpen(prev => !prev)}
               >
                 {repliesOpen ? "Close Replies" : "See Replies"}
               </Button>
@@ -51,20 +54,18 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
           </div>
         </Card.Body>
       </Card>
-      <div className={"mt-3 ms-3"}>
+      <div className="mt-3 ms-3">
         {isReplying && (
           <Comment editable={true} onSubmit={onSubmit} parentId={comment.id} />
         )}
-        {repliesAvailable &&
-          repliesOpen &&
-          comment.replies.map((c) => (
-            <Comment
-              key={c.id}
-              comment={c}
-              onSubmit={onSubmit}
-              editable={false}
-            />
-          ))}
+        {repliesAvailable && repliesOpen && comment.replies.map(c => (
+          <Comment
+            key={c.id}
+            comment={c}
+            onSubmit={onSubmit}
+            editable={false}
+          />
+        ))}
       </div>
     </>
   );
@@ -72,14 +73,15 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
 
 const EditableComment = ({ onSubmit, parentId }: EditableCommentProps) => {
   const [newComment, setNewComment] = useState<string>("");
+
   return (
     <Card>
       <Card.Body>
         <Form
           onSubmit={(e) => {
             e.preventDefault();
+            onSubmit(parentId || 0, newComment);  // Ensure parentId is handled safely
             setNewComment("");
-            onSubmit(parentId, newComment);
           }}
         >
           <Form.Group controlId="commentForm">
@@ -87,12 +89,10 @@ const EditableComment = ({ onSubmit, parentId }: EditableCommentProps) => {
               as="textarea"
               rows={3}
               value={newComment}
-              onChange={(e) => {
-                setNewComment(e.target.value);
-              }}
+              onChange={(e) => setNewComment(e.target.value)}
             />
           </Form.Group>
-          <Button variant="primary" type="submit" className={"mt-2"}>
+          <Button variant="primary" type="submit" className="mt-2">
             Submit
           </Button>
         </Form>

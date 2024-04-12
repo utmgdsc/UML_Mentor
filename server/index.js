@@ -54,7 +54,7 @@ db.sequelize.sync().then(async () => {
 
   // import the challenges into the db. Comment out after first run
   // Also create the AI user
-  // await importChallenges();
+   //await importChallenges();
   // await createAITAUser();
 
   // Start listening for requests after the database is ready

@@ -6,7 +6,7 @@ import { CommentData } from "../types/CommentData.ts";
 import Card from "react-bootstrap/Card";
 import Button from "../components/Button.tsx";
 import Comment from "../components/Comment.tsx";
-
+import dayjs from 'dayjs'; 
 function loadSolution(
   id: string,
   setter: React.Dispatch<React.SetStateAction<SolutionData | undefined>>,
@@ -29,6 +29,7 @@ function loadComments(
     .then((resp) => resp.json())
     .then((data: CommentData[]) => {
       setter(data);
+      console.log(data);
     })
     .catch((err) => {
       console.error(err);
@@ -89,6 +90,10 @@ const Solution = () => {
           <h2>Solution</h2>
           {solutionData && (
             <Card>
+            <Card.Header className="d-flex justify-content-between align-items-center">
+              <span><strong>{solutionData.userId}</strong></span>
+              <span>{dayjs(solutionData.createdAt).format('MMMM D, YYYY')}</span>
+            </Card.Header>
               <Card.Body>
                 <Card.Title>{solutionData.title}</Card.Title>
                 <Card.Text>{solutionData.description}</Card.Text>
