@@ -24,10 +24,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
     },
+    usersWhoUpvoted: {
+      type: DataTypes.TEXT,
+      defaultValue: "",
+    },
     replies: {
       type: DataTypes.TEXT,
       defaultValue: "",
       // This is a comma separated list of comment ids
+    },
+    runId: {
+      type: DataTypes.TEXT,
     },
   });
   return Comment;

@@ -2,7 +2,9 @@ import Card from "react-bootstrap/Card";
 import Button from "./Button.tsx";
 import { CommentData } from "../types/CommentData.ts";
 import { Form } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CaretUpFill, CaretUp } from "react-bootstrap-icons";
+import { useRemark } from "react-remark";
 
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
 
@@ -10,6 +12,7 @@ type NonEditableCommentProps = {
   comment: CommentData;
   onSubmit: (parentId: number, text: string) => void;
   editable: false;
+  hasUserUpvoted: boolean;
 };
 
 type EditableCommentProps = {
@@ -18,24 +21,69 @@ type EditableCommentProps = {
   editable: true;
 };
 
+type UpvoterProps = {
+  commentId: number;
+  upVotes: number;
+  hasUpvoted: boolean;
+};
+
+const Upvoter = ({ commentId, upVotes, hasUpvoted }: UpvoterProps) => {
+  const [upVotesState, setUpVotesState] = useState(upVotes);
+  const [hasUpvotedState, setHasUpvotedState] = useState(hasUpvoted);
+  return (
+    <Button
+      style={{
+        display: "inline-flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+      className={"me-3"}
+      variant={"outline-secondary"}
+      onClick={() => {
+        console.log(`Upvoting ${commentId}`);
+        fetch(`/api/comments/upvote/${commentId}`).catch(() => {});
+        setUpVotesState((p) => p + 1);
+        setHasUpvotedState(true);
+      }}
+      disabled={hasUpvotedState}
+    >
+      {hasUpvotedState ? <CaretUpFill /> : <CaretUp />}
+      {upVotesState}
+    </Button>
+  );
+};
+
 const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
   const [isReplying, setIsReplying] = useState(false);
   const [repliesOpen, setRepliesOpen] = useState(false);
   const repliesAvailable = comment.replies.length !== 0;
 
+  const [renderedMarkdown, setMarkdownSource] = useRemark();
+
+  useEffect(() => {
+    setMarkdownSource(comment.text);
+  }, []);
+
+  console.log(comment);
+
   return (
     <>
       <Card className="mt-3">
         <Card.Body>
-          <Card.Text>{comment.text}</Card.Text>
-          <div className="">
+          <Card.Text>{renderedMarkdown}</Card.Text>
+          <div>
+            <Upvoter
+              commentId={comment.id}
+              upVotes={comment.upVotes}
+              hasUpvoted={comment.hasUserUpvoted}
+            />
             <Button
               variant="primary"
               onClick={() => {
                 setIsReplying((p) => !p);
               }}
             >
-              Reply
+              {isReplying ? "Stop Replying" : "Reply"}
             </Button>
             {repliesAvailable && (
               <Button

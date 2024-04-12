@@ -24,4 +24,7 @@ router.delete("/:id", checkRole(['admin']), Comment.delete);
 // Reply to a comment
 router.post("/reply/:parentId", Comment.reply);
 
+// Upvote a comment
+router.get("/upvote/:commentId", Comment.upvote);
+
 module.exports = router;
