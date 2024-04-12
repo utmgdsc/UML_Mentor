@@ -9,6 +9,9 @@ import PostSolution from "./pages/PostSolution.tsx";
 import Solution from "./pages/Solution.tsx";
 import Profile from "./pages/Profile.tsx"
 import Editor from "./pages/Editor.tsx";
+import AdminSolution from "./pages/AdminSolution.tsx";  
+import RoleBasedSolution from './components/RoleBasedSolution'; 
+
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -62,7 +65,7 @@ const router = createBrowserRouter([
       },
       {
         path: "solution/:id",
-        element: <Solution />,
+        element: <RoleBasedSolution />,
       },
       {
         path: "/solutions/post/:id",

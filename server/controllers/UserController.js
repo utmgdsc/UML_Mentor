@@ -2,8 +2,27 @@ const db = require("../models/index");
 const User = db.User;
 //change
 exports.getMe = async (req, res) => {
-  res.status(200).json({ username: req.headers.utorid });
+  try {
+    const username = req.headers.utorid;
+    if (!username) {
+      return res.status(401).send('Authentication required');
+    }
+
+    const user = await db.User.findOne({ where: { username: username } });
+    if (user) {
+      // Sending response after checking user existence and fetching role
+      res.status(200).json({ username: user.username, role: user.role });
+    } else {
+      // Sending not authorized if no user is found
+      res.status(403).send('Not authorized');
+    }
+  } catch (error) {
+    console.error('Error checking user role:', error);
+    // Sending server error response
+    res.status(500).send('Server error');
+  }
 };
+
 
 exports.get = async (req, res) => {
   const { username } = req.params;
