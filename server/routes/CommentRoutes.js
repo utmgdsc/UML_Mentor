@@ -8,6 +8,9 @@ const checkRole = require("../middleware/CheckRoleMiddleware");
 
 AsyncWrapController(Comment);
 
+// Get all comments for the user.
+router.get("/user/:username", Comment.getUserComments);
+
 // Get comments for a solution.
 router.get("/:solutionId", Comment.get);
 

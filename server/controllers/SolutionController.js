@@ -19,6 +19,14 @@ exports.getNrecent = async (req, res) => {
   res.status(200).json(solutions);
 };
 
+exports.getUserSolutions = async (req, res) => {
+  const userId = req.params.username;
+  const solutions = await Solution.findAll({ where: { userId }, include: {model: User, as: "User"}});
+
+  res.status(200).json(solutions);
+};
+
+
 exports.getAll = async (req, res) => {
   // eager load the user data
   const solutions = await Solution.findAll({
