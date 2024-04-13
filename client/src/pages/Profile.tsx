@@ -8,7 +8,7 @@ import SolutionCard from "../components/SolutionCard.tsx";
 const Profile = () => {
   const { username } = useParams();
   const [user, setUser] = useState<UserData>();
-  const [solutions, setSolutions] = useState<SolutionData[]>([]);
+  const [filteredSolutions, setFilteredSolutions] = useState<SolutionData[]>([]);
   const [filteredUsername, setFilteredUsername] = useState<string>('');
   const [comments, setComments] = useState([]);
   const [error, setError] = useState<string>('');
@@ -28,8 +28,8 @@ const Profile = () => {
         console.error('Error fetching user data: ', error);
       });
     
-    const fetchUrl = filteredUsername ? `/api/solutions?username=${filteredUsername}` : '/api/solutions';
-    fetch(fetchUrl)
+    // Admin - Filter solutions by username 
+    fetch(`/api/solutions?username=${filteredUsername}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch solution data');
@@ -37,52 +37,26 @@ const Profile = () => {
         return response.json() as Promise<SolutionData[]>;
       })
       .then(data => {
-        setSolutions(data);
+        setFilteredSolutions(data);
       })
       .catch(error => {
         setError('Error fetching solution data: ' + error.message);
       });
 
-    fetch('/api/solutions') // Fetch all solutions initially
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch solution data');
-        }
-        return response.json() as Promise<SolutionData[]>;
-      })
-      .then(data => {
-        setSolutions(data);
-      })
-      .catch(error => {
-        setError('Error fetching solution data: ' + error.message);
-      });
-
-    // fetch('/api/solutions/1')
+    // Admin - Filter soltuions by timestamp
+    // Commented out for now since timestamp is not implemented yet
+    // fetch(`/api/solutions?username=${filteredUsername}&timestamp=${filteredTimestamp}`)
     //   .then(response => {
     //     if (!response.ok) {
     //       throw new Error('Failed to fetch solution data');
     //     }
-    //     return response.json() as SolutionData[];
+    //     return response.json() as Promise<SolutionData[]>;
     //   })
     //   .then(data => {
     //     setSolutions(data);
     //   })
     //   .catch(error => {
-    //     console.error('Error fetching solution data:', error);
-    //   });
-
-    // fetch('/api/comments/1')
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch comment data :(');
-    //     }
-    //     return response.json();
-    //   })
-    //   .then(data => {
-    //     setComments(data);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error fetching comment data:', error);
+    //     setError('Error fetching solution data: ' + error.message);
     //   });
   }, [username, filteredUsername]);
 
@@ -92,9 +66,8 @@ const Profile = () => {
 
   const handleFilterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Filter solutions by username
-    const filteredSolutions = solutions.filter(solution => solution.userId === filteredUsername);
-    setSolutions(filteredSolutions);
+    const ret = filteredSolutions.filter(solution => solution.userId === filteredUsername);
+    setFilteredSolutions(ret);
   };
 
   return (
@@ -130,9 +103,9 @@ const Profile = () => {
       <Row className="mb-5 border-0 rounded-3 overflow-hidden shadow-sm">
         <Col>
           <h2 className="mb-4">Recent Solutions</h2>
-          {solutions.length !== 0 ? (
+          {filteredSolutions.length !== 0 ? (
             <Row sm={1} lg={3}>
-              {solutions.map((solution) => (
+              {filteredSolutions.map((solution) => (
                 <Col key={solution.id} className="mb-4">
                   <SolutionCard
                     title={solution.title}
