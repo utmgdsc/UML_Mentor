@@ -8,6 +8,9 @@ const checkRole = require("../middleware/CheckRoleMiddleware");
 
 AsyncWrapController(Comment);
 
+// Get all comments for the user.
+router.get("/user/:username", Comment.getUserComments);
+
 // Get comments for a solution.
 router.get("/:solutionId", Comment.get);
 
@@ -23,5 +26,8 @@ router.delete("/:id", checkRole(['admin']), Comment.delete);
 
 // Reply to a comment
 router.post("/reply/:parentId", Comment.reply);
+
+// Upvote a comment
+router.get("/upvote/:commentId", Comment.upvote);
 
 module.exports = router;

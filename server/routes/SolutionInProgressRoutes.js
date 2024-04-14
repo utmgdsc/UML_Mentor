@@ -1,7 +1,13 @@
 const SolutionInProgress = require('../controllers/SolutionInProgressController');
 const router = require("express").Router();
 
-router.get("/", SolutionInProgress.findAll);
+// Get all solutions in progress from the database for the currently logged in user.
+router.get("/myinprogress", SolutionInProgress.findMyInProgress);
+
+// DEVELOPMENT ONLY! Get all solutions in progress from the database. 
+if (process.env?.ENV === "dev") {
+    router.get("/", SolutionInProgress.findAll);
+}
 
 // Get a solution in progress by its challenge id and (and user id) from the database.
 router.get("/challenge/:challengeId", SolutionInProgress.findOneByChallengeId);

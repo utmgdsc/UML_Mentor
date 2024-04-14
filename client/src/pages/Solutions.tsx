@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import SolutionCard from "../components/SolutionCard.tsx";
 import { SolutionData } from "../types/SolutionData.ts";
+import MasonryGrid from "../components/MasonryGrid.tsx";
 
 const Solutions = () => {
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
@@ -22,7 +23,7 @@ const Solutions = () => {
     <Container>
       <h1 className="mt-5 mb-4">Solutions</h1>
       {solutions.length !== 0 ? (
-        <Row sm={1} lg={3}>
+        <MasonryGrid sm={1} lg={3}>
           {solutions.map((solution) => (
             <Col key={solution.id} className="mb-4">
               <SolutionCard
@@ -35,7 +36,7 @@ const Solutions = () => {
               />
             </Col>
           ))}
-        </Row>
+        </MasonryGrid>
       ) : (
         "No solutions found :("
       )}

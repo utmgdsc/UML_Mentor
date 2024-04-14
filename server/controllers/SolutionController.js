@@ -19,6 +19,14 @@ exports.getNrecent = async (req, res) => {
   res.status(200).json(solutions);
 };
 
+exports.getUserSolutions = async (req, res) => {
+  const userId = req.params.username;
+  const solutions = await Solution.findAll({ where: { userId }, include: {model: User, as: "User"}});
+
+  res.status(200).json(solutions);
+};
+
+
 exports.getAll = async (req, res) => {
   // eager load the user data
   const solutions = await Solution.findAll({
@@ -65,7 +73,7 @@ exports.create = async (req, res) => {
 
   // Prepare AI feedback and submit it as a comment!
   const challenge = await Challenge.findByPk(challengeId);
-  const feedback = await AITA.feedback_for_post(
+  const [chainRunId, feedback] = await AITA.feedback_for_post(
     newSolution,
     challenge,
     `${STORAGE_CONFIG.location}/${diagram}`,
@@ -74,6 +82,7 @@ exports.create = async (req, res) => {
     text: feedback,
     userId: "AITA",
     solutionId: newSolution.id,
+    runId: chainRunId,
   });
   console.log("AITA gave feedback!");
 };

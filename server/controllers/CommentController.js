@@ -2,20 +2,10 @@ const db = require("../models/index");
 const Comment = db.Comment;
 const Challenge = db.Challenge;
 const Solution = db.Solution;
+const User = db.User;
 const { AITA } = require("../AI/AITA");
 
-function formatComments(comments) {
-  const extracted = comments.map(
-    ({ id, text, userId, solutionId, upVotes, replies }) => ({
-      id,
-      text,
-      userId,
-      solutionId,
-      upVotes,
-      replies,
-    }),
-  );
-
+function formatComments(extracted) {
   const convertedReplies = extracted.map((c) => ({
     ...c,
     replies: c.replies
@@ -47,7 +37,10 @@ function formatComments(comments) {
     // Replace replies of the current node
     cm.replies = cm.replies.map((r) => {
       const out = cms.filter((c) => c.id === r)[0];
-      replyIds.push(out.id);
+      // console.log(out);
+      if (out) {
+        replyIds.push(out.id);
+      }
       // console.log(`Reply for ${cm.text} found: ${out.id}.`);
       return replaceReplies(cms, out);
     });
@@ -71,6 +64,16 @@ function formatComments(comments) {
   return repliesIntegratedPurged;
 }
 
+exports.getUserComments = async (req, res) => {
+  const userId = req.params.username;
+  const comments = await Comment.findAll({
+    where: {
+      userId,
+    },
+  });
+  res.status(200).json(comments);
+}
+
 exports.get = async (req, res) => {
   const { solutionId } = req.params;
   const comments = await Comment.findAll({
@@ -79,7 +82,19 @@ exports.get = async (req, res) => {
     },
   });
 
-  const formatted = formatComments(comments);
+  const extracted = comments.map(
+    ({ id, text, userId, solutionId, upVotes, replies, usersWhoUpvoted }) => ({
+      id,
+      text,
+      userId,
+      solutionId,
+      hasUserUpvoted: usersWhoUpvoted.includes(req.user.username),
+      upVotes,
+      replies,
+    }),
+  );
+
+  const formatted = formatComments(extracted);
 
   res.status(200).json(formatted);
 };
@@ -107,13 +122,14 @@ exports.delete = async (req, res) => {
   res.status(204).send();
 };
 
-async function reply_to_comment(parentId, text, userId) {
+async function reply_to_comment(parentId, text, userId, runId = "") {
   const parent = await Comment.findByPk(parentId);
   const { solutionId: parentSolutionId, replies: parentReplies } = parent;
   const to_add = {
     text,
     solutionId: parentSolutionId,
-    userId: userId,
+    userId,
+    runId,
   };
   const newComment = await Comment.create(to_add);
 
@@ -148,8 +164,6 @@ function getCommentChain(comment, id) {
 }
 
 exports.reply = async (req, res) => {
-  // TODO: add userId!!!!
-  // Comment that it's in reply to
   const { parentId } = req.params;
   const { text } = req.body;
   const [parent, comment] = await reply_to_comment(
@@ -164,13 +178,28 @@ exports.reply = async (req, res) => {
   // This is a reply to an AI generated comment.
 
   console.log("Generating AI reply...");
-  const comments = formatComments(
-    await Comment.findAll({
-      where: {
-        solutionId: parent.solutionId,
-      },
+
+  const fetchedComments = await Comment.findAll({
+    where: {
+      solutionId: parent.solutionId,
+    },
+  });
+
+  const extracted = fetchedComments.map(
+    ({ id, text, userId, solutionId, upVotes, replies, usersWhoUpvoted }) => ({
+      id,
+      text,
+      userId,
+      solutionId,
+      hasUserUpvoted: usersWhoUpvoted.includes(req.user.username),
+      upVotes,
+      replies,
     }),
   );
+
+  const comments = formatComments(extracted);
+
+  // console.log(comments);
 
   const comment_chain = comments
     .map((c) => getCommentChain(c, comment.id))
@@ -178,12 +207,48 @@ exports.reply = async (req, res) => {
   const solution = await Solution.findByPk(parent.solutionId);
   const challenge = await Challenge.findByPk(solution.challengeId);
 
-  console.log("Calling AI TA....");
-  const feedback = await AITA.feedback_for_comment(
+  console.log("Calling AITA....");
+  const [chainRunId, feedback] = await AITA.feedback_for_comment(
     comment_chain,
     challenge,
     solution,
   );
-  await reply_to_comment(comment.id, feedback, "AITA");
-  console.log(`AI TA commented on comment ${comment.id}`);
+
+  await reply_to_comment(comment.id, feedback, "AITA", chainRunId);
+  console.log(`AITA commented on comment ${comment.id}`);
+};
+
+exports.upvote = async (req, res) => {
+  const { commentId } = req.params;
+
+  const comment = await Comment.findByPk(commentId);
+
+  const upvotedUsersList = comment.usersWhoUpvoted
+    .split(",")
+    .filter((v) => v.length !== 0);
+
+  if (upvotedUsersList.includes(`${req.user.username}`)) {
+    console.log("Invalid upvote.");
+    res.status(409).send();
+    return;
+  }
+
+  Comment.update(
+    {
+      upVotes: comment.upVotes + 1,
+      usersWhoUpvoted: [...upvotedUsersList, `${req.user.username}`].join(","),
+    },
+    {
+      where: {
+        id: comment.id,
+      },
+    },
+  );
+
+  res.status(204).send();
+
+  if (comment.userId === "AITA") {
+    await AITA.upvote(comment.runId);
+    console.log("AI upvoted.");
+  }
 };
