@@ -26,10 +26,6 @@ const NAV_CONFIG = {
       name: "Solutions",
       href: "/solutions",
     },
-    {
-      name: "Admin", // Add Admin link to the navigation
-      href: "/admin",
-    },
   ],
   profile: {
     name: "Profile",
