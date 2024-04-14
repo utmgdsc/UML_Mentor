@@ -9,6 +9,7 @@ import PostSolution from "./pages/PostSolution.tsx";
 import Solution from "./pages/Solution.tsx";
 import Profile from "./pages/Profile.tsx"
 import Editor from "./pages/Editor.tsx";
+import Admin from "./pages/Admin.tsx"
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -24,6 +25,10 @@ const NAV_CONFIG = {
     {
       name: "Solutions",
       href: "/solutions",
+    },
+    {
+      name: "Admin", // Add Admin link to the navigation
+      href: "/admin",
     },
   ],
   profile: {
@@ -71,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: "editor",
         element: <Editor />
+      },
+      {
+        path: "admin", // Add route for the Admin page
+        element: <Admin />,
       },
     ],
   },
