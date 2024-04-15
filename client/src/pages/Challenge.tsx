@@ -172,6 +172,12 @@ const Challenge = () => {
                   <Button className="m-1" href={"/solutions/post/" + id}>
                     Post a Solution
                   </Button>
+                  <Button
+                    className="m-1"
+                    target="_blank"
+                    href={"/solutions"}>
+                    View Solutions
+                  </Button>
                   <Button className="m-1" onClick={() => setShowInstructions(true)}>
                     Instructions
                   </Button>
