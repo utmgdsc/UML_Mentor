@@ -10,4 +10,5 @@ export type SolutionData = {
   createdAt: string;
   updatedAt: string;
   User: UserData;
+  challengeTitle: string;
 };
