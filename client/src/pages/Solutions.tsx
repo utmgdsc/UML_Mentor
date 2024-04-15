@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Form } from "react-bootstrap";
 import SolutionCard from "../components/SolutionCard.tsx";
 import { SolutionData } from "../types/SolutionData.ts";
 import MasonryGrid from "../components/MasonryGrid.tsx";
 
 const Solutions = () => {
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
+  const [showingSolutions, setShowingSolutions] = useState<SolutionData[]>([]);
+  const [challengeNames, setChallengeNames] = useState<string[]>([]);
+
   useEffect(() => {
     // Fetching solutions data
     fetch("/api/solutions")
@@ -19,12 +22,68 @@ const Solutions = () => {
       });
   }, []);
 
+  // fetch all challenges (we need the challenge titles)
+  useEffect(() => {
+    fetch("/api/challenges")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+        return res.json() as Promise<{ id: number; title: string }[]>;
+      })
+      .then((data) => {
+        console.log(data);
+        setChallengeNames(data.map((challenge) => challenge.title));
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    setShowingSolutions(solutions);
+  }, [solutions]);
+
   return (
     <Container>
-      <h1 className="mt-5 mb-4">Solutions</h1>
+      <header>
+        <Row className="my-2">
+          <Col>
+            <h1 className="fs-2">Solutions</h1>
+            <h2 className="fs-5">View the solutions from the community!</h2>
+          </Col>
+          <Col>
+            <Form>
+              <Form.Group controlId="filterByChallenge">
+                <Form.Label>Solutions to a challenge</Form.Label>
+                <Form.Control
+                  as="select"
+                  onChange={(e) => {
+                    const challengeTitle = e.target.value;
+                    if (challengeTitle === "All") {
+                      setShowingSolutions(solutions);
+                    } else {
+                      setShowingSolutions(
+                        solutions.filter(
+                          (solution) => solution.challengeTitle === challengeTitle,
+                        ),
+                      );
+                    }
+                  }}
+                >
+                  <option>All</option>
+                  {challengeNames.map((challengeName) => (
+                    <option key={challengeName}>{challengeName}</option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Form>
+          </Col>
+        </Row>
+      </header>
       {solutions.length !== 0 ? (
         <MasonryGrid sm={1} lg={3}>
-          {solutions.map((solution) => (
+          {showingSolutions.map((solution) => (
             <Col key={solution.id} className="mb-4">
               <SolutionCard
                 title={solution.title}
