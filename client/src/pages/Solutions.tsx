@@ -5,12 +5,11 @@ import { SolutionData } from "../types/SolutionData.ts";
 import MasonryGrid from "../components/MasonryGrid.tsx";
 
 const Solutions = () => {
-  // const { id } = useParams();
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
   const [showingSolutions, setShowingSolutions] = useState<SolutionData[]>([]);
   const [challengeNames, setChallengeNames] = useState<string[]>([]);
   const [solvedChallenges, setSolvedChallenges] = useState<string[]>([]);
-  const [username, setUsername] = useState<string>("");
+  const [thisUser, setThisUser] = useState<{username: string, role: string}>({username: "", role: ""});
 
 
   // fetch the username and all solved challenges (we need the challenge titles)
@@ -20,10 +19,10 @@ const Solutions = () => {
         if (!res.ok) {
           throw new Error(res.statusText);
         }
-        return res.json() as Promise<{ username: string }>;
+        return res.json() as Promise<{ username: string, role: string }>;
       })
       .then((data) => {
-        setUsername(data.username);
+        setThisUser(data);
         console.log("fetching: /api/users/" + data.username + "/solvedChallenges")
         return fetch("/api/users/" + data.username + "/solvedChallenges")
       })
@@ -107,7 +106,12 @@ const Solutions = () => {
                 >
                   <option>All</option>
                   {challengeNames.map((challengeName) => (
-                    <option disabled={!solvedChallenges.includes(challengeName)} key={challengeName}>{challengeName}</option>
+                    <option 
+                      disabled={!(thisUser.role === "admin") && !solvedChallenges.includes(challengeName)} 
+                      key={challengeName}
+                    >
+                        {challengeName}
+                    </option>
                   ))}
                 </Form.Control>
               </Form.Group>
