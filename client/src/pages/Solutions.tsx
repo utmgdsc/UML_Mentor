@@ -5,7 +5,6 @@ import { SolutionData } from "../types/SolutionData.ts";
 import MasonryGrid from "../components/MasonryGrid.tsx";
 
 const Solutions = () => {
-  // const { id } = useParams();
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
   const [showingSolutions, setShowingSolutions] = useState<SolutionData[]>([]);
   const [challengeNames, setChallengeNames] = useState<string[]>([]);
