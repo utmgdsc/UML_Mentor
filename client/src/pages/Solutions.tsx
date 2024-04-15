@@ -5,12 +5,46 @@ import { SolutionData } from "../types/SolutionData.ts";
 import MasonryGrid from "../components/MasonryGrid.tsx";
 
 const Solutions = () => {
+  // const { id } = useParams();
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
   const [showingSolutions, setShowingSolutions] = useState<SolutionData[]>([]);
   const [challengeNames, setChallengeNames] = useState<string[]>([]);
+  const [solvedChallenges, setSolvedChallenges] = useState<string[]>([]);
+  const [username, setUsername] = useState<string>("");
 
+
+  // fetch the username and all solved challenges (we need the challenge titles)
   useEffect(() => {
-    // Fetching solutions data
+    fetch("/api/users/whoami")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+        return res.json() as Promise<{ username: string }>;
+      })
+      .then((data) => {
+        setUsername(data.username);
+        console.log("fetching: /api/users/" + data.username + "/solvedChallenges")
+        return fetch("/api/users/" + data.username + "/solvedChallenges")
+      })
+      .then((res: Response) => {
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
+        return res.json() as Promise<string[]>;
+      })
+      .then((data) => {
+        console.log(data);
+        console.log("Solved challenges");
+        setSolvedChallenges(data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
+  // fetch all awailable solutions
+  useEffect(() => {
     fetch("/api/solutions")
       .then((resp) => resp.json())
       .then((data: SolutionData[]) => {
@@ -53,7 +87,7 @@ const Solutions = () => {
             <h2 className="fs-5">View the solutions from the community!</h2>
           </Col>
           <Col>
-            <Form>
+            <Form className="mt-1">
               <Form.Group controlId="filterByChallenge">
                 <Form.Label>Solutions to a challenge</Form.Label>
                 <Form.Control
@@ -73,7 +107,7 @@ const Solutions = () => {
                 >
                   <option>All</option>
                   {challengeNames.map((challengeName) => (
-                    <option key={challengeName}>{challengeName}</option>
+                    <option disabled={!solvedChallenges.includes(challengeName)} key={challengeName}>{challengeName}</option>
                   ))}
                 </Form.Control>
               </Form.Group>

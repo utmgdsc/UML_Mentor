@@ -185,6 +185,9 @@ const Challenge = () => {
                 >
                   View Solutions
                 </Button>
+                <Button className="m-1" onClick={() => setShowInstructions(true)}>
+                    Instructions
+                  </Button>
               </ButtonToolbar>
             </Row>
           )
