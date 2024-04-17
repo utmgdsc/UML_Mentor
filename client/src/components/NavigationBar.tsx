@@ -10,6 +10,7 @@ function NavigationBar() {
   const [showNewUserPopup, setShowNewUserPopup] = useState(false);
   const location = useLocation().pathname;
   const [username, setUsername] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null); 
   const navigate = useNavigate();
 
   //fetch the username from the server
@@ -19,11 +20,13 @@ function NavigationBar() {
         if (!response.ok) {
           throw new Error(response.statusText);
         }
-        return response.json() as Promise<{username: string}>;
+        return response.json() as Promise<{username: string, role: string}>;
       })
       .then((data) => {
         console.log("Fetched username: " + data.username);
+        console.log("Fetched role: " + data.role);
         setUsername(data.username);
+        setUserRole(data.role);
       })
       .catch((err: Error) => { // Add the error type 'Error'
         console.error("Failed fetching the username\nError message: " + err.message);
@@ -53,6 +56,12 @@ function NavigationBar() {
                   {route.name}
                 </Nav.Link>
               ))}
+              {
+                userRole === "admin" ? 
+                  <Nav.Link onClick={() => navigate("/challenges/add")} className={location === "/challenges/add" ? "text-primary" : ""}>
+                    Add Challenge
+                  </Nav.Link> : null
+              }
             </Nav>
             <Nav className="align-items-center">
               {/* "NewUserPopup" button */}
