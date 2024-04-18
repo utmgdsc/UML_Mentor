@@ -27,7 +27,7 @@ router.get("/:id", Challenge.findOne);
 // router.get("/:id", Challenge.getSolutions);
 
 // Create a new challenge in the database.
-// router.post("/:id", Challenge.create);
+router.post("/", checkRole(['admin']) ,Challenge.create);
 
 // Edit a challenge in the database.
 // router.put("/:id", Challenge.edit);
