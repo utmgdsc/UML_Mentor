@@ -61,9 +61,17 @@ function validateChallenge(obj: NewChallenge): [boolean, string] {
         return [false, "keyPatterns must be an array"];
     }
 
+    if (!obj.expectedFunctionality) {
+        return [false, "Missing required property: expectedFunctionality"];
+    }
+
     // Check if expectedFunctionality is an object
     if (typeof obj.expectedFunctionality !== 'object') {
         return [false, "expectedFunctionality must be an object"];
+    }
+
+    if (!obj.usageScenarios) {
+        return [false, "Missing required property: usageScenarios"];
     }
 
     // Check if usageScenarios is an object
