@@ -152,11 +152,41 @@ exports.getSolutions = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { description, title } = req.body;
-  const newChallenge = await Challenge.create({ description, title });
-  res.status(201).json(newChallenge);
+  const {
+    title,
+    difficulty,
+    outcome,
+    keyPatterns,
+    generalDescription,
+    expectedFunctionality,
+    usageScenarios
+  } = req.body;
 
-  res.status(500).json({ error: error.message });
+  // build the challenge description
+  const description = JSON.stringify({
+    outcome,
+    keyPatterns,
+    generalDescription,
+    expectedFunctionality,
+    usageScenarios
+  });
+
+  // check if the difficulty is valid
+  if (diffToNum(difficulty.trim().toLowerCase()) === -1) {
+    return res.status(400).json({ error: "Invalid difficulty level." });
+  }
+
+  // create the challenge
+  const newChallenge = {
+    title,
+    difficulty: difficulty.trim().toLowerCase(),
+    description,
+  };
+
+  const challenge = await Challenge.create(newChallenge);
+
+  res.status(201).json(challenge);
+
 };
 
 exports.edit = async (req, res) => {

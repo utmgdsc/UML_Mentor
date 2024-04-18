@@ -17,7 +17,7 @@ type NewChallenge = {
 
 const PLACEHOLDER = {
     "title": "Challenge Title",
-    "difficulty": "Easy | Medium | Hard",
+    "difficulty": "EASY | MEDIUM | HARD",
     "outcome": "Short description of the expected outcome of the challenge",
     "keyPatterns": [
         "Pattern 1",
@@ -42,6 +42,8 @@ function validateChallenge(obj: NewChallenge): [boolean, string] {
 
     if (!obj.difficulty) {
         return [false, "Missing required property: difficulty"];
+    } else if (!["easy", "medium", "hard"].includes(obj.difficulty.trim().toLowerCase())) {
+        return [false, "Invalid value for difficulty. Must be one of EASY | MEDIUM | HARD."];
     }
 
     if (!obj.outcome) {
@@ -68,6 +70,23 @@ function validateChallenge(obj: NewChallenge): [boolean, string] {
     }
 
     return [true, "Challenge is valid!"];
+}
+
+function sendChallenge(obj: NewChallenge) {
+    // Send the challenge to the server
+    fetch("/api/challenges", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(obj),
+    }).then((res) => {
+        if (!res.ok) {
+            throw new Error(res.statusText);
+        }
+    }).catch((err) => {
+        console.error(err);
+    });
 }
 
 function AddChallenge() {
@@ -120,7 +139,13 @@ function AddChallenge() {
                     <Alert variant={valid ? "primary" : "danger"}>
                         {message}
                     </Alert>
-                    <Button disabled={!valid} className="my-2 align-self-start">Add Challenge</Button>
+                    <Button 
+                        disabled={!valid} 
+                        className="my-2 align-self-start"
+                        onClick={() => {sendChallenge(json)}}
+                    >
+                        Add Challenge
+                    </Button>
                 </Col>
             </Row>
         </Container>
