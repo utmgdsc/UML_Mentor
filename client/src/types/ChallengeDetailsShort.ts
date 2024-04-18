@@ -6,4 +6,5 @@ export type ChallengeDetailsShort = {
     generalDescription: string;
     id: number;
     completed: boolean;
+    admin: boolean;
 }

@@ -35,6 +35,7 @@ const PLACEHOLDER = {
     }
 }
 
+
 function validateChallenge(obj: NewChallenge): [boolean, string] {
     // Check if all required properties exist
     if (!obj.title) {
@@ -72,7 +73,6 @@ function validateChallenge(obj: NewChallenge): [boolean, string] {
 
     return [true, "Challenge is valid!"];
 }
-
 
 
 function AddChallenge() {

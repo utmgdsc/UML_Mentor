@@ -23,8 +23,28 @@ function Challenges() {
   const [filter, setFilter] = useState([] as ChallengeDifficulties[]);
   const [hideComplete, setHideComplete] = useState(false);
 
+  const [userRole, setUserRole] = useState<string | null>(null); 
+
+  //fetch the user role from the server
   useEffect(() => {
-    //fetch data about the challenge with the provided "id"
+    fetch("/api/users/whoami")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json() as Promise<{role: string}>;
+      })
+      .then((data) => {
+        setUserRole(data.role);
+      })
+      .catch((err: Error) => { // Add the error type 'Error'
+        console.error("Failed fetching the user role.\nError message: " + err.message);
+      });
+  }, []);
+
+  // Fetch challenges from the server
+  useEffect(() => {
+    
     setIsLoading(true);
     fetch("/api/challenges")
       .then((response) => {
@@ -46,8 +66,8 @@ function Challenges() {
       });
   }, []);
 
+  // Sort challengesData by difficulty
   useEffect(() => {
-    // Sort challengesData by difficulty
     if (challengesData != undefined) {
       const sortedChallengesData = handleSortByDifficulty(challengesData);
       setChallengesData(sortedChallengesData);
@@ -86,6 +106,8 @@ function Challenges() {
           // console.log("Filtering out: " + challenge.title);
           continue;
       }
+
+      challenge.admin = userRole === "admin";
 
       row.push(
         <Col lg={4} key={i} className="mb-4">
