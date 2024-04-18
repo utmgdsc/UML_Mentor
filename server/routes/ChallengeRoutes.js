@@ -27,12 +27,12 @@ router.get("/:id", Challenge.findOne);
 // router.get("/:id", Challenge.getSolutions);
 
 // Create a new challenge in the database.
-router.post("/", checkRole(['admin']), Challenge.create);
+router.post("/", checkRole(["admin"]), Challenge.create);
 
 // Edit a challenge in the database.
 // router.put("/:id", Challenge.edit);
 
 // Delete a challenge from the database.
-// router.delete("/:id", Challenge.delete);
+router.delete("/:id", checkRole(["admin"]), Challenge.delete);
 
 module.exports = router;

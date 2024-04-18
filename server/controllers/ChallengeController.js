@@ -203,6 +203,4 @@ exports.delete = async (req, res) => {
   const { id } = req.params;
   await Challenge.destroy({ where: { id } });
   res.status(204).send();
-
-  res.status(500).json({ error: error.message });
 };

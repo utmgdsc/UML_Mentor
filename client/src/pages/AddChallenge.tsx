@@ -3,6 +3,7 @@ import locale    from 'react-json-editor-ajrm/locale/en';
 import { useState } from 'react';
 import { Container, Row, Col, Alert, Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import { InfoCircle } from "react-bootstrap-icons";
+import { useNavigate } from "react-router-dom";
 
 
 type NewChallenge = {
@@ -72,27 +73,35 @@ function validateChallenge(obj: NewChallenge): [boolean, string] {
     return [true, "Challenge is valid!"];
 }
 
-function sendChallenge(obj: NewChallenge) {
-    // Send the challenge to the server
-    fetch("/api/challenges", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(obj),
-    }).then((res) => {
-        if (!res.ok) {
-            throw new Error(res.statusText);
-        }
-    }).catch((err) => {
-        console.error(err);
-    });
-}
+
 
 function AddChallenge() {
+    const navigate = useNavigate();
+
     const [json, setJson] = useState(PLACEHOLDER);
     const [message, setMessage] = useState<string>("The challenge is valid!");
     const [valid, setValid] = useState<boolean>(true);
+
+    function sendChallenge(obj: NewChallenge) {
+        // Send the challenge to the server
+        fetch("/api/challenges", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(obj),
+        }).then((res) => {
+            if (!res.ok) {
+                throw new Error(res.statusText);
+            }
+            return res.json() as Promise<{id: number}>;
+        }).then((data) => {
+            // Navigate to the challenge page
+            navigate("/challenge/" + data.id);
+        }).catch((err) => {
+            console.error(err);
+        });
+    }
 
     return (
         <Container>
