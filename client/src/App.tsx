@@ -10,6 +10,7 @@ import Solution from "./pages/Solution.tsx";
 import Profile from "./pages/Profile.tsx"
 import Editor from "./pages/Editor.tsx";
 
+
 const NAV_CONFIG = {
   brand: "UML Mentor",
   routes: [
