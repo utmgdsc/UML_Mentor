@@ -4,7 +4,13 @@ import { CommentData } from "../types/CommentData.ts";
 import { Form } from "react-bootstrap";
 import { useState } from "react";
 
+type CommonProps = {
+  isAdmin: boolean;
+  handleDelete: (commentId: number) => void;
+};
+
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
+
 
 type NonEditableCommentProps = {
   comment: CommentData;
@@ -18,32 +24,32 @@ type EditableCommentProps = {
   editable: true;
 };
 
-const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
+const NonEditableComment = ({ comment, onSubmit, isAdmin, handleDelete }: NonEditableCommentProps & CommonProps) => {
   const [isReplying, setIsReplying] = useState(false);
   const [repliesOpen, setRepliesOpen] = useState(false);
-  const repliesAvailable = comment.replies.length !== 0;
+  const repliesAvailable = comment.replies.length > 0;
 
   return (
     <>
       <Card className="mt-3">
         <Card.Body>
           <Card.Text>{comment.text}</Card.Text>
-          <div className="">
-            <Button
-              variant="primary"
-              onClick={() => {
-                setIsReplying((p) => !p);
-              }}
-            >
-              Reply
-            </Button>
+          <div className="d-flex justify-content-start">
+            {isAdmin && (
+              <Button
+                variant="danger"
+                onClick={() => handleDelete(comment.id)}
+                className="me-2"
+              >
+                Delete
+              </Button>
+            )}
+            <Button variant="primary" onClick={() => setIsReplying(prev => !prev)}>Reply</Button>
             {repliesAvailable && (
               <Button
-                variant={"secondary"}
-                className={"ms-3"}
-                onClick={() => {
-                  setRepliesOpen((p) => !p);
-                }}
+                variant="secondary"
+                className="ms-2"
+                onClick={() => setRepliesOpen(prev => !prev)}
               >
                 {repliesOpen ? "Close Replies" : "See Replies"}
               </Button>
@@ -51,24 +57,25 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
           </div>
         </Card.Body>
       </Card>
-      <div className={"mt-3 ms-3"}>
+      <div className="ms-3 mt-3">
         {isReplying && (
-          <Comment editable={true} onSubmit={onSubmit} parentId={comment.id} />
+          <Comment editable={true} onSubmit={onSubmit} parentId={comment.id} isAdmin={isAdmin} handleDelete={handleDelete} />
         )}
-        {repliesAvailable &&
-          repliesOpen &&
-          comment.replies.map((c) => (
-            <Comment
-              key={c.id}
-              comment={c}
-              onSubmit={onSubmit}
-              editable={false}
-            />
-          ))}
+        {repliesAvailable && repliesOpen && comment.replies.map((reply) => (
+          <Comment
+            key={reply.id}
+            comment={reply}
+            onSubmit={onSubmit}
+            editable={false}
+            isAdmin={isAdmin}
+            handleDelete={handleDelete}
+          />
+        ))}
       </div>
     </>
   );
 };
+
 
 const EditableComment = ({ onSubmit, parentId }: EditableCommentProps) => {
   const [newComment, setNewComment] = useState<string>("");
