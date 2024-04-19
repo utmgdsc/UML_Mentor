@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { SolutionData } from "../types/SolutionData.ts";
 import { CommentData } from "../types/CommentData.ts";
@@ -9,6 +10,7 @@ import useCheckRole from "../hooks/useCheckRole"; // Make sure the path is corre
 import dayjs from "dayjs";
 
 function loadSolution(id, setter) {
+function loadSolution(id, setter) {
   fetch(`/api/solutions/${id}`)
     .then((resp) => resp.json())
     .then((data) => setter(data))
@@ -17,6 +19,7 @@ function loadSolution(id, setter) {
     });
 }
 
+function loadComments(id, setter) {
 function loadComments(id, setter) {
   fetch(`/api/comments/${id}`)
     .then((resp) => resp.json())
@@ -31,7 +34,6 @@ const Solution = () => {
   const [solutionData, setSolutionData] = useState<SolutionData | null>(null);
   const [comments, setComments] = useState<CommentData[]>([]);
   const { isAdmin, isLoading } = useCheckRole();
-  const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
     if (id) {
@@ -96,7 +98,68 @@ const Solution = () => {
       });
   };
 
+<<<<<<< HEAD
+  useEffect(() => {
+    fetch("/api/users/whoami")
+      .then((response) => response.json())
+      .then((data) => {
+        setCurrentUserId(data.username);
+      })
+      .catch((error) => {
+        console.error("Error fetching current user ID:", error);
+      });
+  }, []);
+
+  const handleDeleteSolution = () => {
+    if (!isAdmin && solutionData.userId !== currentUserId) return;
+    fetch(`/api/solutions/${id}`, { method: "DELETE" })
+      .then(() => {
+        window.location.href = "/";
+      })
+      .catch((err) => {
+        console.error("Failed to delete solution", err);
+      });
+  };
+
+=======
+>>>>>>> 2ab5178 (admin can now delete comments (#61))
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  const handleDelete = (commentId) => {
+    if (!isAdmin) return;
+    fetch(`/api/comments/${commentId}`, { method: "DELETE" })
+      .then(() => {
+        setComments((comments) =>
+          comments.filter((comment) => comment.id !== commentId),
+        );
+      })
+      .catch((err) => {
+        console.error("Failed to delete comment", err);
+      });
+  };
+
+  const handleSubmit = (parentId, text) => {
+    const endpoint = parentId
+      ? `/api/comments/reply/${parentId}`
+      : `/api/comments/${solutionData.id}`;
+    fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ solutionId: solutionData.id, text }),
+    })
+      .then(() => {
+        loadComments(id, setComments);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
   return (
+    <Container className="my-5" fluid="sm">
+      <Row className="justify-content-center">
     <Container className="my-5" fluid="sm">
       <Row className="justify-content-center">
         <Col md={6}>
@@ -134,6 +197,7 @@ const Solution = () => {
           )}
         </Col>
       </Row>
+      <Row className="mt-5 justify-content-center">
       <Row className="mt-5 justify-content-center">
         <Col md={6}>
           <h2>Comments</h2>
