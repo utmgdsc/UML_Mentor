@@ -18,24 +18,21 @@ const Admin = () => {
 
   useEffect(() => {
     // Filter soltuions by username and timestamp
-	fetch(`/api/solutions?username=${filteredUsername}`)
+    fetch(`/api/solutions?username=${filteredUsername}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch solution data');
-        }
-        return response.json() as Promise<SolutionData[]>;
+            throw new Error('Failed to fetch solution data');
+          }
+          return response.json() as Promise<SolutionData[]>;
       })
       .then(data => {
-			// Filter solutions based on date
-			const filteredSolutionsByDate = data.filter(solution => {
-			// Assuming solution.date is a string in format "YYYY-MM-DD"
-			const date1 = solution.createdAt.split('T')[0];
-			if (filteredUsername === "" || solution.userId === filteredUsername)
-				return filteredTimestamp === "" || date1 === filteredTimestamp;
-
-			return false;
-		});
-		setFilteredSolutions(filteredSolutionsByDate);
+        const filteredSolutionsByDate = data.filter(solution => {
+          // Assuming solution.date is a string in format "YYYY-MM-DD"
+          const date1 = solution.createdAt.split('T')[0];
+          return (filteredUsername === "" || solution.userId === filteredUsername) &&
+                 (filteredTimestamp === "" || date1 === filteredTimestamp);
+        });
+        setFilteredSolutions(filteredSolutionsByDate);
       })
       .catch(error => {
         setError('Error fetching solution data: ' + error.message);
