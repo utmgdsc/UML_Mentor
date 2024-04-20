@@ -10,7 +10,7 @@ const Admin = () => {
   const [user, setUser] = useState<UserData>();
   const [filteredSolutions, setFilteredSolutions] = useState<SolutionData[]>([]);
   const [filteredUsername, setFilteredUsername] = useState<string>('');
-  const [filteredTimestamp, setFilteredTimestamp] = useState<string>('');
+  const [filteredTimestamp, setFilteredTimestamp] = useState<[string, string]>(['', '']);
 
 
   const [comments, setComments] = useState([]);
@@ -30,7 +30,8 @@ const Admin = () => {
           // Assuming solution.date is a string in format "YYYY-MM-DD"
           const date1 = solution.createdAt.split('T')[0];
           return (filteredUsername === "" || solution.userId === filteredUsername) &&
-                 (filteredTimestamp === "" || date1 === filteredTimestamp);
+                 (filteredTimestamp[0] === "" || date1 >= filteredTimestamp[0]) &&
+                 (filteredTimestamp[1] === "" || date1 <= filteredTimestamp[1]);
         });
         setFilteredSolutions(filteredSolutionsByDate);
       })
@@ -45,8 +46,10 @@ const Admin = () => {
     setFilteredUsername(event.target.value);
   };
 
-  const handleTimestampChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilteredTimestamp(event.target.value);
+  const handleTimestampChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const newTimestamp = [...filteredTimestamp];
+    newTimestamp[index] = event.target.value;
+    setFilteredTimestamp(newTimestamp);
   };
 
   const handleFilterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -55,8 +58,8 @@ const Admin = () => {
 
   return (
     <Container>
-	  <h1>Admin Page</h1>
-	  <Button onClick={() => navigate(-1)}>Go Back</Button>
+      <h1>Admin Page</h1>
+      <Button onClick={() => navigate(-1)}>Go Back</Button>
       <Row className="mb-3">
         <Col>
           <Form onSubmit={handleFilterSubmit}>
@@ -69,12 +72,20 @@ const Admin = () => {
                 onChange={handleFilterChange}
               />
             </Form.Group>
-			<Form.Group controlId="timestampFilter">
-              <Form.Label>Filter by Timestamp</Form.Label>
+            <Form.Group controlId="timestampFilterStart">
+              <Form.Label>Filter by Start Timestamp</Form.Label>
               <Form.Control
                 type="date"
-                value={filteredTimestamp}
-                onChange={handleTimestampChange}
+                value={filteredTimestamp[0]}
+                onChange={(event) => handleTimestampChange(event, 0)}
+              />
+            </Form.Group>
+            <Form.Group controlId="timestampFilterEnd">
+              <Form.Label>Filter by End Timestamp</Form.Label>
+              <Form.Control
+                type="date"
+                value={filteredTimestamp[1]}
+                onChange={(event) => handleTimestampChange(event, 1)}
               />
             </Form.Group>
           </Form>
