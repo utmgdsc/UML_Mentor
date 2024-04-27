@@ -58,8 +58,7 @@ const Admin = () => {
 
   return (
     <Container>
-      <h1>Admin Page</h1>
-      <Button onClick={() => navigate(-1)}>Go Back</Button>
+      <h1>Admin Dashboard</h1>
       <Row className="mb-3">
         <Col>
           <Form onSubmit={handleFilterSubmit}>
@@ -93,7 +92,7 @@ const Admin = () => {
       </Row>
       <Row className="mb-5 border-0 rounded-3 overflow-hidden shadow-sm">
         <Col>
-          <h2 className="mb-4">Recent Solutions</h2>
+          <h2 className="mb-4">All Solutions</h2>
           {filteredSolutions.length !== 0 ? (
             <Row sm={1} lg={3}>
               {filteredSolutions.map((solution) => (

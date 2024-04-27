@@ -1,15 +1,17 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home.tsx";
-import AppShell from "./components/AppShell.tsx";
-import ErrorElement from "./pages/ErrorElement.tsx";
-import Challenges from "./pages/Challenges.tsx";
-import Challenge from "./pages/Challenge.tsx";
-import Solutions from "./pages/Solutions.tsx";
-import PostSolution from "./pages/PostSolution.tsx";
-import Solution from "./pages/Solution.tsx";
-import Profile from "./pages/Profile.tsx"
-import Editor from "./pages/Editor.tsx";
-import Admin from "./pages/Admin.tsx"
+//import { useState, useEffect } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+//import NavigationBar from './components/NavigationBar.tsx'; // Import the NavigationBar component
+import Home from './pages/Home.tsx';
+import AppShell from './components/AppShell.tsx';
+import ErrorElement from './pages/ErrorElement.tsx';
+import Challenges from './pages/Challenges.tsx';
+import Challenge from './pages/Challenge.tsx';
+import Solutions from './pages/Solutions.tsx';
+import PostSolution from './pages/PostSolution.tsx';
+import Solution from './pages/Solution.tsx';
+import Profile from './pages/Profile.tsx';
+import Editor from './pages/Editor.tsx';
+import Admin from './pages/Admin.tsx';
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -26,6 +28,10 @@ const NAV_CONFIG = {
       name: "Solutions",
       href: "/solutions",
     },
+    // {
+    //   name: "Admin",
+    //   href: "/admin",
+    // }
   ],
   profile: {
     name: "Profile",
@@ -84,6 +90,33 @@ const router = createBrowserRouter([
 function App() {
   return <RouterProvider router={router} />;
 }
+// function App() {
+//   const [userRole, setUserRole] = useState(null);
+
+//   // Fetch user's role from the server
+//   useEffect(() => {
+//     fetch('/api/users/role')
+//       .then((response) => {
+//         if (!response.ok) {
+//           throw new Error(response.statusText);
+//         }
+//         return response.json();
+//       })
+//       .then((data) => {
+//         setUserRole(data.role);
+//       })
+//       .catch((error) => {
+//         console.error('Error fetching user role:', error);
+//       });
+//   }, []);
+
+//   return (
+//     <>
+//       <RouterProvider router={router} />
+//       <NavigationBar userRole={userRole} />
+//     </>
+//   );
+// }
 
 export { NAV_CONFIG };
 export default App;

@@ -119,7 +119,6 @@ const Profile = () => {
           </Col>
         </Row>
       )}
-      {user && user.role === "admin" && <Button onClick={() => navigate("/admin")}>Admin Dashboard</Button>}
       {
         myProfile && 
         <>

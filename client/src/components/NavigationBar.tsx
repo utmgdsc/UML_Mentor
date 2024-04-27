@@ -5,12 +5,14 @@ import { PersonCircle } from "react-bootstrap-icons";
 import { NAV_CONFIG } from "../App.tsx";
 import NewUserPopup from './NewUserPopup'; // Make sure this path is correct
 import { QuestionCircle } from "react-bootstrap-icons";
+import { UserData } from '../types/UserData';
 
 function NavigationBar() {
   const [showNewUserPopup, setShowNewUserPopup] = useState(false);
   const location = useLocation().pathname;
   const [username, setUsername] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [user, setUser] = useState<UserData>();
 
   //fetch the username from the server
   useEffect(() => {
@@ -27,6 +29,22 @@ function NavigationBar() {
       })
       .catch((err: Error) => { // Add the error type 'Error'
         console.error("Failed fetching the username\nError message: " + err.message);
+      });
+  }, [username]);
+
+  useEffect(() => {
+    fetch(`/api/users/${username}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data :(');
+        }
+        return response.json() as Promise<UserData>;
+      })
+      .then(data => {
+        setUser(data);
+      })
+      .catch(error => {
+        console.error('Error fetching user data: ', error);
       });
   }, [username]);
 
@@ -53,6 +71,15 @@ function NavigationBar() {
                   {route.name}
                 </Nav.Link>
               ))}
+              {/* Conditionally render Admin link based on user role */}
+              {user && user.role === 'admin' && (
+                <Nav.Link
+                  onClick={() => navigate('/admin')}
+                  className={location === '/admin' ? 'text-primary' : ''}
+                >
+                  Admin
+                </Nav.Link>
+              )}
             </Nav>
             <Nav className="align-items-center">
               {/* "NewUserPopup" button */}
