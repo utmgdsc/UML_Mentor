@@ -18,16 +18,11 @@ class AITA {
 
     const diagramBuffer = await fs.readFile(diagramLocation);
     const diagramb64 = diagramBuffer.toString("base64");
+    const systemPromptText = await fs.readFile("./server/AI/SystemPrompt.md");
+    console.log(systemPromptText);
 
     const prompt = ChatPromptTemplate.fromMessages([
-      [
-        "system",
-        "You are a teaching assistant for a software architecture course. You are excellent at providing" +
-          " feedback to solutions written by users to software architecture challenges, including questions about UML" +
-          " diagrams, software architecture patterns and SOLID principles. The images you receive will be of UML" +
-          " diagrams. Provide" +
-          " extensive and helpful feedback as a teaching assistant.",
-      ],
+      ["system", systemPromptText],
       [
         "user",
         [
@@ -64,6 +59,7 @@ class AITA {
     return [chainRunId, feedback];
   }
   static async feedback_for_comment(comment_chain, challenge, solution) {
+    // Not in use
     // console.log(comment_chain);
     // console.log(challenge);
     // console.log(solution);
