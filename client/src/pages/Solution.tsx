@@ -35,7 +35,6 @@ const Solution = () => {
       loadComments(id, setComments);
     }
   }, [id]);
-// here
 
   useEffect(() => {
     fetch("/api/users/whoami")
