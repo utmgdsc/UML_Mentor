@@ -5,5 +5,6 @@ export type CommentData = {
   text: string;
   upVotes: number;
   hasUserUpvoted: boolean;
+  createdAt: string | number | Date;
   replies: CommentData[];
 };

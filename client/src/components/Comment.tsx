@@ -54,11 +54,7 @@ const Upvoter = ({ commentId, upVotes, hasUpvoted }: UpvoterProps) => {
   );
 };
 
-const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
-  const [isReplying, setIsReplying] = useState(false);
-  const [repliesOpen, setRepliesOpen] = useState(false);
-  const repliesAvailable = comment.replies.length !== 0;
-
+const NonEditableComment = ({ comment }: NonEditableCommentProps) => {
   const [renderedMarkdown, setMarkdownSource] = useRemark();
 
   useEffect(() => {
