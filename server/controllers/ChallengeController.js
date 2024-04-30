@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const db = require("../models/index");
 const { use } = require("../routes/ChallengeRoutes");
 const Challenge = db.Challenge;
@@ -29,7 +30,7 @@ async function formatChallenge(challengeData, userId) {
         challengeId: challengeData.id, 
         userId: userId
       } 
-    });    
+    });
 
     const completed = challengeSolutions.length > 0;
     return {
@@ -42,6 +43,7 @@ async function formatChallenge(challengeData, userId) {
       usageScenarios: challengeDescription.usageScenarios,
       expectedFunctionality: challengeDescription.expectedFunctionality,
       completed: completed,
+      hidden: challengeData.hidden,
     };
 }
   
@@ -81,6 +83,7 @@ exports.findSuggested = async (req, res) => {
       order: db.sequelize.random(),
       where: {
         difficulty: "easy",
+        hidden: false,
       },
     });
   } else if (userLevel < 15) {
@@ -89,6 +92,7 @@ exports.findSuggested = async (req, res) => {
       order: db.sequelize.random(),
       where: {
         difficulty: "medium",
+        hidden: false,
       },
     });
   } else {
@@ -97,6 +101,7 @@ exports.findSuggested = async (req, res) => {
       order: db.sequelize.random(),
       where: {
         difficulty: "hard",
+        hidden: false,
       },
     });
   }
@@ -115,7 +120,7 @@ exports.findSuggested = async (req, res) => {
 
 
 exports.findAll = async (req, res) => {
-  const challengesData = await Challenge.findAll();
+  const challengesData = await Challenge.findAll({where: { hidden: false }});
 
   if(challengesData.length === 0) {
     return res.status(404).json({ error: "No challenges found." });
@@ -128,8 +133,6 @@ exports.findAll = async (req, res) => {
 };
 
 exports.findOne = async (req, res) => {
-  // TODO: Check the Solutions table for if the user has already solved the challenge
-  // Append `completed: true` to the challenge object if they have
   const challenge_id = req.params.id;
 
   const challengeData = await Challenge.findOne({
@@ -188,6 +191,16 @@ exports.create = async (req, res) => {
   res.status(201).json(challenge);
 
 };
+
+exports.hide = async (req, res) => {
+  const { id } = req.params;
+  const { hidden } = req.body;
+
+  await Challenge.update({ hidden }, { where: { id } });
+  const updatedChallenge = await Challenge.findByPk(id);
+
+  res.status(200).json(updatedChallenge);
+}
 
 exports.edit = async (req, res) => {
   const { id } = req.params;

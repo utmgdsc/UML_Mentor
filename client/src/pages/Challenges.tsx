@@ -95,6 +95,7 @@ function Challenges() {
     let row: JSX.Element[] = [];
     let i = 0;
     for (const challenge of challengesData) {
+      console.log(challenge);
       //make sure the challenge is not filtered out
       if (!filter.includes(challenge.difficulty) && filter.length > 0) {
         // console.log("Filtering out: " + challenge.difficulty);
@@ -105,6 +106,10 @@ function Challenges() {
       if(hideComplete && challenge.completed) {
           // console.log("Filtering out: " + challenge.title);
           continue;
+      }
+
+      if(challenge.hidden) {
+        continue;
       }
 
       challenge.admin = userRole === "admin";

@@ -11,7 +11,8 @@ function ChallengeCard({
   id,
   difficulty,
   completed,
-  admin
+  admin,
+  hidden,
 }: ChallengeDetailsShort) {
   const [deleted, setDeleted] = useState(false);
 
@@ -44,7 +45,36 @@ function ChallengeCard({
     });
   }
 
-  if (deleted) {
+  function handleHide() {
+    console.log("/api/challenges/hide/" + id);
+
+    fetch("/api/challenges/hide/" + id, {
+      method: "PUT",
+      body: JSON.stringify({
+        hidden: true
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then((response) => {
+      console.log(response);
+      if (response.ok) {
+        console.log("Challenge hidden");
+        // unmount the challenge card
+        setDeleted(true);
+      } else {
+        console.log("Failed to hide challenge");
+      }
+      return response.json();
+    }).then((data) => {
+      console.log(data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }
+
+  if (deleted || hidden) {
     return null;
   }
   return (
@@ -57,7 +87,10 @@ function ChallengeCard({
         <Card.Text>{generalDescription}</Card.Text>
         <ButtonToolbar className="d-flex justify-content-between">
           <Button href={"/challenge/" + id}>Solve</Button>
-          {admin && <Button variant="danger" onClick={() => {handleDelete()}}>Delete</Button>}
+          <div>
+            {admin && !hidden && <Button variant="dark" className="mx-2" onClick={() => {handleHide()}}>Hide</Button>}
+            {admin && <Button variant="danger" onClick={() => {handleDelete()}}>Delete</Button>}
+          </div>
         </ButtonToolbar>
         
       </Card.Body>

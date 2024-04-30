@@ -6,5 +6,6 @@ export type ChallengeDetailsShort = {
     generalDescription: string;
     id: number;
     completed: boolean;
-    admin: boolean;
+    admin: boolean; // Used for displaying the delete & hide buttons
+    hidden: boolean;
 }
