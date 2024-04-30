@@ -49,14 +49,14 @@ app.use(loggingMiddleware);
 app.use(authMiddleware);
 
 // Sync Sequelize models
-db.sequelize.sync().then(async () => {
+db.sequelize.sync( { force: true} ).then(async () => {
   // Use { force: true } cautiously as it will drop existing tables
   console.log("Database synced");
 
   // import the challenges into the db. Comment out after first run
   // Also create the AI user
-  // await importChallenges();
-  // await createAITAUser();
+   await importChallenges();
+   await createAITAUser();
 
   // Start listening for requests after the database is ready
   app.listen(PORT, () => {
