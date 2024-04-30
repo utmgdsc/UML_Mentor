@@ -128,12 +128,9 @@ exports.edit = async (req, res) => {
   res.status(200).json(updatedSolution);
 };
 
-// TODO: Test this route
+
 exports.delete = async (req, res) => {
   const { id } = req.params;
   await Solution.destroy({ where: { id } });
-  fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
-    console.log(err),
-  );
   res.status(204).send();
 };

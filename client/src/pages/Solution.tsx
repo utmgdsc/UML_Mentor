@@ -27,6 +27,7 @@ const Solution = () => {
   const [solutionData, setSolutionData] = useState(null);
   const [comments, setComments] = useState([]);
   const { isAdmin, isLoading } = useCheckRole();
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
     if (id) {
@@ -34,6 +35,26 @@ const Solution = () => {
       loadComments(id, setComments);
     }
   }, [id]);
+
+  useEffect(() => {
+    fetch("/api/users/whoami")
+      .then(response => response.json())
+      .then(data => {
+        setCurrentUserId(data.username);
+      })
+      .catch(error => {
+        console.error("Error fetching current user ID:", error);
+      });
+  }, []);
+
+  const handleDeleteSolution = () => {
+    if (!isAdmin && solutionData.userId !== currentUserId) return;
+    fetch(`/api/solutions/${id}`, { method: 'DELETE' })
+      .then(() => {
+        window.location.href = '/';
+      })
+      .catch(err => console.error('Failed to delete solution', err));
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -78,6 +99,11 @@ const Solution = () => {
                   <Card.Img variant="bottom" src={`/api/solutions/diagrams/${solutionData.diagram}`} alt="Solution Diagram" />
                 )}
               </Card.Body>
+              {isAdmin || solutionData.userId === currentUserId ? (
+                <Card.Footer>
+                  <Button variant="danger" onClick={handleDeleteSolution}>Delete Solution</Button>
+                </Card.Footer>
+              ) : null}
             </Card>
           )}
         </Col>
