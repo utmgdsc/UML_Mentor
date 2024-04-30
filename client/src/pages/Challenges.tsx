@@ -159,6 +159,8 @@ function Challenges() {
     }
   }
 
+
+  if(query.get("hidden") === "true" && userRole !== "admin") return <h1 className="text-center">You are not authorized to view this page</h1>;
   return (
     <section>
       <Container>
