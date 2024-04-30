@@ -42,7 +42,7 @@ const Solutions = () => {
       });
   }, []);
 
-  // fetch all awailable solutions
+  // fetch all available solutions
   useEffect(() => {
     fetch("/api/solutions")
       .then((resp) => resp.json())

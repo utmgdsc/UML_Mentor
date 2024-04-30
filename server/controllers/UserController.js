@@ -24,7 +24,7 @@ exports.getMe = async (req, res) => {
 };
 
 
-exports.getSolvedNames = async (req, res) => {
+exports.getSolvedChallengesTitles = async (req, res) => {
   const solutions = await db.Solution.findAll({
     where: {
       userId: req.params.username,

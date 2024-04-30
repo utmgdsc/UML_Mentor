@@ -15,7 +15,7 @@ router.get("/whoami", User.getMe);
 router.get("/:username", User.get);
 
 // get the names of the challenges that a user has solved
-router.get("/:username/solvedChallenges", User.getSolvedNames);
+router.get("/:username/solvedChallenges", User.getSolvedChallengesTitles);
 
 // USE FOR ADDING ADMINS
 router.post("/", checkRole(["admin"]), User.create);
