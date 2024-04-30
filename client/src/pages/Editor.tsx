@@ -1,6 +1,6 @@
-import { useEffect, useRef, useMemo, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { DrawIoEmbed, DrawIoEmbedRef } from "react-drawio";
-import { useLocation } from "react-router-dom";
+import { useQuery } from "../helpers/useQuery";
 
 const CONFIG = {
   defaultEdgeStyle: {
@@ -25,6 +25,8 @@ const Editor = () => {
   const diagramNameRef = useRef<string | null>(null); //Crutch for the handleSave function
   const diagramId = useRef<string | null>(null);
 
+  const query = useQuery();
+
   function doExport() {
     if (drawioRef.current) {
       drawioRef.current.exportDiagram({
@@ -33,12 +35,6 @@ const Editor = () => {
     }
   }
 
-  function useQuery() {
-    const { search } = useLocation();
-    return useMemo(() => new URLSearchParams(search), [search]);
-  }
-
-  const query = useQuery();
 
   //autosave (export) the diagram every 20 seconds (ONLY FOR DIAGRAMS IN PROGRESS, NOT EDITING EXISTING SOLUTIONS)
   useEffect(() => {

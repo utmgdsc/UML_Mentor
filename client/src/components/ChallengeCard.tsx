@@ -74,7 +74,7 @@ function ChallengeCard({
     });
   }
 
-  if (deleted || hidden) {
+  if (deleted) {
     return null;
   }
   return (

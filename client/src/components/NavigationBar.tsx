@@ -57,10 +57,16 @@ function NavigationBar() {
                 </Nav.Link>
               ))}
               {
-                userRole === "admin" ? 
-                  <Nav.Link onClick={() => navigate("/challenges/add")} className={location === "/challenges/add" ? "text-primary" : ""}>
-                    Add Challenge
-                  </Nav.Link> : null
+                userRole === "admin" && 
+                  <>
+                    <Nav.Link onClick={() => {navigate("/challenges/add")}} className={location === "/challenges/add" ? "text-primary" : ""}>
+                      Add Challenge
+                    </Nav.Link>
+                    <Nav.Link onClick={() => {navigate("challenges/?hidden=true")}} className={location === "/challenges/hidden" ? "text-primary" : ""}>
+                      Hidden Challenges  
+                    </Nav.Link> 
+                  </>
+                  
               }
             </Nav>
             <Nav className="align-items-center">

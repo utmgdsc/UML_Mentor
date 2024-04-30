@@ -12,6 +12,8 @@ import {
 } from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
+import { useQuery } from "../helpers/useQuery";
+
 
 function Challenges() {
   const [challengesData, setChallengesData] =
@@ -24,6 +26,7 @@ function Challenges() {
   const [hideComplete, setHideComplete] = useState(false);
 
   const [userRole, setUserRole] = useState<string | null>(null); 
+  const query = useQuery();
 
   //fetch the user role from the server
   useEffect(() => {
@@ -44,9 +47,12 @@ function Challenges() {
 
   // Fetch challenges from the server
   useEffect(() => {
-    
     setIsLoading(true);
-    fetch("/api/challenges")
+
+    let url = "/api/challenges";
+    if (query.get("hidden") === "true") url = "/api/challenges/hidden";
+
+    fetch(url)
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -64,7 +70,7 @@ function Challenges() {
           "Failed fetching the challenges." + "\nError message: " + err.message,
         );
       });
-  }, []);
+  }, [query]);
 
   // Sort challengesData by difficulty
   useEffect(() => {
@@ -108,10 +114,6 @@ function Challenges() {
           continue;
       }
 
-      if(challenge.hidden) {
-        continue;
-      }
-
       challenge.admin = userRole === "admin";
 
       row.push(
@@ -134,7 +136,7 @@ function Challenges() {
     }
     console.log("Grid made");
     return grid;
-  }, [isLoading, challengesData, filter, hideComplete]);
+  }, [isLoading, challengesData, filter, hideComplete, userRole]);
 
   function handleSortByDifficulty(prevChallengesData: ChallengeDetailsShort[]) {
     const sortedChallengesData = [...prevChallengesData];

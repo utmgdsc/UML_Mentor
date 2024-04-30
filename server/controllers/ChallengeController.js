@@ -132,6 +132,19 @@ exports.findAll = async (req, res) => {
   res.status(200).json(challenges);
 };
 
+exports.findHidden = async (req, res) => {
+  const challengesData = await Challenge.findAll({where: { hidden: true }});
+
+  if(challengesData.length === 0) {
+    return res.status(404).json({ error: "No challenges found." });
+  }
+
+  const challenges = await Promise.all(challengesData.map(async (challenge) => 
+    { return await formatChallenge(challenge, req.user.username) }));
+
+  res.status(200).json(challenges);
+};
+
 exports.findOne = async (req, res) => {
   const challenge_id = req.params.id;
 
