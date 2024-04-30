@@ -24,6 +24,25 @@ exports.getMe = async (req, res) => {
 };
 
 
+exports.getSolvedChallengesTitles = async (req, res) => {
+  const solutions = await db.Solution.findAll({
+    where: {
+      userId: req.params.username,
+    },
+    include: { model: db.Challenge, as: "Challenge" },
+  });
+
+  const solvedNames = [];
+  for (let i = 0; i < solutions.length; i++) {
+    // make sure the challenge is not already in the list
+    if (!solvedNames.includes(solutions[i].Challenge.title)) {
+      solvedNames.push(solutions[i].Challenge.title);
+    }
+  }
+
+  res.status(200).json(solvedNames);
+}
+
 exports.get = async (req, res) => {
   const { username } = req.params;
 

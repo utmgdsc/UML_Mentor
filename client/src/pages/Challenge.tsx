@@ -156,7 +156,7 @@ const Challenge = () => {
                   <Button
                     className="m-1"
                     target="_blank"
-                    href={"/solutions/challenge/" + id}>
+                    href={"/solutions"}>
                     View Solutions
                   </Button>
                   <Button className="m-1" onClick={() => setShowInstructions(true)}>
@@ -181,10 +181,13 @@ const Challenge = () => {
                 <Button
                   className="m-1"
                   target="_blank"
-                  href={"/solutions/challenge/" + id}
+                  href={"/solutions"}
                 >
                   View Solutions
                 </Button>
+                <Button className="m-1" onClick={() => setShowInstructions(true)}>
+                    Instructions
+                  </Button>
               </ButtonToolbar>
             </Row>
           )
