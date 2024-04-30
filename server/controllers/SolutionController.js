@@ -133,4 +133,7 @@ exports.delete = async (req, res) => {
   const { id } = req.params;
   await Solution.destroy({ where: { id } });
   res.status(204).send();
+  fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
+  console.log(err),
+  );
 };
