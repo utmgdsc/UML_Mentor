@@ -53,6 +53,7 @@ router.put("/:id", upload.single("diagram"), Solution.edit);
 // router.put("/:id", Solution.upvote);
 
 // Delete a solution from the database.
-router.delete("/:id", checkRole(["admin"]), Solution.delete);
+router.delete("/:id", Solution.delete);
+
 
 module.exports = router;
