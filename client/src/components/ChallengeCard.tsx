@@ -45,13 +45,13 @@ function ChallengeCard({
     });
   }
 
-  function handleHide() {
+  function handleHide(hidden: boolean) {
     console.log("/api/challenges/hide/" + id);
 
     fetch("/api/challenges/hide/" + id, {
       method: "PUT",
       body: JSON.stringify({
-        hidden: true
+        hidden: hidden
       }),
       headers: {
         "Content-Type": "application/json"
@@ -73,6 +73,8 @@ function ChallengeCard({
       console.error(err);
     });
   }
+ 
+
 
   if (deleted) {
     return null;
@@ -88,7 +90,8 @@ function ChallengeCard({
         <ButtonToolbar className="d-flex justify-content-between">
           <Button href={"/challenge/" + id}>Solve</Button>
           <div>
-            {admin && !hidden && <Button variant="dark" className="mx-2" onClick={() => {handleHide()}}>Hide</Button>}
+            {admin && hidden && <Button variant="dark" className="mx-2" onClick={() => {handleHide(false)}}>Unhide</Button>}
+            {admin && !hidden && <Button variant="dark" className="mx-2" onClick={() => {handleHide(true)}}>Hide</Button>}
             {admin && <Button variant="danger" onClick={() => {handleDelete()}}>Delete</Button>}
           </div>
         </ButtonToolbar>

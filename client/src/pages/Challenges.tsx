@@ -86,7 +86,8 @@ function Challenges() {
    * @returns a bootstrap grid of ChallengeCards
    */
   const makeGrid = useCallback((): JSX.Element[] => {
-    // TODO: refactor this to use css grid instead
+    if(challengesData?.length === 0) return [<h2 key="no-challenges" className="text-center">No challenges found</h2>];
+
     if (isLoading || challengesData === undefined) {
       return [
         <Row key="spinner" className="d-flex justify-content-center">
@@ -164,8 +165,8 @@ function Challenges() {
         <header>
           <Row className="my-2">
             <Col>
-              <h1 className="fs-2">Challenges</h1>
-              <h2 className="fs-5">Choose a challenge to start solving!</h2>
+              <h1 className="fs-2">{query.get("hidden") === "true" ? "Hidden Challenges" : "Challenges"}</h1>
+              <h2 className="fs-5">{query.get("hidden") === "true" ? "Challenges not accessbile by regular users" : "Choose a challenge to start solving!"}</h2>
             </Col>
             <Col>
               <Dropdown className="mt-4 float-end ">
