@@ -5,6 +5,7 @@ import { Form } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { CaretUpFill, CaretUp } from "react-bootstrap-icons";
 import { useRemark } from "react-remark";
+import dayjs from 'dayjs';
 
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
 
@@ -62,13 +63,19 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
 
   useEffect(() => {
     setMarkdownSource(comment.text);
-  }, []);
+  }, [comment.text]);
 
   console.log(comment);
 
   return (
     <>
       <Card className="mt-3">
+        <Card.Header>
+          <div className="d-flex justify-content-between align-items-center">
+            <strong>{comment.userId}</strong>  {/* Displaying username */}
+            <small>{dayjs(comment.createdAt).format('MMM D, YYYY')}</small>  {/* Formatting and displaying date */}
+          </div>
+        </Card.Header>
         <Card.Body>
           <Card.Text>{renderedMarkdown}</Card.Text>
           <div>
@@ -79,19 +86,15 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
             />
             <Button
               variant="primary"
-              onClick={() => {
-                setIsReplying((p) => !p);
-              }}
+              onClick={() => setIsReplying(prev => !prev)}
             >
               {isReplying ? "Stop Replying" : "Reply"}
             </Button>
             {repliesAvailable && (
               <Button
-                variant={"secondary"}
-                className={"ms-3"}
-                onClick={() => {
-                  setRepliesOpen((p) => !p);
-                }}
+                variant="secondary"
+                className="ms-3"
+                onClick={() => setRepliesOpen(prev => !prev)}
               >
                 {repliesOpen ? "Close Replies" : "See Replies"}
               </Button>
@@ -99,24 +102,23 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
           </div>
         </Card.Body>
       </Card>
-      <div className={"mt-3 ms-3"}>
+      <div className="mt-3 ms-3">
         {isReplying && (
           <Comment editable={true} onSubmit={onSubmit} parentId={comment.id} />
         )}
-        {repliesAvailable &&
-          repliesOpen &&
-          comment.replies.map((c) => (
-            <Comment
-              key={c.id}
-              comment={c}
-              onSubmit={onSubmit}
-              editable={false}
-            />
-          ))}
+        {repliesAvailable && repliesOpen && comment.replies.map(c => (
+          <Comment
+            key={c.id}
+            comment={c}
+            onSubmit={onSubmit}
+            editable={false}
+          />
+        ))}
       </div>
     </>
   );
 };
+
 
 const EditableComment = ({ onSubmit, parentId }: EditableCommentProps) => {
   const [newComment, setNewComment] = useState<string>("");

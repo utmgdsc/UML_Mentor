@@ -6,6 +6,7 @@ import { CommentData } from "../types/CommentData.ts";
 import Button from "../components/Button.tsx";
 import Comment from "../components/Comment.tsx";
 import useCheckRole from '../hooks/useCheckRole';  // Make sure the path is correct
+import dayjs from 'dayjs';
 
 function loadSolution(id, setter) {
   fetch(`/api/solutions/${id}`)
@@ -63,9 +64,16 @@ const Solution = () => {
           <h2>Solution</h2>
           {solutionData && (
             <Card>
+               <Card.Header>
+                <div className="d-flex justify-content-between align-items-center">
+                  <strong>By: {solutionData.userId}</strong>
+                  <small>{dayjs(solutionData.createdAt).format('MMMM D, YYYY')}</small>
+                </div>
+              </Card.Header>
               <Card.Body>
                 <Card.Title>{solutionData.title}</Card.Title>
                 <Card.Text>{solutionData.description}</Card.Text>
+ 
                 {solutionData.diagram && (
                   <Card.Img variant="bottom" src={`/api/solutions/diagrams/${solutionData.diagram}`} alt="Solution Diagram" />
                 )}
