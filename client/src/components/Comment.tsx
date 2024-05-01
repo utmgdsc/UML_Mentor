@@ -5,6 +5,7 @@ import { Form } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { CaretUpFill, CaretUp } from "react-bootstrap-icons";
 import { useRemark } from "react-remark";
+import dayjs from "dayjs";
 
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
 
@@ -12,7 +13,7 @@ type NonEditableCommentProps = {
   comment: CommentData;
   onSubmit: (parentId: number, text: string) => void;
   editable: false;
-  hasUserUpvoted: boolean;
+  depth: number;
 };
 
 type EditableCommentProps = {
@@ -53,22 +54,32 @@ const Upvoter = ({ commentId, upVotes, hasUpvoted }: UpvoterProps) => {
   );
 };
 
-const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
+const NonEditableComment = ({
+  comment,
+  onSubmit,
+  depth,
+}: NonEditableCommentProps) => {
   const [isReplying, setIsReplying] = useState(false);
   const [repliesOpen, setRepliesOpen] = useState(false);
   const repliesAvailable = comment.replies.length !== 0;
-
   const [renderedMarkdown, setMarkdownSource] = useRemark();
 
   useEffect(() => {
     setMarkdownSource(comment.text);
-  }, []);
+  }, [comment.text]);
 
   console.log(comment);
 
   return (
     <>
       <Card className="mt-3">
+        <Card.Header>
+          <div className="d-flex justify-content-between align-items-center">
+            <strong>{comment.userId}</strong> {/* Displaying username */}
+            <small>{dayjs(comment.createdAt).format("MMM D, YYYY")}</small>{" "}
+            {/* Formatting and displaying date */}
+          </div>
+        </Card.Header>
         <Card.Body>
           <Card.Text>{renderedMarkdown}</Card.Text>
           <div>
@@ -77,43 +88,55 @@ const NonEditableComment = ({ comment, onSubmit }: NonEditableCommentProps) => {
               upVotes={comment.upVotes}
               hasUpvoted={comment.hasUserUpvoted}
             />
-            <Button
-              variant="primary"
-              onClick={() => {
-                setIsReplying((p) => !p);
-              }}
-            >
-              {isReplying ? "Stop Replying" : "Reply"}
-            </Button>
-            {repliesAvailable && (
-              <Button
-                variant={"secondary"}
-                className={"ms-3"}
-                onClick={() => {
-                  setRepliesOpen((p) => !p);
-                }}
-              >
-                {repliesOpen ? "Close Replies" : "See Replies"}
-              </Button>
+            {depth === 0 && (
+              <>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setIsReplying((prev) => !prev);
+                  }}
+                >
+                  {isReplying ? "Stop Replying" : "Reply"}
+                </Button>
+                {repliesAvailable && (
+                  <Button
+                    variant="secondary"
+                    className="ms-3"
+                    onClick={() => {
+                      setRepliesOpen((prev) => !prev);
+                    }}
+                  >
+                    {repliesOpen ? "Close Replies" : "See Replies"}
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </Card.Body>
       </Card>
-      <div className={"mt-3 ms-3"}>
-        {isReplying && (
-          <Comment editable={true} onSubmit={onSubmit} parentId={comment.id} />
-        )}
-        {repliesAvailable &&
-          repliesOpen &&
-          comment.replies.map((c) => (
+
+      {depth === 0 && (
+        <div className={"mt-3 ms-3"}>
+          {isReplying && (
             <Comment
-              key={c.id}
-              comment={c}
+              editable={true}
               onSubmit={onSubmit}
-              editable={false}
+              parentId={comment.id}
             />
-          ))}
-      </div>
+          )}
+          {repliesAvailable &&
+            repliesOpen &&
+            comment.replies.map((c) => (
+              <Comment
+                key={c.id}
+                comment={c}
+                onSubmit={onSubmit}
+                editable={false}
+                depth={depth + 1}
+              />
+            ))}
+        </div>
+      )}
     </>
   );
 };

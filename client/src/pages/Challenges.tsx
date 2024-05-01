@@ -12,6 +12,8 @@ import {
 } from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
+import { useQuery } from "../helpers/useQuery";
+
 
 function Challenges() {
   const [challengesData, setChallengesData] =
@@ -23,10 +25,34 @@ function Challenges() {
   const [filter, setFilter] = useState([] as ChallengeDifficulties[]);
   const [hideComplete, setHideComplete] = useState(false);
 
+  const [userRole, setUserRole] = useState<string | null>(null); 
+  const query = useQuery();
+
+  //fetch the user role from the server
   useEffect(() => {
-    //fetch data about the challenge with the provided "id"
+    fetch("/api/users/whoami")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json() as Promise<{role: string}>;
+      })
+      .then((data) => {
+        setUserRole(data.role);
+      })
+      .catch((err: Error) => { // Add the error type 'Error'
+        console.error("Failed fetching the user role.\nError message: " + err.message);
+      });
+  }, []);
+
+  // Fetch challenges from the server
+  useEffect(() => {
     setIsLoading(true);
-    fetch("/api/challenges")
+
+    let url = "/api/challenges";
+    if (query.get("hidden") === "true") url = "/api/challenges/hidden";
+
+    fetch(url)
       .then((response) => {
         if (!response.ok) {
           throw new Error(response.statusText);
@@ -35,7 +61,6 @@ function Challenges() {
       })
       .then((data) => {
         setChallengesData(data);
-        console.log(data);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -44,10 +69,10 @@ function Challenges() {
           "Failed fetching the challenges." + "\nError message: " + err.message,
         );
       });
-  }, []);
+  }, [query]);
 
+  // Sort challengesData by difficulty
   useEffect(() => {
-    // Sort challengesData by difficulty
     if (challengesData != undefined) {
       const sortedChallengesData = handleSortByDifficulty(challengesData);
       setChallengesData(sortedChallengesData);
@@ -60,7 +85,8 @@ function Challenges() {
    * @returns a bootstrap grid of ChallengeCards
    */
   const makeGrid = useCallback((): JSX.Element[] => {
-    // TODO: refactor this to use css grid instead
+    if(challengesData?.length === 0) return [<h2 key="no-challenges" className="text-center">No challenges found</h2>];
+
     if (isLoading || challengesData === undefined) {
       return [
         <Row key="spinner" className="d-flex justify-content-center">
@@ -87,6 +113,8 @@ function Challenges() {
           continue;
       }
 
+      challenge.isAdmin = userRole === "admin";
+
       row.push(
         <Col lg={4} key={i} className="mb-4">
           <ChallengeCard {...challenge} />
@@ -105,9 +133,8 @@ function Challenges() {
     if (row.length > 0) {
       grid.push(<Row key={i}>{row}</Row>);
     }
-    console.log("Grid made");
     return grid;
-  }, [isLoading, challengesData, filter, hideComplete]);
+  }, [isLoading, challengesData, filter, hideComplete, userRole]);
 
   function handleSortByDifficulty(prevChallengesData: ChallengeDetailsShort[]) {
     const sortedChallengesData = [...prevChallengesData];
@@ -129,14 +156,16 @@ function Challenges() {
     }
   }
 
+
+  if(query.get("hidden") === "true" && userRole !== "admin") return <h1 className="text-center">You are not authorized to view this page</h1>;
   return (
     <section>
       <Container>
         <header>
           <Row className="my-2">
             <Col>
-              <h1 className="fs-2">Challenges</h1>
-              <h2 className="fs-5">Choose a challenge to start solving!</h2>
+              <h1 className="fs-2">{query.get("hidden") === "true" ? "Hidden Challenges" : "Challenges"}</h1>
+              <h2 className="fs-5">{query.get("hidden") === "true" ? "Challenges not accessbile by regular users" : "Choose a challenge to start solving!"}</h2>
             </Col>
             <Col>
               <Dropdown className="mt-4 float-end ">

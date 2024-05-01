@@ -3,6 +3,7 @@ const STORAGE_CONFIG = require("../storage_config.json");
 const db = require("../models/index");
 const { HandledError } = require("../middleware/ErrorHandlingMiddleware");
 const { AITA } = require("../AI/AITA.js");
+const { where } = require("sequelize");
 const Solution = db.Solution;
 const Comment = db.Comment;
 const Challenge = db.Challenge;
@@ -28,18 +29,76 @@ exports.getUserSolutions = async (req, res) => {
 
 
 exports.getAll = async (req, res) => {
-  // eager load the user data
-  const solutions = await Solution.findAll({
-    limit: 50,
-    include: { model: User, as: "User" },
-  });
+  if (req.user.role === "admin") { // don't hide any solutions
+    // eager load the user data
+    const solutions = await Solution.findAll({
+      // limit: 50,
+      include: { model: User, as: "User" },
+    });
 
-  res.status(200).json(solutions);
+    // append the challenge title to each solution
+    for (let i = 0; i < solutions.length; i++) {
+      const solution = solutions[i];
+      const challenge = await Challenge.findByPk(solution.challengeId);
+      solution.dataValues.challengeTitle = challenge.title;
+    }
+
+    res.status(200).json(solutions);
+  } 
+  else { // only return the solutions to the challenges that the user has solved
+    // find all the solutions belonging to the user
+    const userSolutions = await Solution.findAll({
+      where: { userId: req.user.username },
+    });
+
+    const solvedChallengeIds = [];
+    const solutions = [];
+
+    // make a list of challenge id's that the user has solved
+    for (let i = 0; i < userSolutions.length; i++) {
+      if(!solvedChallengeIds.includes(userSolutions[i].challengeId)) {
+        solvedChallengeIds.push(userSolutions[i].challengeId);
+      }
+    }
+
+    // find all the solutions to the challenges that the user has solved
+    for (let i = 0; i < solvedChallengeIds.length; i++) {
+      const challengeId = solvedChallengeIds[i];
+      const challengeSolutions = await Solution.findAll({
+        where: { challengeId },
+        include: { model: User, as: "User" },
+      });
+      solutions.push(...challengeSolutions);
+    }
+
+    // append the challenge title to each solution
+    for (let i = 0; i < solutions.length; i++) {
+      const solution = solutions[i];
+      const challenge = await Challenge.findByPk(solution.challengeId);
+      solution.dataValues.challengeTitle = challenge.title;
+    }
+
+    // sort the solutions by date created
+    solutions.sort((a, b) => {
+      return b.createdAt - a.createdAt;
+    });
+
+    res.status(200).json(solutions);
+    
+  }
+
 };
 
 exports.get = async (req, res) => {
   const { id } = req.params;
   const solution = await Solution.findByPk(id);
+  // append the challenge title to the solution
+  const challenge = await Challenge.findByPk(solution.challengeId);
+  solution.dataValues.challengeTitle = challenge.title;
+  //append the user data to the solution
+  const user = await User.findByPk(solution.userId);
+  solution.dataValues.User = user;
+
   res.status(200).json(solution);
 };
 
@@ -128,12 +187,12 @@ exports.edit = async (req, res) => {
   res.status(200).json(updatedSolution);
 };
 
-// TODO: Test this route
+
 exports.delete = async (req, res) => {
   const { id } = req.params;
   await Solution.destroy({ where: { id } });
-  fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
-    console.log(err),
-  );
   res.status(204).send();
+  fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
+  console.log(err),
+  );
 };

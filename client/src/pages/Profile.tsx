@@ -133,6 +133,8 @@ const Profile = () => {
                     generalDescription={challenge.generalDescription}
                     id={challenge.id}
                     completed={challenge.completed}
+                    isAdmin={false}
+                    hidden={challenge.hidden}
                   />
               ))}
             </MasonryGrid>

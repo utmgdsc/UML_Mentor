@@ -6,13 +6,15 @@ import { NAV_CONFIG } from "../App.tsx";
 import NewUserPopup from './NewUserPopup'; // Make sure this path is correct
 import { QuestionCircle } from "react-bootstrap-icons";
 import { UserData } from '../types/UserData';
+import { useQuery } from '../helpers/useQuery.tsx';
 
 function NavigationBar() {
   const [showNewUserPopup, setShowNewUserPopup] = useState(false);
   const location = useLocation().pathname;
   const [username, setUsername] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null); 
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserData>();
+  const query = useQuery();
 
   //fetch the username from the server
   useEffect(() => {
@@ -21,30 +23,16 @@ function NavigationBar() {
         if (!response.ok) {
           throw new Error(response.statusText);
         }
-        return response.json() as Promise<{username: string}>;
+        return response.json() as Promise<{username: string, role: string}>;
       })
       .then((data) => {
         console.log("Fetched username: " + data.username);
+        console.log("Fetched role: " + data.role);
         setUsername(data.username);
+        setUserRole(data.role);
       })
       .catch((err: Error) => { // Add the error type 'Error'
         console.error("Failed fetching the username\nError message: " + err.message);
-      });
-  }, [username]);
-
-  useEffect(() => {
-    fetch(`/api/users/${username}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data :(');
-        }
-        return response.json() as Promise<UserData>;
-      })
-      .then(data => {
-        setUser(data);
-      })
-      .catch(error => {
-        console.error('Error fetching user data: ', error);
       });
   }, [username]);
 
@@ -53,6 +41,8 @@ function NavigationBar() {
   };
 
   const toggleNewUserPopup = () => setShowNewUserPopup(!showNewUserPopup);
+
+  console.log(location);
 
   return (
     <>
@@ -71,15 +61,24 @@ function NavigationBar() {
                   {route.name}
                 </Nav.Link>
               ))}
-              {/* Conditionally render Admin link based on user role */}
-              {user && user.role === 'admin' && (
-                <Nav.Link
-                  onClick={() => navigate('/admin')}
-                  className={location === '/admin' ? 'text-primary' : ''}
-                >
-                  Admin
-                </Nav.Link>
-              )}
+              {
+                userRole === "admin" && 
+                  <>
+                    <Nav.Link
+                      onClick={() => navigate('/admin')}
+                      className={location === '/admin' ? 'text-primary' : ''}
+                    >
+                      Admin
+                    </Nav.Link>
+                    <Nav.Link onClick={() => {navigate("/challenges/add")}} className={location === "/challenges/add" ? "text-primary" : ""}>
+                      Add Challenge
+                    </Nav.Link>
+                    <Nav.Link onClick={() => {navigate("challenges/?hidden=true")}} className={(location === "/challenges/" && query.get("hidden") === "true") ? "text-primary" : ""}>
+                      Hidden Challenges  
+                    </Nav.Link> 
+                  </>
+                  
+              }
             </Nav>
             <Nav className="align-items-center">
               {/* "NewUserPopup" button */}

@@ -1,4 +1,4 @@
-const session = require('express-session');
+const session = require("express-session");
 const express = require("express");
 const path = require("node:path");
 const db = require("./models");
@@ -6,16 +6,15 @@ const importChallenges = require("./scripts/importChallenges");
 const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./middleware/LoggingMiddleware");
 const createAITAUser = require("./scripts/createAITAUser");
-const authMiddleware = require('./middleware/AuthenticationMiddleware');
+const authMiddleware = require("./middleware/AuthenticationMiddleware");
 const checkRole = require("./middleware/CheckRoleMiddleware");
 
 const app = express();
 
-app.use(express.json({limit: '10mb'}));
-app.use(express.urlencoded({limit: '10mb'}));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb" }));
 
 const PORT = process.env.PORT || 8080;
-
 
 // Set up API routes
 const challenges = require("./routes/ChallengeRoutes");
@@ -39,11 +38,9 @@ const SolutionInProgress = require("./routes/SolutionInProgressRoutes");
 // });
 
 //For testing purposes - admin
-app.get('/test-protected', checkRole(['admin']), (req, res) => {
-  res.send('Welcome, admin!');
+app.get("/test-protected", checkRole(["admin"]), (req, res) => {
+  res.send("Welcome, admin!");
 });
-
-
 
 app.use(loggingMiddleware);
 app.use(authMiddleware);
@@ -55,8 +52,8 @@ db.sequelize.sync().then(async () => {
 
   // import the challenges into the db. Comment out after first run
   // Also create the AI user
-  // await importChallenges();
-  // await createAITAUser();
+   //await importChallenges();
+   //await createAITAUser();
 
   // Start listening for requests after the database is ready
   app.listen(PORT, () => {
@@ -65,14 +62,14 @@ db.sequelize.sync().then(async () => {
 });
 
 //For testing purposes
-app.post('/test-auth', authMiddleware, (req, res) => {
+app.post("/test-auth", authMiddleware, (req, res) => {
   const user = req.user;
 
   const userInfo = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    role: user.role,
   };
 
   res.json(userInfo);
@@ -100,8 +97,6 @@ if (process.env?.ENV === "prod") {
   });
 }
 
-
 if (process.env?.ENV === "dev") {
   console.log("===[ Running in Dev Mode ]===");
 }
-

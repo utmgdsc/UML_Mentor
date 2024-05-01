@@ -72,7 +72,7 @@ exports.getUserComments = async (req, res) => {
     },
   });
   res.status(200).json(comments);
-}
+};
 
 exports.get = async (req, res) => {
   const { solutionId } = req.params;
@@ -173,49 +173,6 @@ exports.reply = async (req, res) => {
   );
 
   res.status(204).send();
-
-  if (parent.userId !== "AITA") return;
-  // This is a reply to an AI generated comment.
-
-  console.log("Generating AI reply...");
-
-  const fetchedComments = await Comment.findAll({
-    where: {
-      solutionId: parent.solutionId,
-    },
-  });
-
-  const extracted = fetchedComments.map(
-    ({ id, text, userId, solutionId, upVotes, replies, usersWhoUpvoted }) => ({
-      id,
-      text,
-      userId,
-      solutionId,
-      hasUserUpvoted: usersWhoUpvoted.includes(req.user.username),
-      upVotes,
-      replies,
-    }),
-  );
-
-  const comments = formatComments(extracted);
-
-  // console.log(comments);
-
-  const comment_chain = comments
-    .map((c) => getCommentChain(c, comment.id))
-    .filter((ch) => ch.length !== 0)[0];
-  const solution = await Solution.findByPk(parent.solutionId);
-  const challenge = await Challenge.findByPk(solution.challengeId);
-
-  console.log("Calling AITA....");
-  const [chainRunId, feedback] = await AITA.feedback_for_comment(
-    comment_chain,
-    challenge,
-    solution,
-  );
-
-  await reply_to_comment(comment.id, feedback, "AITA", chainRunId);
-  console.log(`AITA commented on comment ${comment.id}`);
 };
 
 exports.upvote = async (req, res) => {

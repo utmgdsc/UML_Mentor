@@ -9,7 +9,8 @@ import PostSolution from './pages/PostSolution.tsx';
 import Solution from './pages/Solution.tsx';
 import Profile from './pages/Profile.tsx';
 import Editor from './pages/Editor.tsx';
-import Admin from './pages/Admin.tsx';
+import AddChallenge from "./pages/AddChallenge.tsx";
+
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
         element: <Challenges />
       },
       {
+        path: "challenges/add",
+        element: <AddChallenge />
+      },
+      {
         path: "profile/:username",
         element: <Profile />
       },
@@ -72,10 +77,6 @@ const router = createBrowserRouter([
       {
         path: "editor",
         element: <Editor />
-      },
-      {
-        path: "admin", // Add route for the Admin page
-        element: <Admin />,
       },
     ],
   },

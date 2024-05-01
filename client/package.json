@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.2",
+    "dayjs": "^1.11.11",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.0",
     "react-bootstrap-icons": "^1.10.3",
     "react-dom": "^18.2.0",
     "react-drawio": "^0.1.7",
+    "react-json-editor-ajrm": "^2.5.14",
     "react-remark": "^2.1.0",
     "react-router-dom": "^6.21.3"
   },
