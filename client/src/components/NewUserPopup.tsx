@@ -97,7 +97,7 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
                                 <br />Faculty Supervisor:
                                 <br />Rutwa Engineer
                                 <br />Mentors:
-                                <br />Arthur
+                                <br />Arthur Ng
                                 <br />Developers:
                                 <br />Omar Khamis, Vlad Yaremchuk, Alex Apostolu, Eren Suner
                             </Accordion.Body>
