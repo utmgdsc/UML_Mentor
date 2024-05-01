@@ -9,4 +9,5 @@ export type ChallengeDetails = {
     expectedFunctionality: object;
     usageScenarios: object;
     completed: boolean;
+    hidden: boolean;
 }

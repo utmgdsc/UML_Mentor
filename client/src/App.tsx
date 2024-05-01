@@ -9,6 +9,7 @@ import PostSolution from "./pages/PostSolution.tsx";
 import Solution from "./pages/Solution.tsx";
 import Profile from "./pages/Profile.tsx"
 import Editor from "./pages/Editor.tsx";
+import AddChallenge from "./pages/AddChallenge.tsx";
 
 
 const NAV_CONFIG = {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: "challenges",
         element: <Challenges />
+      },
+      {
+        path: "challenges/add",
+        element: <AddChallenge />
       },
       {
         path: "profile/:username",

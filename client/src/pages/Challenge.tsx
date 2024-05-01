@@ -16,6 +16,24 @@ const Challenge = () => {
     // Setting the state true initally to show the instructions
     const [showInstructions, setShowInstructions] = useState(false);
 
+    const [userRole, setUserRole] = useState<string | null>(null); 
+    //fetch the user role from the server
+    useEffect(() => {
+      fetch("/api/users/whoami")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(response.statusText);
+          }
+          return response.json() as Promise<{role: string}>;
+        })
+        .then((data) => {
+          setUserRole(data.role);
+        })
+        .catch((err: Error) => { // Add the error type 'Error'
+          console.error("Failed fetching the user role.\nError message: " + err.message);
+        });
+    }, []);
+
     useEffect(() => {
       const instructionsShown = localStorage.getItem('instructionsShown');
       if (!instructionsShown) {
@@ -81,6 +99,7 @@ const Challenge = () => {
 
   if (isLoading) return <p>Loading...</p>;
   if (details == undefined) return <p>Failed to load challenge details</p>;
+  if (details.hidden && userRole != "admin") return <p>The challenge is hidden</p>;
   return (
     <Container>
       <section>
@@ -152,12 +171,6 @@ const Challenge = () => {
                   </Button>
                   <Button className="m-1" href={"/solutions/post/" + id}>
                     Post a Solution
-                  </Button>
-                  <Button
-                    className="m-1"
-                    target="_blank"
-                    href={"/solutions"}>
-                    View Solutions
                   </Button>
                   <Button className="m-1" onClick={() => setShowInstructions(true)}>
                     Instructions

@@ -17,6 +17,7 @@
     "react-bootstrap-icons": "^1.10.3",
     "react-dom": "^18.2.0",
     "react-drawio": "^0.1.7",
+    "react-json-editor-ajrm": "^2.5.14",
     "react-remark": "^2.1.0",
     "react-router-dom": "^6.21.3"
   },

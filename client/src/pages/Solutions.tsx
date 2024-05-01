@@ -33,7 +33,6 @@ const Solutions = () => {
         return res.json() as Promise<string[]>;
       })
       .then((data) => {
-        console.log(data);
         console.log("Solved challenges");
         setSolvedChallenges(data);
       })
@@ -47,7 +46,6 @@ const Solutions = () => {
     fetch("/api/solutions")
       .then((resp) => resp.json())
       .then((data: SolutionData[]) => {
-        console.log(data);
         setSolutions(data);
       })
       .catch((err) => {
@@ -65,7 +63,6 @@ const Solutions = () => {
         return res.json() as Promise<{ id: number; title: string }[]>;
       })
       .then((data) => {
-        console.log(data);
         setChallengeNames(data.map((challenge) => challenge.title));
       })
       .catch((err) => {
