@@ -6,6 +6,7 @@ const importChallenges = require("./scripts/importChallenges");
 const { ErrorHandler } = require("./middleware/ErrorHandlingMiddleware");
 const loggingMiddleware = require("./middleware/LoggingMiddleware");
 const createAITAUser = require("./scripts/createAITAUser");
+const createAdmins = require("./scripts/createAdmins");
 const authMiddleware = require("./middleware/AuthenticationMiddleware");
 const checkRole = require("./middleware/CheckRoleMiddleware");
 
@@ -52,8 +53,9 @@ db.sequelize.sync().then(async () => {
 
   // import the challenges into the db. Comment out after first run
   // Also create the AI user
-   //await importChallenges();
-   //await createAITAUser();
+  //await importChallenges();
+  //await createAITAUser();
+  createAdmins();
 
   // Start listening for requests after the database is ready
   app.listen(PORT, () => {
