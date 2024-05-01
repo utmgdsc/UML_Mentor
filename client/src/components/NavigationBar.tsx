@@ -5,6 +5,7 @@ import { PersonCircle } from "react-bootstrap-icons";
 import { NAV_CONFIG } from "../App.tsx";
 import NewUserPopup from './NewUserPopup'; // Make sure this path is correct
 import { QuestionCircle } from "react-bootstrap-icons";
+import { UserData } from '../types/UserData';
 import { useQuery } from '../helpers/useQuery.tsx';
 
 function NavigationBar() {
@@ -63,6 +64,12 @@ function NavigationBar() {
               {
                 userRole === "admin" && 
                   <>
+                    <Nav.Link
+                      onClick={() => navigate('/admin')}
+                      className={location === '/admin' ? 'text-primary' : ''}
+                    >
+                      Admin
+                    </Nav.Link>
                     <Nav.Link onClick={() => {navigate("/challenges/add")}} className={location === "/challenges/add" ? "text-primary" : ""}>
                       Add Challenge
                     </Nav.Link>

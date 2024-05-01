@@ -1,14 +1,14 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home.tsx";
-import AppShell from "./components/AppShell.tsx";
-import ErrorElement from "./pages/ErrorElement.tsx";
-import Challenges from "./pages/Challenges.tsx";
-import Challenge from "./pages/Challenge.tsx";
-import Solutions from "./pages/Solutions.tsx";
-import PostSolution from "./pages/PostSolution.tsx";
-import Solution from "./pages/Solution.tsx";
-import Profile from "./pages/Profile.tsx"
-import Editor from "./pages/Editor.tsx";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Home from './pages/Home.tsx';
+import AppShell from './components/AppShell.tsx';
+import ErrorElement from './pages/ErrorElement.tsx';
+import Challenges from './pages/Challenges.tsx';
+import Challenge from './pages/Challenge.tsx';
+import Solutions from './pages/Solutions.tsx';
+import PostSolution from './pages/PostSolution.tsx';
+import Solution from './pages/Solution.tsx';
+import Profile from './pages/Profile.tsx';
+import Editor from './pages/Editor.tsx';
 import AddChallenge from "./pages/AddChallenge.tsx";
 
 
