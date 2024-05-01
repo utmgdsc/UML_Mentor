@@ -61,7 +61,6 @@ function Challenges() {
       })
       .then((data) => {
         setChallengesData(data);
-        console.log(data);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -102,7 +101,6 @@ function Challenges() {
     let row: JSX.Element[] = [];
     let i = 0;
     for (const challenge of challengesData) {
-      console.log(challenge);
       //make sure the challenge is not filtered out
       if (!filter.includes(challenge.difficulty) && filter.length > 0) {
         // console.log("Filtering out: " + challenge.difficulty);
@@ -115,7 +113,7 @@ function Challenges() {
           continue;
       }
 
-      challenge.admin = userRole === "admin";
+      challenge.isAdmin = userRole === "admin";
 
       row.push(
         <Col lg={4} key={i} className="mb-4">
@@ -135,7 +133,6 @@ function Challenges() {
     if (row.length > 0) {
       grid.push(<Row key={i}>{row}</Row>);
     }
-    console.log("Grid made");
     return grid;
   }, [isLoading, challengesData, filter, hideComplete, userRole]);
 

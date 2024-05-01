@@ -5,6 +5,7 @@ import { PersonCircle } from "react-bootstrap-icons";
 import { NAV_CONFIG } from "../App.tsx";
 import NewUserPopup from './NewUserPopup'; // Make sure this path is correct
 import { QuestionCircle } from "react-bootstrap-icons";
+import { useQuery } from '../helpers/useQuery.tsx';
 
 function NavigationBar() {
   const [showNewUserPopup, setShowNewUserPopup] = useState(false);
@@ -12,6 +13,7 @@ function NavigationBar() {
   const [username, setUsername] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null); 
   const navigate = useNavigate();
+  const query = useQuery();
 
   //fetch the username from the server
   useEffect(() => {
@@ -39,6 +41,8 @@ function NavigationBar() {
 
   const toggleNewUserPopup = () => setShowNewUserPopup(!showNewUserPopup);
 
+  console.log(location);
+
   return (
     <>
       <Navbar expand="lg" className="bg-body-tertiary">
@@ -62,7 +66,7 @@ function NavigationBar() {
                     <Nav.Link onClick={() => {navigate("/challenges/add")}} className={location === "/challenges/add" ? "text-primary" : ""}>
                       Add Challenge
                     </Nav.Link>
-                    <Nav.Link onClick={() => {navigate("challenges/?hidden=true")}} className={location === "/challenges/hidden" ? "text-primary" : ""}>
+                    <Nav.Link onClick={() => {navigate("challenges/?hidden=true")}} className={(location === "/challenges/" && query.get("hidden") === "true") ? "text-primary" : ""}>
                       Hidden Challenges  
                     </Nav.Link> 
                   </>

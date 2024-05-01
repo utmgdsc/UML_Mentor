@@ -11,7 +11,7 @@ function ChallengeCard({
   id,
   difficulty,
   completed,
-  admin,
+  isAdmin,
   hidden,
 }: ChallengeDetailsShort) {
   const [deleted, setDeleted] = useState(false);
@@ -90,9 +90,9 @@ function ChallengeCard({
         <ButtonToolbar className="d-flex justify-content-between">
           <Button href={"/challenge/" + id}>Solve</Button>
           <div>
-            {admin && hidden && <Button variant="dark" className="mx-2" onClick={() => {handleHide(false)}}>Unhide</Button>}
-            {admin && !hidden && <Button variant="dark" className="mx-2" onClick={() => {handleHide(true)}}>Hide</Button>}
-            {admin && <Button variant="danger" onClick={() => {handleDelete()}}>Delete</Button>}
+            {isAdmin && hidden && <Button variant="dark" className="mx-2" onClick={() => {handleHide(false)}}>Unhide</Button>}
+            {isAdmin && !hidden && <Button variant="dark" className="mx-2" onClick={() => {handleHide(true)}}>Hide</Button>}
+            {isAdmin && <Button variant="danger" onClick={() => {handleDelete()}}>Delete</Button>}
           </div>
         </ButtonToolbar>
         
