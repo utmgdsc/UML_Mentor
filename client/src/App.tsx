@@ -10,6 +10,7 @@ import Solution from './pages/Solution.tsx';
 import Profile from './pages/Profile.tsx';
 import Editor from './pages/Editor.tsx';
 import AddChallenge from "./pages/AddChallenge.tsx";
+import Admin from "./pages/Admin.tsx"
 
 
 const NAV_CONFIG = {
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
       {
         path: "editor",
         element: <Editor />
+      },
+      {
+        path: "admin",
+        element: <Admin />
       },
     ],
   },
