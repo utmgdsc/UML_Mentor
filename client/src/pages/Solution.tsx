@@ -145,6 +145,7 @@ const Solution = () => {
                   comment={comment}
                   editable={false}
                   onSubmit={handleSubmit}
+                  depth={0}
                 />
                 {isAdmin && (
                   <Button

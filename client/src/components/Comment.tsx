@@ -13,7 +13,7 @@ type NonEditableCommentProps = {
   comment: CommentData;
   onSubmit: (parentId: number, text: string) => void;
   editable: false;
-  hasUserUpvoted: boolean;
+  depth: number;
 };
 
 type EditableCommentProps = {
@@ -54,7 +54,14 @@ const Upvoter = ({ commentId, upVotes, hasUpvoted }: UpvoterProps) => {
   );
 };
 
-const NonEditableComment = ({ comment }: NonEditableCommentProps) => {
+const NonEditableComment = ({
+  comment,
+  onSubmit,
+  depth,
+}: NonEditableCommentProps) => {
+  const [isReplying, setIsReplying] = useState(false);
+  const [repliesOpen, setRepliesOpen] = useState(false);
+  const repliesAvailable = comment.replies.length !== 0;
   const [renderedMarkdown, setMarkdownSource] = useRemark();
 
   useEffect(() => {
@@ -81,9 +88,55 @@ const NonEditableComment = ({ comment }: NonEditableCommentProps) => {
               upVotes={comment.upVotes}
               hasUpvoted={comment.hasUserUpvoted}
             />
+            {depth === 0 && (
+              <>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setIsReplying((prev) => !prev);
+                  }}
+                >
+                  {isReplying ? "Stop Replying" : "Reply"}
+                </Button>
+                {repliesAvailable && (
+                  <Button
+                    variant="secondary"
+                    className="ms-3"
+                    onClick={() => {
+                      setRepliesOpen((prev) => !prev);
+                    }}
+                  >
+                    {repliesOpen ? "Close Replies" : "See Replies"}
+                  </Button>
+                )}
+              </>
+            )}
           </div>
         </Card.Body>
       </Card>
+
+      {depth === 0 && (
+        <div className={"mt-3 ms-3"}>
+          {isReplying && (
+            <Comment
+              editable={true}
+              onSubmit={onSubmit}
+              parentId={comment.id}
+            />
+          )}
+          {repliesAvailable &&
+            repliesOpen &&
+            comment.replies.map((c) => (
+              <Comment
+                key={c.id}
+                comment={c}
+                onSubmit={onSubmit}
+                editable={false}
+                depth={depth + 1}
+              />
+            ))}
+        </div>
+      )}
     </>
   );
 };
