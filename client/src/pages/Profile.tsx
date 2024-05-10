@@ -28,7 +28,7 @@ const Profile = () => {
     fetch(`/api/users/${username}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch user data :(');
+          throw new Error('Failed to fetch user data');
         }
         return response.json() as Promise<UserData>;
       })
@@ -44,7 +44,7 @@ const Profile = () => {
   useEffect(() => {
     fetch('/api/users/whoami').then(response => {
       if (!response.ok) {
-        throw new Error('Failed to fetch user data:(');
+        throw new Error('Failed to fetch user data');
       }
       return response.json() as Promise<{username: string}>;
     }
@@ -116,6 +116,9 @@ const Profile = () => {
           <Col>
             <h1 className="">{user.username}</h1>
             <h2 className="fs-5">{user.email}</h2>
+          </Col>
+          <Col>
+            <p>Score: {user.score}</p>
           </Col>
         </Row>
       )}
