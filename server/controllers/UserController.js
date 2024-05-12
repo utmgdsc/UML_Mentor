@@ -1,5 +1,6 @@
 const db = require("../models/index");
 const User = db.User;
+
 //change
 exports.getMe = async (req, res) => {
   try {
@@ -22,7 +23,6 @@ exports.getMe = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
-
 
 exports.getSolvedChallengesTitles = async (req, res) => {
   const solutions = await db.Solution.findAll({
@@ -51,7 +51,7 @@ exports.get = async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  // Create a shallow copy of user object
+  // If score is null, display 0
   const updatedUser = { ...user.dataValues };
   if (updatedUser.score === null) {
     updatedUser.score = 0;
@@ -90,7 +90,7 @@ exports.create = async (req, res) => {
   const newUser = await User.create({
     username,
     email,
-    role
+    role,
   });
   res.status(201).json(newUser);
 };
