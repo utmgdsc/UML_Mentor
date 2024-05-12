@@ -1,8 +1,9 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "../components/Button.tsx";
 import { useNavigate } from "react-router-dom";
+import { UserData } from "../types/UserData.ts";
 
 type PostSolutionState = {
   title: string;
@@ -20,6 +21,18 @@ const PostSolution = () => {
       diagram: null,
     },
   );
+  
+  const [user, setUser] = useState<UserData>();
+  useEffect(() => {
+    fetch("/api/users/whoami")
+      .then((response) => response.json())
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching current user ID: ", error);
+      });
+  }, []);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -64,6 +77,7 @@ const PostSolution = () => {
         console.error(err);
       });
   };
+
   return (
     <Container>
       <Row className={"my-5 justify-content-center"}>

@@ -7,6 +7,7 @@ import Button from "../components/Button.tsx";
 import Comment from "../components/Comment.tsx";
 import useCheckRole from "../hooks/useCheckRole"; // Make sure the path is correct
 import dayjs from "dayjs";
+import { UserData } from "../types/UserData.ts";
 
 function loadSolution(id, setter) {
   fetch(`/api/solutions/${id}`)
