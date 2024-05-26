@@ -11,7 +11,12 @@ const User = db.User;
 
 exports.getNrecent = async (req, res) => {
   const { n } = req.params;
+  const userSolutions = await Solution.findAll({
+    where: { userId: req.user.username },
+  });
+  const solvedChallengeIds = userSolutions.map((solution) => solution.challengeId);
   const solutions = await Solution.findAll({
+    where: { challengeId: solvedChallengeIds },
     limit: n,
     include: { model: User, as: "User" },
     order: [["createdAt", "DESC"]],
@@ -92,10 +97,24 @@ exports.getAll = async (req, res) => {
 exports.get = async (req, res) => {
   const { id } = req.params;
   const solution = await Solution.findByPk(id);
-  // append the challenge title to the solution
+  
+  // Check if the user has solved the challenge
+  const userSolutions = await Solution.findAll({
+    where: { userId: req.user.username },
+  });
+  const solvedChallengeIds = userSolutions.map((solution) => solution.challengeId);
+  const hasSolved = solvedChallengeIds.includes(solution.challengeId);
+  
+  // If the user is not an admin and has not solved the challenge, return a 403
+  if (req.user.role !== "admin" && !hasSolved) {
+    return res.status(403).json({ message: "You do not have permission to view this solution" });
+  }
+
+  // Append the challenge title to the solution
   const challenge = await Challenge.findByPk(solution.challengeId);
   solution.dataValues.challengeTitle = challenge.title;
-  //append the user data to the solution
+  
+  // Append the user data to the solution
   const user = await User.findByPk(solution.userId);
   solution.dataValues.User = user;
 

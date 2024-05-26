@@ -8,9 +8,19 @@ import Comment from "../components/Comment.tsx";
 import useCheckRole from "../hooks/useCheckRole.tsx"; // Make sure the path is correct
 import dayjs from "dayjs";
 
-function loadSolution(id, setter) {
+function loadSolution(id, setter, setForbidden) {
   fetch(`/api/solutions/${id}`)
-    .then((resp) => resp.json())
+    .then((resp) => {
+      if (!resp.ok) {
+        if (resp.status === 403) {
+          setForbidden(true);
+          throw new Error("Access denied");
+        } else {
+          throw new Error(`Failed to fetch solution: ${resp.status}`);
+        }
+      }
+      return resp.json();
+    })
     .then((data) => setter(data))
     .catch((err) => {
       console.error(err);
@@ -32,10 +42,11 @@ const Solution = () => {
   const [comments, setComments] = useState<CommentData[]>([]);
   const { isAdmin, isLoading } = useCheckRole();
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [forbidden, setForbidden] = useState(false);
 
   useEffect(() => {
     if (id) {
-      loadSolution(id, setSolutionData);
+      loadSolution(id, setSolutionData, setForbidden);
       loadComments(id, setComments);
     }
   }, [id]);
@@ -64,6 +75,9 @@ const Solution = () => {
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+  if (forbidden) {
+    return <div>Access denied</div>;
   }
 
   const handleDelete = (commentId) => {
