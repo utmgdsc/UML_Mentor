@@ -5,7 +5,7 @@ import { SolutionData } from "../types/SolutionData.ts";
 import { CommentData } from "../types/CommentData.ts";
 import Button from "../components/Button.tsx";
 import Comment from "../components/Comment.tsx";
-import useCheckRole from "../hooks/useCheckRole"; // Make sure the path is correct
+import useCheckRole from "../hooks/useCheckRole.tsx"; // Make sure the path is correct
 import dayjs from "dayjs";
 
 function loadSolution(id, setter) {
