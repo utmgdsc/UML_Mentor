@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Container, Row, Col, Alert, Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
 import { InfoCircle } from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
+import useCheckRole from '../hooks/useCheckRole';
 
 
 type NewChallenge = {
@@ -111,26 +112,9 @@ function AddChallenge() {
         });
     }
 
-    const [userRole, setUserRole] = useState<string | null>(null); 
+    const {isAdmin } = useCheckRole();
 
-    //fetch the user role from the server
-    useEffect(() => {
-        fetch("/api/users/whoami")
-        .then((response) => {
-            if (!response.ok) {
-            throw new Error(response.statusText);
-            }
-            return response.json() as Promise<{role: string}>;
-        })
-        .then((data) => {
-            setUserRole(data.role);
-        })
-        .catch((err: Error) => { // Add the error type 'Error'
-            console.error("Failed fetching the user role.\nError message: " + err.message);
-        });
-    }, []);
-
-    if (userRole !== "admin") return <p>Forbidden</p>
+    if (!isAdmin) return <p>Forbidden</p>
     return (
         <Container>
             <Row>

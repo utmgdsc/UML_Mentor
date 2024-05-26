@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
-import { useQuery } from "../helpers/useQuery";
+import { useQuery } from "../hooks/useQuery";
 import useCheckRole from "../hooks/useCheckRole";
 
 
@@ -28,8 +28,6 @@ function Challenges() {
 
   const {isAdmin} = useCheckRole();
   const query = useQuery();
-
-
 
   // Fetch challenges from the server
   useEffect(() => {
