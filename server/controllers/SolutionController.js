@@ -141,8 +141,10 @@ exports.create = async (req, res) => {
       user.score += 10;
     } else if (challenge.difficulty === "medium") {
       user.score += 20;
-    } else {
+    } else if (challenge.difficulty === "hard") {
       user.score += 30;
+    } else {
+      console.error('Error finding challenge difficulty: ', challenge.difficulty);
     }
 
     await user.save();

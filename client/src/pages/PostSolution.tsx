@@ -21,18 +21,6 @@ const PostSolution = () => {
       diagram: null,
     },
   );
-  
-  const [user, setUser] = useState<UserData>();
-  useEffect(() => {
-    fetch("/api/users/whoami")
-      .then((response) => response.json())
-      .then((data) => {
-        setUser(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching current user ID: ", error);
-      });
-  }, []);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
