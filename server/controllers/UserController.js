@@ -53,9 +53,6 @@ exports.get = async (req, res) => {
 
   // If score is null, display 0
   const updatedUser = { ...user.dataValues };
-  if (updatedUser.score === null) {
-    updatedUser.score = 0;
-  }
 
   res.status(200).json(updatedUser);
 };
