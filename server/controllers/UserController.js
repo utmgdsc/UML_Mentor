@@ -51,10 +51,7 @@ exports.get = async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  // If score is null, display 0
-  const updatedUser = { ...user.dataValues };
-
-  res.status(200).json(updatedUser);
+  res.status(200).json(user);
 };
 
 exports.getSolutions = async (req, res) => {

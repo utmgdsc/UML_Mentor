@@ -47,7 +47,7 @@ app.use(loggingMiddleware);
 app.use(authMiddleware);
 
 // Sync Sequelize models
-db.sequelize.sync({ force: true }).then(async () => {
+db.sequelize.sync().then(async () => {
   // Use { force: true } cautiously as it will drop existing tables
   console.log("Database synced");
 
