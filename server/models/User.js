@@ -19,7 +19,11 @@ module.exports = (sequelize, DataTypes) => {
                 isIn: [['user', 'admin']], 
             }
         },
-        score: DataTypes.INTEGER
+        score: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+        }
     });
     User.associate = function(models) {
         // Define associations

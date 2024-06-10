@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; 
-import { Container, Row, Button, Col, Card, Form } from 'react-bootstrap';
+import { useParams } from 'react-router-dom'; 
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import { UserData } from '../types/UserData';
 import { SolutionData } from '../types/SolutionData';
 import { CommentData } from '../types/CommentData';
@@ -12,12 +12,8 @@ import MasonryGrid from '../components/MasonryGrid';
 const Profile = () => {
   const { username } = useParams();
   const [user, setUser] = useState<UserData>();
-  const [filteredSolutions, setFilteredSolutions] = useState<SolutionData[]>([]);
-  const [filteredUsername, setFilteredUsername] = useState<string>('');
-  //const [comments, setComments] = useState([]);
   const [error, setError] = useState<string>('');
 
-  const navigate = useNavigate();
   const [myProfile, setMyProfile] = useState<boolean>(false);
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
   const [comments, setComments] = useState<CommentData[]>([]);
@@ -28,7 +24,7 @@ const Profile = () => {
     fetch(`/api/users/${username}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch user data :(');
+          throw new Error('Failed to fetch user data');
         }
         return response.json() as Promise<UserData>;
       })
@@ -44,7 +40,7 @@ const Profile = () => {
   useEffect(() => {
     fetch('/api/users/whoami').then(response => {
       if (!response.ok) {
-        throw new Error('Failed to fetch user data:(');
+        throw new Error('Failed to fetch user data');
       }
       return response.json() as Promise<{username: string}>;
     }
@@ -116,6 +112,9 @@ const Profile = () => {
           <Col>
             <h1 className="">{user.username}</h1>
             <h2 className="fs-5">{user.email}</h2>
+          </Col>
+          <Col>
+            <p>Score: {user.score}</p>
           </Col>
         </Row>
       )}

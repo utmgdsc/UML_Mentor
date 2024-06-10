@@ -55,5 +55,4 @@ router.put("/:id", upload.single("diagram"), Solution.edit);
 // Delete a solution from the database.
 router.delete("/:id", Solution.delete);
 
-
 module.exports = router;

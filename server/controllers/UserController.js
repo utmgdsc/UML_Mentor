@@ -1,5 +1,6 @@
 const db = require("../models/index");
 const User = db.User;
+
 //change
 exports.getMe = async (req, res) => {
   try {
@@ -11,7 +12,7 @@ exports.getMe = async (req, res) => {
     const user = await db.User.findOne({ where: { username: username } });
     if (user) {
       // Sending response after checking user existence and fetching role
-      res.status(200).json({ username: user.username, role: user.role });
+      res.status(200).json({ username: user.username, role: user.role, score: user.score });
     } else {
       // Sending not authorized if no user is found
       res.status(403).send('Not authorized');
@@ -22,7 +23,6 @@ exports.getMe = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
-
 
 exports.getSolvedChallengesTitles = async (req, res) => {
   const solutions = await db.Solution.findAll({
@@ -91,14 +91,14 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   const { username } = req.params;
-  const { email, role } = req.body;
+  const { email, role, score } = req.body;
 
   const user = await User.findByPk(username);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  user.update({ email, role });
+  user.update({ email, role, score });
   res.status(200).json(user);
 };
 

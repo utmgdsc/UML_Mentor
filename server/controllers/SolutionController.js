@@ -128,10 +128,34 @@ exports.create = async (req, res) => {
     diagram,
   });
 
+  const challenge = await Challenge.findByPk(challengeId);
+
+  // Update user score
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (challenge.difficulty === "easy") {
+      user.score += 10;
+    } else if (challenge.difficulty === "medium") {
+      user.score += 20;
+    } else if (challenge.difficulty === "hard") {
+      user.score += 30;
+    } else {
+      console.error('Error finding challenge difficulty: ', challenge.difficulty);
+    }
+
+    await user.save();
+  } catch (error) {
+    console.error('Error updating user score:', error);
+    res.status(500).send('Server error');
+  }
+
   res.status(201).json(newSolution).send();
 
   // Prepare AI feedback and submit it as a comment!
-  const challenge = await Challenge.findByPk(challengeId);
   const [chainRunId, feedback] = await AITA.feedback_for_post(
     newSolution,
     challenge,
@@ -186,7 +210,6 @@ exports.edit = async (req, res) => {
   const updatedSolution = await Solution.findByPk(id);
   res.status(200).json(updatedSolution);
 };
-
 
 exports.delete = async (req, res) => {
   const { id } = req.params;

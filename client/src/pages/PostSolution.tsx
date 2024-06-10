@@ -1,8 +1,9 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "../components/Button.tsx";
 import { useNavigate } from "react-router-dom";
+import { UserData } from "../types/UserData.ts";
 
 type PostSolutionState = {
   title: string;
@@ -64,6 +65,7 @@ const PostSolution = () => {
         console.error(err);
       });
   };
+
   return (
     <Container>
       <Row className={"my-5 justify-content-center"}>
