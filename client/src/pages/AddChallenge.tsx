@@ -88,8 +88,8 @@ function AddChallenge() {
     const navigate = useNavigate();
 
     const [json, setJson] = useState(PLACEHOLDER);
-    const [message, setMessage] = useState<string>("The challenge is valid!");
-    const [valid, setValid] = useState<boolean>(true);
+    const [message, setMessage] = useState<string>("Invalid value for difficulty. Must be one of EASY | MEDIUM | HARD.");
+    const [valid, setValid] = useState<boolean>(false);
 
     function sendChallenge(obj: NewChallenge) {
         // Send the challenge to the server
