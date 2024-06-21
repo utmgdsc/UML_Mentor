@@ -6,7 +6,12 @@ const useCheckRole = () => {
 
   useEffect(() => {
     fetch("/api/users/whoami")
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch user role");
+        }
+        return response.json();
+      })
       .then((data) => {
         setIsAdmin(data.role === "admin");
         setIsLoading(false);

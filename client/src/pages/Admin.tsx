@@ -4,6 +4,7 @@ import { Container, Row, Button, Col, Card, Form } from 'react-bootstrap';
 import { UserData } from '../types/UserData';
 import { SolutionData } from '../types/SolutionData';
 import SolutionCard from "../components/SolutionCard.tsx";
+import useCheckRole from '../hooks/useCheckRole.tsx';
 
 const Admin = () => {
   const { username } = useParams();
@@ -11,7 +12,7 @@ const Admin = () => {
   const [filteredSolutions, setFilteredSolutions] = useState<SolutionData[]>([]);
   const [filteredUsername, setFilteredUsername] = useState<string>('');
   const [filteredTimestamp, setFilteredTimestamp] = useState<[string, string]>(['', '']);
-
+  const {isAdmin} = useCheckRole();
 
   const [comments, setComments] = useState([]);
   const [error, setError] = useState<string>('');
@@ -55,6 +56,15 @@ const Admin = () => {
   const handleFilterSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
   };
+
+  if (!isAdmin) {
+    return (
+      <Container>
+        <h1>Admin Dashboard</h1>
+        <p>Access denied.</p>
+      </Container>
+    );
+  }
 
   return (
     <Container>

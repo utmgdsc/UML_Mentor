@@ -12,7 +12,8 @@ import {
 } from "react-bootstrap";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
-import { useQuery } from "../helpers/useQuery";
+import { useQuery } from "../hooks/useQuery";
+import useCheckRole from "../hooks/useCheckRole";
 
 
 function Challenges() {
@@ -25,25 +26,8 @@ function Challenges() {
   const [filter, setFilter] = useState([] as ChallengeDifficulties[]);
   const [hideComplete, setHideComplete] = useState(false);
 
-  const [userRole, setUserRole] = useState<string | null>(null); 
+  const {isAdmin} = useCheckRole();
   const query = useQuery();
-
-  //fetch the user role from the server
-  useEffect(() => {
-    fetch("/api/users/whoami")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json() as Promise<{role: string}>;
-      })
-      .then((data) => {
-        setUserRole(data.role);
-      })
-      .catch((err: Error) => { // Add the error type 'Error'
-        console.error("Failed fetching the user role.\nError message: " + err.message);
-      });
-  }, []);
 
   // Fetch challenges from the server
   useEffect(() => {
@@ -113,7 +97,7 @@ function Challenges() {
           continue;
       }
 
-      challenge.isAdmin = userRole === "admin";
+      challenge.isAdmin = isAdmin;
 
       row.push(
         <Col lg={4} key={i} className="mb-4">
@@ -134,7 +118,7 @@ function Challenges() {
       grid.push(<Row key={i}>{row}</Row>);
     }
     return grid;
-  }, [isLoading, challengesData, filter, hideComplete, userRole]);
+  }, [isLoading, challengesData, filter, hideComplete, isAdmin]);
 
   function handleSortByDifficulty(prevChallengesData: ChallengeDetailsShort[]) {
     const sortedChallengesData = [...prevChallengesData];
@@ -157,7 +141,7 @@ function Challenges() {
   }
 
 
-  if(query.get("hidden") === "true" && userRole !== "admin") return <h1 className="text-center">You are not authorized to view this page</h1>;
+  if(query.get("hidden") === "true" && !isAdmin) return <h1 className="text-center">You are not authorized to view this page</h1>;
   return (
     <section>
       <Container>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { DrawIoEmbed, DrawIoEmbedRef } from "react-drawio";
-import { useQuery } from "../helpers/useQuery";
+import { useQuery } from "../hooks/useQuery";
 
 const CONFIG = {
   defaultEdgeStyle: {
