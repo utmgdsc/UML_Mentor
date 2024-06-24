@@ -1,7 +1,7 @@
 export type CommentData = {
   id: number;
   solutionId: number;
-  userId: number;
+  userId: string;
   text: string;
   upVotes: number;
   hasUserUpvoted: boolean;
