@@ -98,16 +98,8 @@ exports.get = async (req, res) => {
   const { id } = req.params;
   const solution = await Solution.findByPk(id);
   
-  // Check if the user has solved the challenge
-  const userSolutions = await Solution.findAll({
-    where: { userId: req.user.username },
-  });
-  const solvedChallengeIds = userSolutions.map((solution) => solution.challengeId);
-  const hasSolved = solvedChallengeIds.includes(solution.challengeId);
-  
-  // If the user is not an admin and has not solved the challenge, return a 403
-  if (req.user.role !== "admin" && !hasSolved) {
-    return res.status(403).json({ message: "You do not have permission to view this solution" });
+  if (!solution) {
+    return res.status(404).json({ message: "Solution not found" });
   }
 
   // Append the challenge title to the solution
@@ -132,61 +124,72 @@ exports.getComments = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  const { challengeId, title, description } = req.body;
-  const { filename: diagram } = req.file;
-
-  const userId = req.user.username;
-
-  console.log(`Creating Solution /w ${challengeId}m ${userId}`);
-
-  const newSolution = await Solution.create({
-    challengeId,
-    userId: userId,
-    title,
-    description,
-    diagram,
-  });
-
-  const challenge = await Challenge.findByPk(challengeId);
-
-  // Update user score
   try {
-    const user = await User.findByPk(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    const { challengeId, title, description } = req.body;
+    let diagram = null;
+
+    if (req.file) {
+      diagram = req.file.filename; // Store just the filename, not the full path
     }
 
-    if (challenge.difficulty === "easy") {
-      user.score += 10;
-    } else if (challenge.difficulty === "medium") {
-      user.score += 20;
-    } else if (challenge.difficulty === "hard") {
-      user.score += 30;
-    } else {
-      console.error('Error finding challenge difficulty: ', challenge.difficulty);
+    const userId = req.user.username;
+
+    console.log(`Creating Solution /w ${challengeId}, ${userId}`);
+
+    const newSolution = await Solution.create({
+      challengeId,
+      userId: userId,
+      title,
+      description,
+      diagram,
+    });
+
+    const challenge = await Challenge.findByPk(challengeId);
+
+    // Update user score
+    try {
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      if (challenge.difficulty === "easy") {
+        user.score += 10;
+      } else if (challenge.difficulty === "medium") {
+        user.score += 20;
+      } else if (challenge.difficulty === "hard") {
+        user.score += 30;
+      } else {
+        console.error('Error finding challenge difficulty: ', challenge.difficulty);
+      }
+
+      await user.save();
+    } catch (error) {
+      console.error('Error updating user score:', error);
+      return res.status(500).send('Server error');
     }
 
-    await user.save();
+    res.status(201).json(newSolution);
+
+    // Prepare AI feedback and submit it as a comment!
+    if (diagram) {
+      const [chainRunId, feedback] = await AITA.feedback_for_post(
+        newSolution,
+        challenge,
+        `${STORAGE_CONFIG.location}/${diagram}`,
+      );
+      await Comment.create({
+        text: feedback,
+        userId: "AITA",
+        solutionId: newSolution.id,
+        runId: chainRunId,
+      });
+      console.log("AITA gave feedback!");
+    }
   } catch (error) {
-    console.error('Error updating user score:', error);
-    res.status(500).send('Server error');
+    console.error("Error creating solution:", error);
+    res.status(500).json({ error: "An error occurred while creating the solution." });
   }
-
-  res.status(201).json(newSolution).send();
-
-  // Prepare AI feedback and submit it as a comment!
-  const [chainRunId, feedback] = await AITA.feedback_for_post(
-    newSolution,
-    challenge,
-    `${STORAGE_CONFIG.location}/${diagram}`,
-  );
-  Comment.create({
-    text: feedback,
-    userId: "AITA",
-    solutionId: newSolution.id,
-    runId: chainRunId,
-  });
-  console.log("AITA gave feedback!");
 };
 
 exports.edit = async (req, res) => {
