@@ -5,6 +5,9 @@ import { CaretUpFill, CaretUp } from "react-bootstrap-icons";
 import dayjs from "dayjs";
 import { CommentData } from "../types/CommentData";
 import CommentForm from "./CommentForm";
+import styled from 'styled-components';
+import UserInfo from './UserInfo';
+import { UserData } from '../types/UserData';
 
 type CommentProps = {
   comment: CommentData;
@@ -80,38 +83,25 @@ const Comment = ({
       <Card className="mt-3">
         <Card.Header>
           <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <strong>{comment.userId}</strong> {/* Displaying username */}
-              <small className="ms-2">
-                {dayjs(comment.createdAt).format("MMM D, YYYY")}
-              </small>{" "}
-              {/* Formatting and displaying date */}
-            </div>
+            <UserInfo
+              username={comment.user?.username || comment.userId || "Unknown User"}
+              score={comment.user?.score || 0}
+            />
+            <small>{dayjs(comment.createdAt).format("MMM D, YYYY")}</small>
             {(comment.userId === currentUserId || isAdmin) && (
               <Dropdown>
-                <Dropdown.Toggle
-                  as={Button}
-                  variant="link"
-                  className="text-dark p-0"
-                >
+                <Dropdown.Toggle as={Button} variant="link" className="text-dark p-0">
                   <i className="bi bi-three-dots"></i>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item
-                    onClick={() => {
-                      setIsEditing(true);
-                    }}
-                  >
-                    Edit
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={handleShowDeleteModal}>
-                    Delete
-                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => setIsEditing(true)}>Edit</Dropdown.Item>
+                  <Dropdown.Item onClick={handleShowDeleteModal}>Delete</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             )}
           </div>
         </Card.Header>
+
         <Card.Body>
           {isEditing ? (
             <Form
@@ -125,9 +115,7 @@ const Comment = ({
                   as="textarea"
                   rows={3}
                   value={newText}
-                  onChange={(e) => {
-                    setNewText(e.target.value);
-                  }}
+                  onChange={(e) => setNewText(e.target.value)}
                 />
               </Form.Group>
               <Button variant="primary" type="submit" className="mt-2 mb-2">
@@ -152,65 +140,56 @@ const Comment = ({
               {comment.upVotes}
             </Button>
             {depth === 0 && (
-              <Button
-                variant="link"
-                onClick={() => {
-                  setIsReplying(!isReplying);
-                }}
-              >
+              <Button variant="link" onClick={() => setIsReplying(!isReplying)}>
                 {isReplying ? "Cancel" : "Reply"}
               </Button>
             )}
             {depth === 0 && comment.replies.length > 0 && (
-              <Button
-                variant="link"
-                onClick={() => {
-                  setRepliesOpen(!repliesOpen);
-                }}
-              >
-                {repliesOpen
-                  ? "Hide Replies"
-                  : `Show Replies (${comment.replies.length})`}
+              <Button variant="link" onClick={() => setRepliesOpen(!repliesOpen)}>
+                {repliesOpen ? "Hide Replies" : `Show Replies (${comment.replies.length})`}
               </Button>
             )}
           </div>
         </Card.Body>
+
+        {isReplying && (
+          <div className="mt-3 ms-3">
+            <CommentForm parentId={comment.id} onSubmit={handleReply} />
+          </div>
+        )}
+
+        {repliesOpen && (
+          <div className="mt-3 ms-3">
+            {comment.replies.map((reply) => (
+              <Comment
+                key={reply.id}
+                comment={reply}
+                onSubmit={onSubmit}
+                onDelete={onDelete}
+                onEdit={onEdit}
+                depth={depth + 1}
+                currentUserId={currentUserId}
+                isAdmin={isAdmin}
+              />
+            ))}
+          </div>
+        )}
+
+        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure you want to delete this comment?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseDeleteModal}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleDelete}>
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Card>
-      {isReplying && (
-        <div className="mt-3 ms-3">
-          <CommentForm parentId={comment.id} onSubmit={handleReply} />
-        </div>
-      )}
-      {repliesOpen && (
-        <div className="mt-3 ms-3">
-          {comment.replies.map((reply) => (
-            <Comment
-              key={reply.id}
-              comment={reply}
-              onSubmit={onSubmit}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              depth={depth + 1}
-              currentUserId={currentUserId}
-              isAdmin={isAdmin}
-            />
-          ))}
-        </div>
-      )}
-      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Deletion</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this comment?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseDeleteModal}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 };
