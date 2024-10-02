@@ -13,7 +13,7 @@ interface UMLNodeData {
 
 interface UMLNodeProps extends NodeProps<UMLNodeData> {}
 
-const UMLNode: React.FC<UMLNodeProps> = ({ data, id }) => {
+const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     const [label, setLabel] = useState<string>(data.label || 'ClassName');
     const [attributes, setAttributes] = useState<string[]>(data.attributes || ['name: string']);
     const [methods, setMethods] = useState<string[]>(data.methods || ['playGame()']);
@@ -200,4 +200,4 @@ const UMLNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     );
 };
 
-export default UMLNode;
+export default UMLClassNode;

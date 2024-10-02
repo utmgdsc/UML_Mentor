@@ -10,11 +10,13 @@ import {
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
-import UMLNode from '../components/UMLNode'; // Ensure correct path
+import UMLClassNode from '../components/UMLClassNode.tsx';
+import UMLInterfaceNode from '../components/UMLInterfaceNode.tsx';
 
 // Define custom node types
 const nodeTypes = {
-    umlNode: UMLNode,
+    umlNode: UMLClassNode,
+    interfaceUMLNode: UMLInterfaceNode,
 };
 
 // Keys for local storage
@@ -68,7 +70,23 @@ export default function App() {
         );
     };
 
-    // Add a new UML node to the editor with a random color
+    // Add a new Interface UML node to the editor with a random color
+    const addInterfaceUMLNode = () => {
+        const newNode = {
+            id: (nodes.length + 1).toString(), // Unique ID
+            position: { x: Math.random() * 500, y: Math.random() * 500 }, // Random position
+            data: {
+                label: `InterfaceNode${nodes.length + 1}`,
+                methods: ['interfaceMethod1()', 'interfaceMethod2()'],
+                color: getRandomColor(), // Assign a random color
+            },
+            type: 'interfaceUMLNode', // Specify the node type as Interface UML Node
+        };
+
+        setNodes((nds) => [...nds, newNode]); // Add the new InterfaceUMLNode to the state
+    };
+
+    // Add a new UML Class node to the editor with a random color
     const addNewNode = () => {
         const newNode = {
             id: (nodes.length + 1).toString(), // Unique ID
@@ -106,7 +124,7 @@ export default function App() {
     };
 
     return (
-        <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
+        <div style={{width: '100vw', height: '100vh', position: 'relative'}}>
             <button
                 onClick={toggleButtons}
                 style={{
@@ -123,6 +141,24 @@ export default function App() {
                 }}
             >
                 {showButtons ? 'Hide Add Buttons' : 'Show Add Buttons'}
+            </button>
+
+            <button
+                onClick={addInterfaceUMLNode}
+                style={{
+                    position: 'fixed',
+                    top: '200px',
+                    left: '20px',
+                    padding: '10px',
+                    fontSize: '14px',
+                    backgroundColor: '#ccc',
+                    border: '1px solid #999',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    zIndex: 1000,
+                }}
+            >
+                Add Interface UML Node
             </button>
 
             <button
@@ -164,21 +200,21 @@ export default function App() {
             </button>
 
             <ReactFlow
-                nodes={nodes.map(node => ({ ...node, data: { ...node.data, removeNode }}))}
+                nodes={nodes.map(node => ({...node, data: {...node.data, removeNode}}))}
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}  // Ensure onConnect only adds edges when user connects
                 nodeTypes={nodeTypes}  // Register custom node types
             >
-                <Controls />
+                <Controls/>
                 <MiniMap
                     nodeColor={(node) => node.data.color || '#eee'} // Use the node's color
                     nodeStrokeWidth={3}
                     width={200}
                     height={150}
                 />
-                <Background variant="dots" gap={12} size={1} />
+                <Background variant="dots" gap={12} size={1}/>
             </ReactFlow>
         </div>
     );
