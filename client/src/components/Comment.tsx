@@ -6,6 +6,10 @@ import { useEffect, useState } from "react";
 import { CaretUpFill, CaretUp } from "react-bootstrap-icons";
 import { useRemark } from "react-remark";
 import dayjs from "dayjs";
+import React from 'react';
+import styled from 'styled-components';
+import UserInfo from './UserInfo';
+import { UserData } from '../types/UserData';
 
 type CommentProps = NonEditableCommentProps | EditableCommentProps;
 
@@ -68,16 +72,18 @@ const NonEditableComment = ({
     setMarkdownSource(comment.text);
   }, [comment.text]);
 
-  console.log(comment);
+  console.log('Comment data:', comment);  // Add this line
 
   return (
     <>
       <Card className="mt-3">
         <Card.Header>
           <div className="d-flex justify-content-between align-items-center">
-            <strong>{comment.userId}</strong> {/* Displaying username */}
-            <small>{dayjs(comment.createdAt).format("MMM D, YYYY")}</small>{" "}
-            {/* Formatting and displaying date */}
+            <UserInfo 
+              username={comment.user?.username || comment.userId || 'Unknown User'} 
+              score={comment.user?.score || 0}
+            />
+            <small>{dayjs(comment.createdAt).format("MMM D, YYYY")}</small>
           </div>
         </Card.Header>
         <Card.Body>
@@ -172,11 +178,24 @@ const EditableComment = ({ onSubmit, parentId }: EditableCommentProps) => {
   );
 };
 
-const Comment = ({ editable, ...otherProps }: CommentProps) => {
-  return editable ? (
-    <EditableComment {...otherProps} />
+// Styled components
+const CommentContainer = styled.div`
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+`;
+
+const CommentBody = styled.p`
+  margin: 8px 0 0;
+`;
+
+// Comment component
+const Comment: React.FC<CommentProps> = (props: CommentProps) => {
+  return props.editable ? (
+    <EditableComment {...props as EditableCommentProps} />
   ) : (
-    <NonEditableComment {...otherProps} />
+    <NonEditableComment {...props as NonEditableCommentProps} />
   );
 };
 
