@@ -1,6 +1,6 @@
 const { where } = require("sequelize");
 const db = require("../models/index");
-const { use } = require("../routes/ChallengeRoutes");
+// const { use } = require("../routes/ChallengeRoutes");
 const Challenge = db.Challenge;
 
 function diffToNum(difficulty) {
@@ -23,7 +23,7 @@ function diffToNum(difficulty) {
  * @returns 
  */
 async function formatChallenge(challengeData, userId) {
-  const challengeDescription = JSON.parse(challengeData.description);
+  const challengeDescription = challengeData.description ? JSON.parse(challengeData.description) : {}; //added check challengeData.description before parsing?
   // fetch the user's solutions
   const challengeSolutions = await db.Solution.findAll(
     { where: { 
