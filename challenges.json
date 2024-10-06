@@ -613,7 +613,57 @@
           "SalesPipelineManagement": "Enhance sales operations with automated lead tracking, qualification, and follow-up tasks, increasing sales team efficiency and closing rates.",
           "PerformanceReviewAutomation": "Simplify the performance review process with automated self-assessments, peer reviews, and manager evaluations, culminating in actionable insights for employee development."
         }
+      },
+      {
+        "id": 32,
+        "title": "Gourmet Chef Kitchen Simulation",
+        "outcome": "A highly detailed kitchen management simulation where players manage multiple cooking stations, ingredients, and recipes to serve gourmet meals efficiently.",
+        "keyPatterns": [
+          "Command pattern for executing kitchen tasks like chopping, cooking, and plating",
+          "Singleton pattern for managing a centralized inventory of ingredients and kitchen tools",
+          "Template Method pattern for defining base steps of different recipes while allowing custom variations",
+          "Chain of Responsibility pattern for handling different stages of meal preparation across kitchen stations",
+          "Flyweight pattern for optimizing ingredient usage across multiple dishes without redundancy"
+        ],
+        "generalDescription": "ChefMaster is an advanced cooking simulation where players must manage a busy kitchen, create complex gourmet dishes, and ensure efficient workflow across multiple cooking stations. The game provides realistic challenges, such as ingredient sourcing, time management, and adapting to special customer orders, testing the player's strategic and organizational skills.",
+        "expectedFunctionality": {
+          "MealPreparation": "Players must oversee and execute various stages of meal preparation, from ingredient gathering to cooking, plating, and serving, ensuring optimal timing for each step.",
+          "StationManagement": "Manage different cooking stations, including grilling, baking, and frying, while assigning chefs and optimizing task flow to meet tight customer deadlines.",
+          "RecipeVariation": "Customize recipes on-the-fly based on customer preferences, allergies, or ingredient availability, and innovate new gourmet dishes to impress critics."
+        },
+        "usageScenarios": {
+          "CustomMealForVIPGuests": "In a high-pressure scenario, players receive a last-minute request to prepare a custom meal for VIP guests. The player must quickly adjust ingredient usage and cooking steps without disrupting the flow of the kitchen.",
+          "HandlingKitchenEmergencies": "During peak hours, a fire breaks out at one of the stations, requiring the player to adapt by reallocating tasks and managing the crisis while still serving meals on time.",
+          "SourcingRareIngredients": "For a special event, players must source rare ingredients from different vendors while balancing the kitchen’s ongoing operations. They must decide which dishes to prioritize based on the availability of ingredients.",
+          "SeasonalMenuPlanning": "Players plan a seasonal menu, taking into account available ingredients, customer preferences, and optimizing the use of kitchen resources. The simulation tests their ability to handle a diverse set of recipes over a fixed time period."
+        }
+      },
+      {
+        "id": 33,
+        "title": "Advanced Air Traffic Control Simulation",
+        "outcome": "A simulation where players manage the takeoff, landing, and mid-air traffic of airplanes to prevent collisions and optimize flight schedules.",
+        "keyPatterns": [
+          "Observer pattern for monitoring the status of multiple airplanes in the airspace",
+          "Mediator pattern for coordinating communication between different control towers and airplanes",
+          "State pattern for managing the different states of airplanes (taxiing, taking off, cruising, landing)",
+          "Command pattern for executing flight commands like altitude changes, rerouting, and landing instructions",
+          "Strategy pattern for determining the best approach to handle high-traffic scenarios"
+        ],
+        "generalDescription": "SkyControl is a highly detailed air traffic control simulation where players act as air traffic controllers, managing the flow of airplanes at an airport and in the surrounding airspace. Players must handle takeoffs, landings, and in-flight adjustments while preventing collisions and ensuring that flights run on schedule.",
+        "expectedFunctionality": {
+          "TrafficManagement": "Players must guide airplanes through different flight stages, providing commands for altitude adjustments, speed control, and rerouting to avoid conflicts.",
+          "EmergencyHandling": "Handle emergency situations like engine failures, bad weather, and runway blockages, making quick decisions to prevent accidents and maintain safety.",
+          "AirportCapacityPlanning": "Manage the airport's runway capacity, optimizing the timing of takeoffs and landings while keeping delays to a minimum."
+        },
+        "usageScenarios": {
+          "HeavyTrafficScenario": "During peak hours, players must handle an unusually high volume of airplanes arriving and departing, coordinating their movements to avoid collisions and delays.",
+          "EngineFailureEmergency": "An airplane reports engine failure mid-flight, and the player must reroute other planes to clear a landing path and coordinate emergency services on the ground.",
+          "BadWeatherLanding": "Severe weather conditions make it difficult for airplanes to land. Players must adjust flight plans, reroute airplanes to alternate airports, and handle the chaos caused by the weather.",
+          "RunwayClosure": "One of the airport's runways is unexpectedly closed for maintenance, reducing the available capacity. The player must adjust flight schedules and manage the backlog of planes waiting to land and take off."
+        }
       }
+      
+      
     ]
   }
 }

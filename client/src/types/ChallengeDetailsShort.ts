@@ -8,4 +8,5 @@ export type ChallengeDetailsShort = {
     completed: boolean;
     isAdmin: boolean; // Used for displaying the delete & hide buttons
     hidden: boolean;
+    keyPatterns: string[];
 }

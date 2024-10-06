@@ -11,6 +11,7 @@ import Profile from './pages/Profile.tsx';
 import Editor from './pages/Editor.tsx';
 import AddChallenge from "./pages/AddChallenge.tsx";
 import Admin from "./pages/Admin.tsx"
+// import ChallengeFilterDropdown from './pages/filterByName.tsx';
 
 
 const NAV_CONFIG = {
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
         path: "profile/:username",
         element: <Profile />
       },
+      // {
+      //   path: "challenges/filter",
+      //   element: <ChallengeFilterDropdown />
+      // },
       {
         path: "solutions",
         element: <Solutions />,
