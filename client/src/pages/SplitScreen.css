@@ -1,0 +1,13 @@
+.left-pane, .right-pane {
+  padding: 10px;
+  overflow: auto;
+}
+
+.left-pane {
+  background-color: #f0f0f0;
+  border-right: 1px solid #ddd;
+}
+
+.right-pane {
+  background-color: #fff;
+}

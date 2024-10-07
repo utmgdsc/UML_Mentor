@@ -8,6 +8,8 @@ interface UMLNodeData {
     showButtons?: boolean;
     color?: string;
     removeNode?: (id: string) => void;
+    width?: number;  // Add width property for image generation
+    height?: number; // Add height property for image generation
 }
 
 interface UMLNodeProps extends NodeProps<UMLNodeData> {}
@@ -18,7 +20,7 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     const showButtons = data.showButtons !== undefined ? data.showButtons : true;  // Default to true if undefined
     const headerColor = data.color || '#FFEE93';  // Use the color passed in the node's data for the header only
 
-    // Remove the node if all attributes and methods are deleted
+    // Remove the node if all attributes are deleted
     useEffect(() => {
         if (attributes.length === 0) {
             data.removeNode?.(id); // Call the removeNode function passed from App
@@ -48,24 +50,32 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
         data.removeNode?.(id);  // Call removeNode from App
     };
 
+    // Set dynamic height based on attributes
+    const nodeHeight = 100 + attributes.length * 25; // Base height + height per attribute
+    const nodeWidth = 200; // Fixed width for simplicity; you can adjust as needed
+
+    // Update data with calculated dimensions for image generation
+    data.width = nodeWidth;
+    data.height = nodeHeight;
+
     return (
         <div style={{
             border: '1px solid black',
             borderRadius: '5px',
-            width: '200px',
+            width: `${nodeWidth}px`,
+            height: `${nodeHeight}px`,
             fontFamily: 'Arial, sans-serif',
             position: 'relative',
         }}>
             {/* Header with random background color */}
             <div style={{
-                backgroundColor: headerColor, // Only the header has the random color
+                backgroundColor: headerColor,
                 padding: '10px',
                 borderBottom: '1px solid black',
                 textAlign: 'center',
                 fontWeight: 'bold',
                 position: 'relative'
             }}>
-                {/* Non-Editable text */}
                 <div style={{
                     fontSize: '14px',
                     color: 'ghostwhite',
@@ -73,20 +83,18 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                 }}>
                     &lt;&lt;interface&gt;&gt;
                 </div>
-
-                {/* Editable text */}
                 <input
                     value={label}
                     onChange={(e) => setLabel(e.target.value)}
                     style={{
                         width: '100%',
                         border: 'none',
-                        backgroundColor: 'transparent',  // Keep the input transparent
+                        backgroundColor: 'transparent',
                         textAlign: 'center',
                         fontWeight: 'bold'
                     }}
+                    aria-label="Interface name"
                 />
-                {/* Delete Node Button in the Header */}
                 <button
                     onClick={handleDeleteNode}
                     style={{
@@ -100,6 +108,7 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                         cursor: 'pointer',
                         fontSize: '12px',
                     }}
+                    aria-label="Delete node"
                 >
                     X
                 </button>
@@ -114,6 +123,7 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                                 value={attr}
                                 onChange={(e) => handleAttributeChange(index, e.target.value)}
                                 style={{ width: '85%', border: 'none', paddingBottom: '5px' }}
+                                aria-label={`Attribute ${index}`}
                             />
                             {showButtons && (
                                 <button
@@ -126,6 +136,7 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                                         cursor: 'pointer',
                                         fontSize: '12px',
                                     }}
+                                    aria-label="Delete attribute"
                                 >
                                     X
                                 </button>
@@ -139,7 +150,6 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                     )}
                 </div>
             )}
-
 
             {/* Node connection handles */}
             <Handle

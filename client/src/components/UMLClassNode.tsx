@@ -17,8 +17,8 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     const [label, setLabel] = useState<string>(data.label || 'ClassName');
     const [attributes, setAttributes] = useState<string[]>(data.attributes || ['name: string']);
     const [methods, setMethods] = useState<string[]>(data.methods || ['playGame()']);
-    const showButtons = data.showButtons !== undefined ? data.showButtons : true;  // Default to true if undefined
-    const headerColor = data.color || '#FFEE93';  // Use the color passed in the node's data for the header only
+    const showButtons = data.showButtons !== undefined ? data.showButtons : true; // Default to true if undefined
+    const headerColor = data.color || '#FFEE93'; // Use the color passed in the node's data for the header only
 
     // Remove the node if all attributes and methods are deleted
     useEffect(() => {
@@ -65,20 +65,28 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
 
     // Function to delete the entire node
     const handleDeleteNode = () => {
-        data.removeNode?.(id);  // Call removeNode from App
+        data.removeNode?.(id); // Call removeNode from App
     };
+
+    // Set width and height dynamically based on content
+    const nodeWidth = 200; // Fixed width for simplicity; you can adjust based on content
+    const nodeHeight = 50 + attributes.length * 25 + methods.length * 25; // Adjust height based on content
+
+    // Update data with calculated dimensions
+    data.width = nodeWidth;
+    data.height = nodeHeight;
 
     return (
         <div style={{
             border: '1px solid black',
             borderRadius: '5px',
-            width: '200px',
+            width: `${nodeWidth}px`,
             fontFamily: 'Arial, sans-serif',
             position: 'relative',
         }}>
             {/* Header with random background color */}
             <div style={{
-                backgroundColor: headerColor, // Only the header has the random color
+                backgroundColor: headerColor,
                 padding: '10px',
                 borderBottom: '1px solid black',
                 textAlign: 'center',
@@ -91,7 +99,7 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                     style={{
                         width: '100%',
                         border: 'none',
-                        backgroundColor: 'transparent',  // Keep the input transparent
+                        backgroundColor: 'transparent',
                         textAlign: 'center',
                         fontWeight: 'bold'
                     }}
