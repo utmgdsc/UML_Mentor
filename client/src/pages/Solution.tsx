@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Modal, Button as BootstrapButton, Dropdown } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Modal,
+  Button as BootstrapButton,
+  Dropdown,
+} from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { SolutionData } from "../types/SolutionData";
 import { CommentData } from "../types/CommentData";
@@ -52,6 +60,8 @@ const Solution = () => {
     }
   }, [id]);
 
+  console.log(comments);
+
   useEffect(() => {
     fetch("/api/users/whoami")
       .then((response) => response.json())
@@ -103,7 +113,7 @@ const Solution = () => {
   const handleSubmitComment = (parentId, text) => {
     const endpoint = parentId
       ? `/api/comments/reply/${parentId}`
-      : `/api/comments`;
+      : `/api/comments/`;
     fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -117,8 +127,12 @@ const Solution = () => {
       });
   };
 
-  const handleCloseDeleteModal = () => setShowDeleteModal(false);
-  const handleShowDeleteModal = () => setShowDeleteModal(true);
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+  const handleShowDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -147,11 +161,17 @@ const Solution = () => {
                     </div>
                     {(isAdmin || solutionData.userId === currentUserId) && (
                       <Dropdown>
-                        <Dropdown.Toggle as={BootstrapButton} variant="link" className="text-dark p-0">
+                        <Dropdown.Toggle
+                          as={BootstrapButton}
+                          variant="link"
+                          className="text-dark p-0"
+                        >
                           <i className="bi bi-three-dots"></i>
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                          <Dropdown.Item onClick={handleShowDeleteModal}>Delete</Dropdown.Item>
+                          <Dropdown.Item onClick={handleShowDeleteModal}>
+                            Delete
+                          </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>
                     )}
@@ -176,19 +196,26 @@ const Solution = () => {
       <Row className="mt-5 justify-content-center">
         <Col md={8}>
           <h2>Student's Answers</h2>
-          {Array.isArray(comments) && comments.map((comment) => (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              onSubmit={(parentId, text) => handleSubmitComment(parentId, text)}
-              onDelete={handleDeleteComment}
-              onEdit={handleEditComment}
-              depth={0}
-              currentUserId={currentUserId}
-              isAdmin={isAdmin}
-            />
-          ))}
-          <CommentForm onSubmit={(parentId, text) => handleSubmitComment(parentId, text)} />
+          {Array.isArray(comments) &&
+            comments.map((comment) => (
+              <Comment
+                key={comment.id}
+                comment={comment}
+                onSubmit={(parentId, text) => {
+                  handleSubmitComment(parentId, text);
+                }}
+                onDelete={handleDeleteComment}
+                onEdit={handleEditComment}
+                depth={0}
+                currentUserId={currentUserId}
+                isAdmin={isAdmin}
+              />
+            ))}
+          <CommentForm
+            onSubmit={(parentId, text) => {
+              handleSubmitComment(parentId, text);
+            }}
+          />
         </Col>
       </Row>
 

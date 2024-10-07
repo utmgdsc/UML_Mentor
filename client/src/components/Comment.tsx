@@ -36,7 +36,7 @@ const Comment = ({
     setMarkdownSource(comment.text);
   }, [comment.text]);
 
-  const handleReply = (text: string) => {
+  const handleReply = (_: never, text: string) => {
     if (typeof text !== "string" || !text.trim()) return;
     onSubmit(comment.id, text);
     setIsReplying(false);
@@ -68,8 +68,12 @@ const Comment = ({
       });
   };
 
-  const handleShowDeleteModal = () => setShowDeleteModal(true);
-  const handleCloseDeleteModal = () => setShowDeleteModal(false);
+  const handleShowDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
 
   return (
     <>
@@ -78,16 +82,31 @@ const Comment = ({
           <div className="d-flex justify-content-between align-items-center">
             <div>
               <strong>{comment.userId}</strong> {/* Displaying username */}
-              <small className="ms-2">{dayjs(comment.createdAt).format("MMM D, YYYY")}</small> {/* Formatting and displaying date */}
+              <small className="ms-2">
+                {dayjs(comment.createdAt).format("MMM D, YYYY")}
+              </small>{" "}
+              {/* Formatting and displaying date */}
             </div>
             {(comment.userId === currentUserId || isAdmin) && (
               <Dropdown>
-                <Dropdown.Toggle as={Button} variant="link" className="text-dark p-0">
+                <Dropdown.Toggle
+                  as={Button}
+                  variant="link"
+                  className="text-dark p-0"
+                >
                   <i className="bi bi-three-dots"></i>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => setIsEditing(true)}>Edit</Dropdown.Item>
-                  <Dropdown.Item onClick={handleShowDeleteModal}>Delete</Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setIsEditing(true);
+                    }}
+                  >
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleShowDeleteModal}>
+                    Delete
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             )}
@@ -106,10 +125,12 @@ const Comment = ({
                   as="textarea"
                   rows={3}
                   value={newText}
-                  onChange={(e) => setNewText(e.target.value)}
+                  onChange={(e) => {
+                    setNewText(e.target.value);
+                  }}
                 />
               </Form.Group>
-              <Button variant="primary" type="submit" className="mt-2">
+              <Button variant="primary" type="submit" className="mt-2 mb-2">
                 Save
               </Button>
             </Form>
@@ -133,7 +154,9 @@ const Comment = ({
             {depth === 0 && (
               <Button
                 variant="link"
-                onClick={() => setIsReplying(!isReplying)}
+                onClick={() => {
+                  setIsReplying(!isReplying);
+                }}
               >
                 {isReplying ? "Cancel" : "Reply"}
               </Button>
@@ -141,9 +164,13 @@ const Comment = ({
             {depth === 0 && comment.replies.length > 0 && (
               <Button
                 variant="link"
-                onClick={() => setRepliesOpen(!repliesOpen)}
+                onClick={() => {
+                  setRepliesOpen(!repliesOpen);
+                }}
               >
-                {repliesOpen ? "Hide Replies" : `Show Replies (${comment.replies.length})`}
+                {repliesOpen
+                  ? "Hide Replies"
+                  : `Show Replies (${comment.replies.length})`}
               </Button>
             )}
           </div>

@@ -25,7 +25,9 @@ const CommentForm = ({ parentId, onSubmit }: CommentFormProps) => {
               as="textarea"
               rows={3}
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => {
+                setText(e.target.value);
+              }}
             />
           </Form.Group>
           <Button variant="primary" type="submit" className="mt-2">
