@@ -4,6 +4,7 @@ const Challenge = db.Challenge;
 const Solution = db.Solution;
 const User = db.User;
 const { AITA } = require("../AI/AITA");
+const { Op } = require("sequelize");
 
 function formatComments(extracted) {
   const convertedReplies = extracted.map((c) => ({
@@ -118,7 +119,50 @@ exports.edit = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const { id } = req.params;
-  await Comment.destroy({ where: { id } });
+  const { user } = req;
+
+  if (!id || !user) {
+    res.status(400).send();
+    return;
+  }
+
+  const comment = await db.Comment.findOne({
+    where: { id },
+  });
+
+  if (!comment || !user) {
+    res.status(402).send();
+    return;
+  }
+
+  const parents = await db.Comment.findAll({
+    where: {
+      replies: {
+        [Op.substring]: `${comment.id}`,
+      },
+    },
+  });
+
+  if (user.role === "admin" || user.username === comment.userId) {
+    await Comment.destroy({ where: { id } });
+    await Promise.all(
+      parents.map((c) => {
+        return Comment.update(
+          {
+            replies: c.replies
+              .split(",")
+              .filter((x) => x !== `${id}`)
+              .join(","),
+          },
+          { where: { id: c.id } },
+        );
+      }),
+    );
+  } else {
+    res.status(403).send();
+    return;
+  }
+
   res.status(204).send();
 };
 

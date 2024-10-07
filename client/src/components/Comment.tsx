@@ -1,182 +1,217 @@
-import Card from "react-bootstrap/Card";
-import Button from "./Button.tsx";
-import { CommentData } from "../types/CommentData.ts";
-import { Form } from "react-bootstrap";
-import { useEffect, useState } from "react";
-import { CaretUpFill, CaretUp } from "react-bootstrap-icons";
+import React, { useState, useEffect } from "react";
+import { Card, Button, Form, Dropdown, Modal } from "react-bootstrap";
 import { useRemark } from "react-remark";
+import { CaretUpFill, CaretUp } from "react-bootstrap-icons";
 import dayjs from "dayjs";
+import { CommentData } from "../types/CommentData";
+import CommentForm from "./CommentForm";
 
-type CommentProps = NonEditableCommentProps | EditableCommentProps;
-
-type NonEditableCommentProps = {
+type CommentProps = {
   comment: CommentData;
   onSubmit: (parentId: number, text: string) => void;
-  editable: false;
+  onDelete: (commentId: number) => void;
+  onEdit: (commentId: number, newText: string) => void;
   depth: number;
+  currentUserId: string;
+  isAdmin: boolean;
 };
 
-type EditableCommentProps = {
-  parentId?: number;
-  onSubmit: (parentId: number, text: string) => void;
-  editable: true;
-};
-
-type UpvoterProps = {
-  commentId: number;
-  upVotes: number;
-  hasUpvoted: boolean;
-};
-
-const Upvoter = ({ commentId, upVotes, hasUpvoted }: UpvoterProps) => {
-  const [upVotesState, setUpVotesState] = useState(upVotes);
-  const [hasUpvotedState, setHasUpvotedState] = useState(hasUpvoted);
-  return (
-    <Button
-      style={{
-        display: "inline-flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-      className={"me-3"}
-      variant={"outline-secondary"}
-      onClick={() => {
-        console.log(`Upvoting ${commentId}`);
-        fetch(`/api/comments/upvote/${commentId}`).catch(() => {});
-        setUpVotesState((p) => p + 1);
-        setHasUpvotedState(true);
-      }}
-      disabled={hasUpvotedState}
-    >
-      {hasUpvotedState ? <CaretUpFill /> : <CaretUp />}
-      {upVotesState}
-    </Button>
-  );
-};
-
-const NonEditableComment = ({
+const Comment = ({
   comment,
   onSubmit,
+  onDelete,
+  onEdit,
   depth,
-}: NonEditableCommentProps) => {
+  currentUserId,
+  isAdmin,
+}: CommentProps) => {
   const [isReplying, setIsReplying] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [repliesOpen, setRepliesOpen] = useState(false);
-  const repliesAvailable = comment.replies.length !== 0;
+  const [newText, setNewText] = useState(comment.text);
   const [renderedMarkdown, setMarkdownSource] = useRemark();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     setMarkdownSource(comment.text);
   }, [comment.text]);
 
-  console.log(comment);
+  const handleReply = (_: never, text: string) => {
+    if (typeof text !== "string" || !text.trim()) return;
+    onSubmit(comment.id, text);
+    setIsReplying(false);
+  };
+
+  const handleEdit = () => {
+    if (typeof newText !== "string" || !newText.trim()) return;
+    onEdit(comment.id, newText);
+    setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    onDelete(comment.id);
+    setShowDeleteModal(false);
+  };
+
+  const handleUpvote = () => {
+    fetch(`/api/comments/upvote/${comment.id}`, {
+      method: "POST",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to upvote comment: ${response.statusText}`);
+        }
+        // Optionally update UI optimistically or refetch comments
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const handleShowDeleteModal = () => {
+    setShowDeleteModal(true);
+  };
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
 
   return (
     <>
       <Card className="mt-3">
         <Card.Header>
           <div className="d-flex justify-content-between align-items-center">
-            <strong>{comment.userId}</strong> {/* Displaying username */}
-            <small>{dayjs(comment.createdAt).format("MMM D, YYYY")}</small>{" "}
-            {/* Formatting and displaying date */}
+            <div>
+              <strong>{comment.userId}</strong> {/* Displaying username */}
+              <small className="ms-2">
+                {dayjs(comment.createdAt).format("MMM D, YYYY")}
+              </small>{" "}
+              {/* Formatting and displaying date */}
+            </div>
+            {(comment.userId === currentUserId || isAdmin) && (
+              <Dropdown>
+                <Dropdown.Toggle
+                  as={Button}
+                  variant="link"
+                  className="text-dark p-0"
+                >
+                  <i className="bi bi-three-dots"></i>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    onClick={() => {
+                      setIsEditing(true);
+                    }}
+                  >
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleShowDeleteModal}>
+                    Delete
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            )}
           </div>
         </Card.Header>
         <Card.Body>
-          <Card.Text>{renderedMarkdown}</Card.Text>
-          <div>
-            <Upvoter
-              commentId={comment.id}
-              upVotes={comment.upVotes}
-              hasUpvoted={comment.hasUserUpvoted}
-            />
-            {depth === 0 && (
-              <>
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    setIsReplying((prev) => !prev);
+          {isEditing ? (
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleEdit();
+              }}
+            >
+              <Form.Group controlId="editCommentForm">
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={newText}
+                  onChange={(e) => {
+                    setNewText(e.target.value);
                   }}
-                >
-                  {isReplying ? "Stop Replying" : "Reply"}
-                </Button>
-                {repliesAvailable && (
-                  <Button
-                    variant="secondary"
-                    className="ms-3"
-                    onClick={() => {
-                      setRepliesOpen((prev) => !prev);
-                    }}
-                  >
-                    {repliesOpen ? "Close Replies" : "See Replies"}
-                  </Button>
-                )}
-              </>
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" className="mt-2 mb-2">
+                Save
+              </Button>
+            </Form>
+          ) : (
+            <Card.Text>{renderedMarkdown}</Card.Text>
+          )}
+          <div className="d-flex align-items-center">
+            <Button
+              style={{
+                display: "inline-flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+              variant={"outline-secondary"}
+              onClick={handleUpvote}
+              disabled={comment.hasUserUpvoted}
+            >
+              {comment.hasUserUpvoted ? <CaretUpFill /> : <CaretUp />}
+              {comment.upVotes}
+            </Button>
+            {depth === 0 && (
+              <Button
+                variant="link"
+                onClick={() => {
+                  setIsReplying(!isReplying);
+                }}
+              >
+                {isReplying ? "Cancel" : "Reply"}
+              </Button>
+            )}
+            {depth === 0 && comment.replies.length > 0 && (
+              <Button
+                variant="link"
+                onClick={() => {
+                  setRepliesOpen(!repliesOpen);
+                }}
+              >
+                {repliesOpen
+                  ? "Hide Replies"
+                  : `Show Replies (${comment.replies.length})`}
+              </Button>
             )}
           </div>
         </Card.Body>
       </Card>
-
-      {depth === 0 && (
-        <div className={"mt-3 ms-3"}>
-          {isReplying && (
-            <Comment
-              editable={true}
-              onSubmit={onSubmit}
-              parentId={comment.id}
-            />
-          )}
-          {repliesAvailable &&
-            repliesOpen &&
-            comment.replies.map((c) => (
-              <Comment
-                key={c.id}
-                comment={c}
-                onSubmit={onSubmit}
-                editable={false}
-                depth={depth + 1}
-              />
-            ))}
+      {isReplying && (
+        <div className="mt-3 ms-3">
+          <CommentForm parentId={comment.id} onSubmit={handleReply} />
         </div>
       )}
-    </>
-  );
-};
-
-const EditableComment = ({ onSubmit, parentId }: EditableCommentProps) => {
-  const [newComment, setNewComment] = useState<string>("");
-  return (
-    <Card>
-      <Card.Body>
-        <Form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setNewComment("");
-            onSubmit(parentId, newComment);
-          }}
-        >
-          <Form.Group controlId="commentForm">
-            <Form.Control
-              as="textarea"
-              rows={3}
-              value={newComment}
-              onChange={(e) => {
-                setNewComment(e.target.value);
-              }}
+      {repliesOpen && (
+        <div className="mt-3 ms-3">
+          {comment.replies.map((reply) => (
+            <Comment
+              key={reply.id}
+              comment={reply}
+              onSubmit={onSubmit}
+              onDelete={onDelete}
+              onEdit={onEdit}
+              depth={depth + 1}
+              currentUserId={currentUserId}
+              isAdmin={isAdmin}
             />
-          </Form.Group>
-          <Button variant="primary" type="submit" className={"mt-2"}>
-            Submit
+          ))}
+        </div>
+      )}
+      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this comment?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDeleteModal}>
+            Cancel
           </Button>
-        </Form>
-      </Card.Body>
-    </Card>
-  );
-};
-
-const Comment = ({ editable, ...otherProps }: CommentProps) => {
-  return editable ? (
-    <EditableComment {...otherProps} />
-  ) : (
-    <NonEditableComment {...otherProps} />
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 };
 
