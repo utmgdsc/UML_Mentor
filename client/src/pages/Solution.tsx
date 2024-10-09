@@ -107,11 +107,11 @@ const Solution: React.FC = () => {
   const handleSubmit = (parentId: string | null, text: string) => {
     const endpoint = parentId
       ? `/api/comments/reply/${parentId}`
-      : `/api/comments/${solutionData?.id}`;
+      : `/api/comments/${solutionData.id}`;
     fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ solutionId: solutionData?.id, text }),
+      body: JSON.stringify({ solutionId: solutionData.id, text }),
     })
       .then(() => {
         loadComments(id, setComments);
