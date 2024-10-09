@@ -170,7 +170,7 @@ exports.create = async (req, res) => {
     }
 
     res.status(201).json(newSolution);
-
+    await user.save()
     // Prepare AI feedback and submit it as a comment!
     if (diagram) {
       const [chainRunId, feedback] = await AITA.feedback_for_post(

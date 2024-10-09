@@ -136,7 +136,7 @@ const Solution: React.FC = () => {
     fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ solutionId: solutionData?.id, text }),
+      body: JSON.stringify({ solutionId: solutionData.id, text }),
     })
       .then(() => {
         loadComments(id, setComments);
