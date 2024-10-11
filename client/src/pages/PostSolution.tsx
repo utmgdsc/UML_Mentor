@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "../components/Button.tsx";
 import { useNavigate } from "react-router-dom";
-import { UserData } from "../types/UserData.ts";
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 
 type PostSolutionState = {
   title: string;
@@ -23,7 +22,6 @@ const PostSolution = () => {
     },
   );
   const [showPreview, setShowPreview] = useState(false);
-  const [description, setDescription] = useState('');
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -47,14 +45,11 @@ const PostSolution = () => {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: Form validation
     const data = new FormData();
     data.append("challengeId", `${challengeId}`);
-
     data.append("title", postSolutionState.title);
-
     data.append("description", postSolutionState.description);
-    data.append("diagram", postSolutionState.diagram);
+    data.append("diagram", postSolutionState.diagram!);
 
     fetch(`/api/solutions`, {
       method: "POST",
@@ -76,7 +71,7 @@ const PostSolution = () => {
   return (
     <Container>
       <Row className={"my-5 justify-content-center"}>
-        <Col md={6} className={"bg-gray-200 rounded py-5 px-md-5"}>
+        <Col md={8} className={"bg-gray-200 rounded py-5 px-md-5"}>
           <h1>Submit Your Solution!</h1>
           <p>
             The solution retrospective helps you think about your project and share it with the community. Answer the questions below to talk about your project, what you learned, and where you need support. Clear details help others understand and give useful feedback.
@@ -90,7 +85,7 @@ const PostSolution = () => {
                 value={postSolutionState.title}
                 onChange={handleChange}
                 required
-                placeholder="Enter a concise, descriptive title for your design pattern implementation (e.g., 'Observer Pattern for Event Handling System')"
+                placeholder="Enter a concise, descriptive title"
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="description">
@@ -104,7 +99,7 @@ const PostSolution = () => {
               </ul>
               <div>
                 <Button variant="secondary" onClick={togglePreview}>
-                  {showPreview ? 'Edit' : 'Preview'}
+                  {showPreview ? "Edit" : "Preview"}
                 </Button>
               </div>
               {showPreview ? (
@@ -119,14 +114,11 @@ const PostSolution = () => {
                   onChange={handleChange}
                   rows={6}
                   required
-                  placeholder="Provide a brief overview of your design pattern implementation. Include:
-- The specific design pattern you used
-- The problem it solves
-- Key components of your implementation
-- How it adheres to design pattern principles"
+                  placeholder="Provide a brief overview of your design pattern implementation"
                 />
               )}
             </Form.Group>
+
             <Form.Group className="mb-3" controlId="diagram">
               <Form.Label>Solution Diagram</Form.Label>
               <Form.Control
@@ -136,11 +128,14 @@ const PostSolution = () => {
                 accept="image/*"
               />
               <Form.Text className="text-muted">
-                Upload a diagram illustrating the structure and relationships of your design pattern implementation. Use UML or a similar notation to clearly show classes, interfaces, and their interactions.
+                Upload a diagram illustrating the structure and relationships of your design pattern implementation. Use UML or a similar notation.
               </Form.Text>
             </Form.Group>
+
             <Form.Group className="mb-3" controlId="proud">
-              <Form.Label>What are you most proud of, and what would you do differently next time?</Form.Label>
+              <Form.Label>
+                What are you most proud of, and what would you do differently next time?
+              </Form.Label>
               <Form.Control
                 as="textarea"
                 name="proud"
@@ -149,8 +144,11 @@ const PostSolution = () => {
                 required
               />
             </Form.Group>
+
             <Form.Group className="mb-3" controlId="challenges">
-              <Form.Label>What challenges did you encounter, and how did you overcome them?</Form.Label>
+              <Form.Label>
+                What challenges did you encounter, and how did you overcome them?
+              </Form.Label>
               <Form.Control
                 as="textarea"
                 name="challenges"
@@ -159,6 +157,7 @@ const PostSolution = () => {
                 required
               />
             </Form.Group>
+
             <Button variant="primary" type="submit">
               Submit
             </Button>
