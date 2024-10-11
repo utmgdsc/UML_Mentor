@@ -13,8 +13,9 @@ import { SolutionData } from "../types/SolutionData";
 import { CommentData } from "../types/CommentData";
 import Comment from "../components/Comment";
 import CommentForm from "../components/CommentForm";
-import useCheckRole from "../hooks/useCheckRole"; // Make sure the path is correct
+import useCheckRole from "../hooks/useCheckRole"; 
 import dayjs from "dayjs";
+import Avatar from "../components/Avatar"; 
 
 function loadSolution(id, setter, setForbidden) {
   fetch(`/api/solutions/${id}`)
@@ -44,14 +45,15 @@ function loadComments(id, setter) {
     });
 }
 
-const Solution = () => {
+const Solution: React.FC = () => {
   const { id } = useParams();
   const [solutionData, setSolutionData] = useState<SolutionData | null>(null);
   const [comments, setComments] = useState<CommentData[]>([]);
   const { isAdmin, isLoading } = useCheckRole();
-  const [currentUserId, setCurrentUserId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [forbidden, setForbidden] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showImage, setShowImage] = useState(true); // New state for image visibility
 
   useEffect(() => {
     if (id) {
@@ -73,8 +75,14 @@ const Solution = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (solutionData) {
+      console.log("Diagram path:", solutionData.diagram);
+    }
+  }, [solutionData]);
+
   const handleDeleteSolution = () => {
-    if (!isAdmin && solutionData.userId !== currentUserId) return;
+    if (!isAdmin && solutionData?.userId !== currentUserId) return;
     fetch(`/api/solutions/${id}`, { method: "DELETE" })
       .then(() => {
         window.location.href = "/";
@@ -84,18 +92,29 @@ const Solution = () => {
       });
   };
 
-  const handleDeleteComment = (commentId) => {
+  const toggleImage = () => {
+    setShowImage(!showImage);
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (forbidden) {
+    return <div>Access denied</div>;
+  }
+
+  const handleDelete = (commentId: string) => {
+    if (!isAdmin) return;
     fetch(`/api/comments/${commentId}`, { method: "DELETE" })
       .then(() => {
         setComments((comments) =>
-          comments.filter((comment) => comment.id !== commentId),
+          comments.filter((comment) => comment.id !== commentId)
         );
       })
       .catch((err) => {
         console.error("Failed to delete comment", err);
       });
   };
-
   const handleEditComment = (commentId, newText) => {
     fetch(`/api/comments/${commentId}`, {
       method: "PUT",
@@ -146,50 +165,52 @@ const Solution = () => {
       <Row className="justify-content-center">
         <Col md={8}>
           {solutionData && (
-            <>
-              <h1>
-                {solutionData.challengeTitle} - Solution #{solutionData.id}
-              </h1>
-              <Card className="mb-4">
-                <Card.Header>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <strong>{solutionData.userId}</strong>
-                      <small className="ms-2 text-muted">
-                        {dayjs(solutionData.createdAt).format("MMMM D, YYYY")}
-                      </small>
+            <Card>
+              <Card.Header>
+                <div className="d-flex align-items-center">
+                  <Avatar username={solutionData.userId} size={40} />
+                  <div className="ms-3">
+                    <strong>{solutionData.userId}</strong>
+                    <div className="text-muted">
+                      Score: {solutionData.User?.score || 0}
                     </div>
-                    {(isAdmin || solutionData.userId === currentUserId) && (
-                      <Dropdown>
-                        <Dropdown.Toggle
-                          as={BootstrapButton}
-                          variant="link"
-                          className="text-dark p-0"
-                        >
-                          <i className="bi bi-three-dots"></i>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item onClick={handleShowDeleteModal}>
-                            Delete
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    )}
                   </div>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title>{solutionData.title}</Card.Title>
-                  <Card.Text>{solutionData.description}</Card.Text>
-                  {solutionData.diagram && (
-                    <Card.Img
-                      variant="bottom"
-                      src={`/api/solutions/diagrams/${solutionData.diagram}`}
-                      alt="Solution Diagram"
-                    />
-                  )}
-                </Card.Body>
-              </Card>
-            </>
+                  <small className="ms-auto">
+                    {dayjs(solutionData.createdAt).format("MMMM D, YYYY")}
+                  </small>
+                </div>
+              </Card.Header>
+              <Card.Body>
+                <Card.Title>{solutionData.title}</Card.Title>
+                <Card.Text>{solutionData.description}</Card.Text>
+
+                {solutionData.diagram && (
+                  <>
+                    <BootstrapButton 
+                      variant="outline-primary" 
+                      onClick={toggleImage} 
+                      className="mb-3"
+                    >
+                      {showImage ? "Hide Image" : "Show Image"}
+                    </BootstrapButton>
+                    {showImage && (
+                      <Card.Img
+                        variant="bottom"
+                        src={`/api/solutions/diagrams/${solutionData.diagram}`}
+                        alt="Solution Diagram"
+                      />
+                    )}
+                  </>
+                )}
+              </Card.Body>
+              {(isAdmin || solutionData.userId === currentUserId) && (
+                <Card.Footer>
+                  <BootstrapButton variant="danger" onClick={handleDeleteSolution}>
+                    Delete Solution
+                  </BootstrapButton>
+                </Card.Footer>
+              )}
+            </Card>
           )}
         </Col>
       </Row>
@@ -198,18 +219,22 @@ const Solution = () => {
           <h2>Student's Answers</h2>
           {Array.isArray(comments) &&
             comments.map((comment) => (
-              <Comment
-                key={comment.id}
-                comment={comment}
-                onSubmit={(parentId, text) => {
-                  handleSubmitComment(parentId, text);
-                }}
-                onDelete={handleDeleteComment}
-                onEdit={handleEditComment}
-                depth={0}
-                currentUserId={currentUserId}
-                isAdmin={isAdmin}
-              />
+              <div key={comment.id}>
+                <Comment
+                  comment={comment}
+                  editable={false}
+                  onSubmit={handleSubmitComment}
+                  depth={0}
+                />
+                {isAdmin && (
+                  <BootstrapButton
+                    variant="danger"
+                    onClick={() => handleDelete(comment.id)}
+                  >
+                    Delete
+                  </BootstrapButton>
+                )}
+              </div>
             ))}
           <CommentForm
             onSubmit={(parentId, text) => {

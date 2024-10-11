@@ -42,7 +42,21 @@ router.get("/:id", Solution.get);
 // router.get("/:id", Challenge.getComments);
 
 // Create a new solution in the database.
-router.post("/", upload.single("diagram"), Solution.create);
+const uploadMiddleware = (req, res, next) => {
+  upload.single("diagram")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      // A Multer error occurred when uploading.
+      return res.status(400).json({ error: err.message });
+    } else if (err) {
+      // An unknown error occurred when uploading.
+      return res.status(500).json({ error: "An error occurred while uploading the file." });
+    }
+    // Everything went fine.
+    next();
+  });
+};
+
+router.post("/", uploadMiddleware, Solution.create);
 
 // Edit a solution in the database.
 router.put("/:id", upload.single("diagram"), Solution.edit);
