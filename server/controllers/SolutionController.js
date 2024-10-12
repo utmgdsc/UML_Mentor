@@ -242,24 +242,9 @@ exports.edit = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const { id } = req.params;
-
-  try {
-    // Fetch the solution before deleting
-    const solution = await Solution.findByPk(id);
-
-    if (!solution) {
-      return res.status(404).json({ message: "Solution not found" });
-    }
-
-    // Delete the solution from the database
-    await Solution.destroy({ where: { id } });
-
-    // Delete the associated file
-    await fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`);
-
-    res.status(204).send();
-  } catch (error) {
-    console.error("Error deleting solution:", error);
-    res.status(500).json({ message: "Error deleting solution" });
-  }
+  await Solution.destroy({ where: { id } });
+  res.status(204).send();
+  fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
+    console.log(err)
+  );
 };
