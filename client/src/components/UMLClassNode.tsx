@@ -9,6 +9,7 @@ interface UMLNodeData {
     showButtons?: boolean;
     color?: string;
     removeNode?: (id: string) => void;
+    isPreview?: boolean; // Add this line
 }
 
 interface UMLNodeProps extends NodeProps<UMLNodeData> {}
@@ -83,6 +84,7 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
             width: `${nodeWidth}px`,
             fontFamily: 'Arial, sans-serif',
             position: 'relative',
+            backgroundColor: 'white',
         }}>
             {/* Header with random background color */}
             <div style={{
@@ -194,16 +196,58 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
             )}
 
             {/* Node connection handles */}
-            <Handle
-                type="source"
-                position={Position.Right}
-                style={{ background: '#555' }}
-            />
-            <Handle
-                type="target"
-                position={Position.Left}
-                style={{ background: '#555' }}
-            />
+            {!data.isPreview && (
+                <>
+                    <Handle
+                        type="source"
+                        position={Position.Right}
+                        id="right"
+                        style={{ background: '#555' }}
+                    />
+                    <Handle
+                        type="target"
+                        position={Position.Right}
+                        id="right"
+                        style={{ background: '#555' }}
+                    />
+                    <Handle
+                        type="source"
+                        position={Position.Left}
+                        id="left"
+                        style={{ background: '#555' }}
+                    />
+                    <Handle
+                        type="target"
+                        position={Position.Left}
+                        id="left"
+                        style={{ background: '#555' }}
+                    />
+                    <Handle
+                        type="source"
+                        position={Position.Top}
+                        id="top"
+                        style={{ background: '#555' }}
+                    />
+                    <Handle
+                        type="target"
+                        position={Position.Top}
+                        id="top"
+                        style={{ background: '#555' }}
+                    />
+                    <Handle
+                        type="source"
+                        position={Position.Bottom}
+                        id="bottom"
+                        style={{ background: '#555' }}
+                    />
+                    <Handle
+                        type="target"
+                        position={Position.Bottom}
+                        id="bottom"
+                        style={{ background: '#555' }}
+                    />
+                </>
+            )}
         </div>
     );
 };
