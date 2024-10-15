@@ -97,13 +97,12 @@ const UMLDiagramEditor = () => {
   const initialEdges = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_EDGES) || '[]');
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [showInstructions, setShowInstructions] = useState(false); // State for instructions popup
-  const [edgeType, setEdgeType] = useState('filled'); // State for edge type
-  const [selectedEdge, setSelectedEdge] = useState(null); // State for the currently selected edge
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [edgeType, setEdgeType] = useState('filled');
+  const [selectedEdge, setSelectedEdge] = useState(null);
   const [draggedNodeType, setDraggedNodeType] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const reactFlowWrapperRef = useRef(null);
-  const [showButtons, setShowButtons] = useState(true); // Global state for button visibility
 
   const onConnect = useCallback(
     (params) => {
@@ -120,28 +119,14 @@ const UMLDiagramEditor = () => {
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
   }, [edges]);
 
-  const toggleButtons = () => {
-    setShowButtons((prev) => !prev); // Toggle global button visibility state
-    setNodes((nds) =>
-      nds.map((node) => ({
-        ...node,
-        data: {
-          ...node.data,
-          showButtons: !showButtons, // Use the toggled global state
-        },
-      }))
-    );
-  };
-
   const addInterfaceUMLNode = () => {
     const newNode = {
       id: (nodes.length + 1).toString(),
       position: { x: Math.random() * 500, y: Math.random() * 500 },
       data: {
         label: `InterfaceNode${nodes.length + 1}`,
-        methods: ['interfaceMethod1()'],
+        methods: [], // Ensure no default methods
         color: getRandomColor(),
-        showButtons, // Use global showButtons state
       },
       type: 'interfaceUMLNode',
     };
@@ -154,9 +139,8 @@ const UMLDiagramEditor = () => {
       position: { x: Math.random() * 500, y: Math.random() * 500 },
       data: {
         label: `NewNode${nodes.length + 1}`,
-        attributes: ['newAttribute: string'],
-        methods: ['newMethod()'],
-        showButtons,
+        attributes: [], // Ensure no default attributes
+        methods: [], // Ensure no default methods
         color: getRandomColor(),
       },
       type: 'umlNode',
@@ -246,9 +230,8 @@ const UMLDiagramEditor = () => {
         position,
         data: {
           label: draggedNodeType === 'umlNode' ? `NewNode${nodes.length + 1}` : `InterfaceNode${nodes.length + 1}`,
-          attributes: draggedNodeType === 'umlNode' ? ['newAttribute: string'] : [],
-          methods: draggedNodeType === 'umlNode' ? ['newMethod()'] : ['interfaceMethod1()'],
-          showButtons,
+          attributes: draggedNodeType === 'umlNode' ? [] : [],
+          methods: draggedNodeType === 'umlNode' ? [] : [],
           color: getRandomColor(),
         },
         type: draggedNodeType,
@@ -276,9 +259,8 @@ const UMLDiagramEditor = () => {
           position,
           data: {
             label: `ClassNode${nodes.length + 1}`,
-            attributes: ['attribute: type'],
-            methods: ['method()'],
-            showButtons,
+            attributes: [],
+            methods: [],
             color: getRandomColor(),
           },
           type: 'umlNode', // Change to 'umlNode' for class node
@@ -287,7 +269,7 @@ const UMLDiagramEditor = () => {
         setNodes((nds) => [...nds, newNode]);
       }
     },
-    [nodes, showButtons, setNodes]
+    [nodes, setNodes]
   );
 
   return (
@@ -314,9 +296,6 @@ const UMLDiagramEditor = () => {
         }}
       >
         <h4 style={{ margin: '0', textAlign: 'center' }}>Actions</h4>
-        <button onClick={toggleButtons} className="action-button">
-          Toggle
-        </button>
         <button onMouseDown={() => startDraggingNode('interfaceUMLNode')} className="action-button">
           Add Interface Node
         </button>
@@ -346,7 +325,7 @@ const UMLDiagramEditor = () => {
             padding: '5px',
             borderRadius: '5px',
             border: '1px solid #ccc',
-            width: '200px', // Increased width for better visibility
+            width: '200px',
           }}
         >
           <option value="filled">Solid Arrow (Filled)</option>
@@ -363,7 +342,7 @@ const UMLDiagramEditor = () => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onEdgeClick={(event, edge) => setSelectedEdge(edge.id)} // Set the selected edge on click
+        onEdgeClick={(event, edge) => setSelectedEdge(edge.id)}
         nodeTypes={nodeTypes}
         edgeTypes={{
           filled: UMLEdge,

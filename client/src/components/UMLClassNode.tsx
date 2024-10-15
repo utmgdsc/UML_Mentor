@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 
 // Define types for the node data and props
@@ -6,63 +6,33 @@ interface UMLNodeData {
     label?: string;
     attributes?: string[];
     methods?: string[];
-    showButtons?: boolean;
     color?: string;
     removeNode?: (id: string) => void;
-    isPreview?: boolean; // Add this line
+    isPreview?: boolean;
 }
 
 interface UMLNodeProps extends NodeProps<UMLNodeData> {}
 
 const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     const [label, setLabel] = useState<string>(data.label || 'ClassName');
-    const [attributes, setAttributes] = useState<string[]>(data.attributes || ['name: string']);
-    const [methods, setMethods] = useState<string[]>(data.methods || ['playGame()']);
-    const showButtons = data.showButtons !== undefined ? data.showButtons : true; // Default to true if undefined
-    const headerColor = data.color || '#FFEE93'; // Use the color passed in the node's data for the header only
+    const [attributes, setAttributes] = useState<string>(data.attributes?.join('\n') || '');
+    const [methods, setMethods] = useState<string>(data.methods?.join('\n') || '');
+    const headerColor = data.color || '#FFEE93';
 
-    // Remove the node if all attributes and methods are deleted
+    const attributesRef = useRef<HTMLTextAreaElement>(null);
+    const methodsRef = useRef<HTMLTextAreaElement>(null);
+
+    // Set height dynamically based on content
     useEffect(() => {
-        if (attributes.length === 0 && methods.length === 0) {
-            data.removeNode?.(id); // Call the removeNode function passed from App
+        if (attributesRef.current) {
+            attributesRef.current.style.height = 'auto';
+            attributesRef.current.style.height = `${attributesRef.current.scrollHeight}px`;
         }
-    }, [attributes, methods, data.removeNode, id]);
-
-    // Handle attribute changes
-    const handleAttributeChange = (index: number, value: string) => {
-        const updatedAttributes = [...attributes];
-        updatedAttributes[index] = value;
-        setAttributes(updatedAttributes);
-    };
-
-    // Handle method changes
-    const handleMethodChange = (index: number, value: string) => {
-        const updatedMethods = [...methods];
-        updatedMethods[index] = value;
-        setMethods(updatedMethods);
-    };
-
-    // Delete an attribute
-    const deleteAttribute = (index: number) => {
-        const updatedAttributes = attributes.filter((_, attrIndex) => attrIndex !== index);
-        setAttributes(updatedAttributes);
-    };
-
-    // Delete a method
-    const deleteMethod = (index: number) => {
-        const updatedMethods = methods.filter((_, methodIndex) => methodIndex !== index);
-        setMethods(updatedMethods);
-    };
-
-    // Add new attribute
-    const addAttribute = () => {
-        setAttributes([...attributes, 'newAttribute: type']);
-    };
-
-    // Add new method
-    const addMethod = () => {
-        setMethods([...methods, 'newMethod()']);
-    };
+        if (methodsRef.current) {
+            methodsRef.current.style.height = 'auto';
+            methodsRef.current.style.height = `${methodsRef.current.scrollHeight}px`;
+        }
+    }, [attributes, methods]);
 
     // Function to delete the entire node
     const handleDeleteNode = () => {
@@ -71,11 +41,7 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
 
     // Set width and height dynamically based on content
     const nodeWidth = 200; // Fixed width for simplicity; you can adjust based on content
-    const nodeHeight = 50 + attributes.length * 25 + methods.length * 25; // Adjust height based on content
-
-    // Update data with calculated dimensions
-    data.width = nodeWidth;
-    data.height = nodeHeight;
+    const nodeHeight = 100; // Adjust as needed
 
     return (
         <div style={{
@@ -126,74 +92,26 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
             </div>
 
             {/* Attributes Section */}
-            {attributes.length > 0 && (
-                <div style={{ padding: '10px', borderBottom: '1px solid black' }}>
-                    {attributes.map((attr, index) => (
-                        <div key={`attr-${index}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                            <input
-                                value={attr}
-                                onChange={(e) => handleAttributeChange(index, e.target.value)}
-                                style={{ width: '85%', border: 'none', paddingBottom: '5px' }}
-                            />
-                            {showButtons && (
-                                <button
-                                    onClick={() => deleteAttribute(index)}
-                                    style={{
-                                        marginLeft: '5px',
-                                        border: 'none',
-                                        backgroundColor: 'transparent',
-                                        color: 'red',
-                                        cursor: 'pointer',
-                                        fontSize: '12px',
-                                    }}
-                                >
-                                    X
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                    {showButtons && (
-                        <button onClick={addAttribute} style={{ width: '100%', marginTop: '5px' }}>
-                            + Add Attribute
-                        </button>
-                    )}
-                </div>
-            )}
+            <div style={{ padding: '10px', borderBottom: '1px solid black' }}>
+                <textarea
+                    ref={attributesRef}
+                    value={attributes}
+                    onChange={(e) => setAttributes(e.target.value)}
+                    placeholder="Attributes"
+                    style={{ width: '100%', resize: 'none', overflow: 'hidden' }}
+                />
+            </div>
 
             {/* Methods Section */}
-            {methods.length > 0 && (
-                <div style={{ padding: '10px' }}>
-                    {methods.map((method, index) => (
-                        <div key={`method-${index}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                            <input
-                                value={method}
-                                onChange={(e) => handleMethodChange(index, e.target.value)}
-                                style={{ width: '85%', border: 'none', paddingBottom: '5px' }}
-                            />
-                            {showButtons && (
-                                <button
-                                    onClick={() => deleteMethod(index)}
-                                    style={{
-                                        marginLeft: '5px',
-                                        border: 'none',
-                                        backgroundColor: 'transparent',
-                                        color: 'red',
-                                        cursor: 'pointer',
-                                        fontSize: '12px',
-                                    }}
-                                >
-                                    X
-                                </button>
-                            )}
-                        </div>
-                    ))}
-                    {showButtons && (
-                        <button onClick={addMethod} style={{ width: '100%', marginTop: '5px' }}>
-                            + Add Method
-                        </button>
-                    )}
-                </div>
-            )}
+            <div style={{ padding: '10px' }}>
+                <textarea
+                    ref={methodsRef}
+                    value={methods}
+                    onChange={(e) => setMethods(e.target.value)}
+                    placeholder="Methods"
+                    style={{ width: '100%', resize: 'none', overflow: 'hidden' }}
+                />
+            </div>
 
             {/* Node connection handles */}
             {!data.isPreview && (
