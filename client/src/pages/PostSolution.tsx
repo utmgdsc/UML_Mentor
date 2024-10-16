@@ -1,18 +1,15 @@
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { useParams } from "react-router-dom";
-import { Col, Container, Form, Row } from "react-bootstrap";
-import Button from "../components/Button.tsx";
-import { useNavigate } from "react-router-dom";
-import { UserData } from "../types/UserData.ts";
+import React, { useState } from 'react';
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
+import useCheckRole from '../hooks/useCheckRole';
 
-type PostSolutionState = {
-  title: string;
-  description: string;
-  diagram: File | null;
-};
-
-const PostSolution = () => {
+const PostSolution: React.FC = () => {
+  const { id: challengeId } = useParams<{ id: string }>();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const navigate = useNavigate();
+
   const { id: challengeId } = useParams();
   const [postSolutionState, setPostSolutionState] = useState<PostSolutionState>({
     title: "",
@@ -71,61 +68,79 @@ const PostSolution = () => {
     data.append("description", postSolutionState.description);
     data.append("diagram", postSolutionState.diagram);
 
-    fetch(`/api/solutions`, {
-      method: "POST",
-      body: data,
+  const { isAdmin, isLoading } = useCheckRole();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    if (file) {
+      formData.append('diagram', file);
+    }
+    formData.append('challengeId', challengeId || '');
+
+
+    fetch('/api/solutions', {
+      method: 'POST',
+      body: formData,
     })
-      .then((resp) => resp.json())
+      .then((response) => response.json())
       .then((data) => {
+        console.log('Solution posted:', data);
         navigate(`/solution/${data.id}`);
         localStorage.removeItem('uml-diagram-image'); // Clear image from local storage after submission
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((error) => {
+        console.error('Error posting solution:', error);
       });
   };
 
   return (
     <Container>
-      <Row className={"my-5 justify-content-center"}>
-        <Col md={6} className={"bg-gray-200 rounded py-5 px-md-5"}>
-          <h1>Submit Your Solution!</h1>
+      <Row className="justify-content-md-center">
+        <Col md={6}>
+          <h2>Post a Solution</h2>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3" controlId="title">
+            <Form.Group className="mb-3">
               <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                name="title"
-                value={postSolutionState.title}
-                onChange={handleChange}
-                required
+              <Form.Control 
+                type="text" 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)} 
+                required 
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="description">
+            <Form.Group className="mb-3">
               <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                name="description"
-                value={postSolutionState.description}
-                onChange={handleChange}
-                rows={4}
-                required
+              <Form.Control 
+                as="textarea" 
+                rows={3} 
+                value={description} 
+                onChange={(e) => setDescription(e.target.value)} 
+                required 
               />
             </Form.Group>
-            <Form.Group className="mb-3" controlId="diagram">
+            <Form.Group className="mb-3">
               <Form.Label>Diagram</Form.Label>
+
               <Form.Control
                 type="file"
                 name="diagram"
                 accept="image/*"
                 onChange={handleFileChange}
+
+              <Form.Control 
+                type="file" 
+                onChange={(e) => setFile(e.target.files?.[0] || null)} 
+
               />
               <Form.Text className="text-muted">
                 {postSolutionState.diagram ? postSolutionState.diagram.name : 'Automatically attached from local storage'}
               </Form.Text>
             </Form.Group>
             <Button variant="primary" type="submit">
-              Submit
+              Post Solution
             </Button>
           </Form>
         </Col>

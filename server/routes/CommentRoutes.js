@@ -15,19 +15,18 @@ router.get("/user/:username", Comment.getUserComments);
 router.get("/:solutionId", Comment.get);
 
 // Create a new comment for a solution in the database.
-router.post("/:id",  Comment.create);
+router.post("/", Comment.create);
 
 // Edit a comment for a solution in the database.
-router.put("/:id",  Comment.edit);
+router.put("/:id", Comment.edit);
 
 // Delete a comment for a solution from the database.
-router.delete("/:id", checkRole(['admin']), Comment.delete);
-
+router.delete("/:id", Comment.delete);
 
 // Reply to a comment
 router.post("/reply/:parentId", Comment.reply);
 
 // Upvote a comment
-router.get("/upvote/:commentId", Comment.upvote);
+router.post("/upvote/:commentId", Comment.upvote);
 
 module.exports = router;
