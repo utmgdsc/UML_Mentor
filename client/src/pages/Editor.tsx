@@ -227,6 +227,7 @@ const UMLDiagramEditor = () => {
     link.click();
   };
 
+
   const postSolution = async () => {
     const { nodes, edges } = getNodesAndEdges();
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
@@ -449,7 +450,7 @@ const UMLDiagramEditor = () => {
         <Controls />
         <Background />
       </ReactFlow>
-      {showInstructions && <InstructionsPopup onClose={() => setShowInstructions(false)} />}
+      <InstructionsPopup show={showInstructions} handleClose={() => { setShowInstructions(false) }} />
       {draggedNodeType && (
         <div
           style={{
@@ -486,5 +487,6 @@ const UMLDiagramEditor = () => {
     </div>
   );
 };
+
 
 export default UMLDiagramEditor;

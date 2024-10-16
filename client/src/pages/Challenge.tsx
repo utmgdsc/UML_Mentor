@@ -7,12 +7,19 @@ import { ChallengeDetails } from "../types/challengeDetails";
 import { StarFill } from "react-bootstrap-icons";
 import InstructionsPopup from '../components/InstructionsPopup';
 
+
 const Challenge = () => {
   const [details, setDetails] = useState<ChallengeDetails>();
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useParams();
   const [showInstructions, setShowInstructions] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+
+
+    function anotherShowInstructions() {
+    setShowInstructions(true);
+  };
+
 
   // Fetch user role
   useEffect(() => {
@@ -126,6 +133,16 @@ const Challenge = () => {
             </ul>
           </Row>
         )}
+                {/* <Row className="mb-4">
+          <Col className="text-center">
+            <button onClick={anotherShowInstructions} className="instructions-button mt-3">
+              Show Instructions
+            </button>
+            <button onClick={postSolution} className="post-button">
+          Post Solution
+        </button>
+          </Col>
+        </Row> */}
       </section>
       <InstructionsPopup show={showInstructions} handleClose={() => setShowInstructions(false)} />
     </Container>
