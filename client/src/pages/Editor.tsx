@@ -239,9 +239,7 @@ const UMLDiagramEditor = ({ problemId }) => {
     window.location.href = `/solutions/post/${challengeId}`;
   };
 
-  function anotherShowInstructions() {
-    setShowInstructions(true);
-  };
+
 
   const startDraggingNode = (nodeType) => {
     setDraggedNodeType(nodeType);
@@ -348,7 +346,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         <button onClick={postSolution} className="post-button">
           Post Solution
         </button>
-        <button onClick={anotherShowInstructions} className="instructions-button">
+        <button onClick={() => setShowInstructions(true)} className="instructions-button">
           Show Instructions
         </button>
         <button onClick={() => removeEdge(selectedEdge)} className="delete-button" disabled={!selectedEdge}>
@@ -410,14 +408,14 @@ const UMLDiagramEditor = ({ problemId }) => {
       
           switch (edge.data?.edgeType) {
             case 'Inheritance':
-              markerId = 'filledArrow'; // Solid filled arrow
+              markerId = 'emptyArrow'; // Solid filled arrow
               break;
             case 'Composition':
-              markerId = 'emptyArrow'; // Dashed with empty arrow
+              markerId = 'diamond'; // Dashed with empty arrow
               dashArray = '5,5';
               break;
             case 'Implementation':
-              markerId = 'diamond'; // Solid with diamond
+              markerId = 'emptyArrow'; // Solid with diamond
               break;
             default:
               markerId = 'filledArrow'; // Default fallback
@@ -429,7 +427,8 @@ const UMLDiagramEditor = ({ problemId }) => {
           style: {
             stroke: '#000',
             strokeWidth: 2,
-            strokeDasharray: edge.data?.edgeType === 'Composition' ? '5, 5' : '0',
+            strokeDasharray: edge.data?.edgeType === 'Implementation' ? '5, 5' : '0',
+            strokeDashoffset : 100,
           },
             markerEnd:  markerId, // Use markerId here
           };

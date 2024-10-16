@@ -11,7 +11,7 @@ import Profile from './pages/Profile.tsx';
 import Editor from './pages/Editor.tsx';
 import AddChallenge from './pages/AddChallenge.tsx';
 import Admin from './pages/Admin.tsx';
-import SplitLayout from './pages/split-screen.tsx'; // Import SplitLayout
+import SplitLayout from './pages/SplitScreen.tsx';
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
