@@ -4,7 +4,7 @@ import Challenge from "./Challenge"; // Left side content
 import UMLDiagramEditor from "./Editor";
 
 const SplitLayout: React.FC = () => {
-  const { id } = useParams(); // Get the challenge ID from the URL
+  const { id: problemId } = useParams(); // Get the challenge ID from the URL
   const [leftWidth, setLeftWidth] = useState(50); // Initial left panel width
 
   const handleDividerMouseDown = (e: React.MouseEvent) => {
@@ -59,8 +59,8 @@ const SplitLayout: React.FC = () => {
           overflowY: "auto", // Enable vertical scrolling
         }}
       >
+        <UMLDiagramEditor problemId={problemId} />
       </div>
-      <UMLDiagramEditor />
     </div>
   );
 };

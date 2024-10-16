@@ -106,7 +106,10 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
 
 
   
-const UMLDiagramEditor = () => {
+const UMLDiagramEditor = ({ problemId }) => {
+  const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
+  const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
+
   const initialNodes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NODES) || '[]');
   const initialEdges = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_EDGES) || '[]');
   const [nodes, setNodes] = useNodesState(initialNodes);
