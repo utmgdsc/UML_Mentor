@@ -13000,4 +13000,47 @@ textarea.form-control-lg {
   }
 }
 
+.action-button, .reset-button, .post-button, .instructions-button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #4CAF50; /* Default button color */
+  color: white;
+  transition: background 0.3s;
+}
+
+.action-button:hover, .reset-button:hover, .post-button:hover, .instructions-button:hover {
+  background: #45a049; /* Darker shade on hover */
+}
+
+.reset-button {
+  background: #f44336; /* Reset button color */
+}
+
+.reset-button:hover {
+  background: #d32f2f; /* Darker shade on hover */
+}
+
+.post-button, .instructions-button {
+  background: #2196F3; /* Other button color */
+}
+
+.post-button:hover, .instructions-button:hover {
+  background: #1976D2; /* Darker shade on hover */
+}
+
+select {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+  width: 200px; /* Adjust width for dropdown */
+}
+
+select:focus {
+  border-color: #4CAF50; /* Change border color on focus */
+}
+
+
 /*# sourceMappingURL=custom.css.map */
