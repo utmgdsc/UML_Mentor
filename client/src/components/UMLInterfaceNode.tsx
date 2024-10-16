@@ -103,14 +103,54 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
 
             {!data.isPreview && (
                 <>
-                    <Handle type="source" position={Position.Right} id="right" style={{ background: '#555' }} />
-                    <Handle type="target" position={Position.Right} id="right" style={{ background: '#555' }} />
-                    <Handle type="source" position={Position.Left} id="left" style={{ background: '#555' }} />
-                    <Handle type="target" position={Position.Left} id="left" style={{ background: '#555' }} />
-                    <Handle type="source" position={Position.Top} id="top" style={{ background: '#555' }} />
-                    <Handle type="target" position={Position.Top} id="top" style={{ background: '#555' }} />
-                    <Handle type="source" position={Position.Bottom} id="bottom" style={{ background: '#555' }} />
-                    <Handle type="target" position={Position.Bottom} id="bottom" style={{ background: '#555' }} />
+                    <Handle
+                        type="source"
+                        position={Position.Right}
+                        id="right"
+                        style={{ background: '#a9a9a9', width: '10px', height: '10px', borderRadius: '2px' }}
+                    />
+                    <Handle
+                        type="target"
+                        position={Position.Right}
+                        id="right"
+                        style={{ background: '#a9a9a9', width: '10px', height: '10px', borderRadius: '2px' }}
+                    />
+                    <Handle
+                        type="source"
+                        position={Position.Left}
+                        id="left"
+                        style={{ background: '#a9a9a9', width: '10px', height: '10px', borderRadius: '2px' }}
+                    />
+                    <Handle
+                        type="target"
+                        position={Position.Left}
+                        id="left"
+                        style={{ background: '#a9a9a9', width: '10px', height: '10px', borderRadius: '2px' }}
+                    />
+                    <Handle
+                        type="source"
+                        position={Position.Top}
+                        id="top"
+                        style={{ background: '#a9a9a9', width: '10px', height: '10px', borderRadius: '2px' }}
+                    />
+                    <Handle
+                        type="target"
+                        position={Position.Top}
+                        id="top"
+                        style={{ background: '#a9a9a9', width: '10px', height: '10px', borderRadius: '2px' }}
+                    />
+                    <Handle
+                        type="source"
+                        position={Position.Bottom}
+                        id="bottom"
+                        style={{ background: '#a9a9a9', width: '10px', height: '10px', borderRadius: '2px' }}
+                    />
+                    <Handle
+                        type="target"
+                        position={Position.Bottom}
+                        id="bottom"
+                        style={{ background: '#a9a9a9', width: '10px', height: '10px', borderRadius: '2px' }}
+                    />
                 </>
             )}
         </div>

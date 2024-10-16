@@ -30,14 +30,13 @@ const nodeTypes = {
 const LOCAL_STORAGE_KEY_NODES = 'uml-diagram-nodes';
 const LOCAL_STORAGE_KEY_EDGES = 'uml-diagram-edges';
 
-// Utility function to generate a random color
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+// Utility function to generate a random pastel color
+const getNodeColor = () => {
+  const getPastelColorComponent = () => Math.floor(Math.random() * 128) + 127; // Ensures a value between 127 and 255
+  const r = getPastelColorComponent();
+  const g = getPastelColorComponent();
+  const b = getPastelColorComponent();
+  return `rgb(${r}, ${g}, ${b})`;
 };
 
 
@@ -165,7 +164,7 @@ const UMLDiagramEditor = ({ problemId }) => {
       data: {
         label: `InterfaceNode${nodes.length + 1}`,
         methods: [], // Ensure no default methods
-        color: getRandomColor(),
+        color: getNodeColor(),
       },
       type: 'interfaceUMLNode',
     };
@@ -180,7 +179,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         label: `NewNode${nodes.length + 1}`,
         attributes: [], // Ensure no default attributes
         methods: [], // Ensure no default methods
-        color: getRandomColor(),
+        color: getNodeColor(),
       },
       type: 'umlNode',
     };
@@ -272,7 +271,7 @@ const UMLDiagramEditor = ({ problemId }) => {
           label: draggedNodeType === 'umlNode' ? `NewNode${nodes.length + 1}` : `InterfaceNode${nodes.length + 1}`,
           attributes: draggedNodeType === 'umlNode' ? [] : [],
           methods: draggedNodeType === 'umlNode' ? [] : [],
-          color: getRandomColor(),
+          color: getNodeColor(),
         },
         type: draggedNodeType,
       };
@@ -302,7 +301,7 @@ const UMLDiagramEditor = ({ problemId }) => {
             label: `ClassNode${nodes.length + 1}`,
             attributes: [],
             methods: [],
-            color: getRandomColor(),
+            color: getNodeColor(),
           },
           type: 'umlNode', // Change to 'umlNode' for class node
         };
@@ -449,7 +448,9 @@ const UMLDiagramEditor = ({ problemId }) => {
         onConnectEnd={onConnectEnd}
       >
         <CustomMarkers/>
-        <MiniMap />
+        <MiniMap
+          nodeColor={(node) => node.data.color || '#eee'} // Use node's color or default to light gray
+        />
         <Controls />
         <Background />
       </ReactFlow>
