@@ -8,12 +8,17 @@ import {
   useEdgesState,
   addEdge,
   removeEdge,
+  applyNodeChanges,
+  applyEdgeChanges,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import UMLClassNode from '../components/UMLClassNode';
 import UMLInterfaceNode from '../components/UMLInterfaceNode';
 import InstructionsPopup from '../components/InstructionsPopup'; // Import the InstructionsPopup
 import html2canvas from 'html2canvas'; // Import html2canvas
+import { getBezierPath, getEdgeCenter, MarkerType } from 'react-flow-renderer';
+import {  getSmoothStepPath } from 'reactflow';
+import CustomMarkers from './CustomMarkers';
 
 // Define custom node types
 const nodeTypes = {
@@ -35,78 +40,109 @@ const getRandomColor = () => {
   return color;
 };
 
+
 // UMLEdge component
-const UMLEdge = ({ sourceX, sourceY, targetX, targetY, type }) => {
-  const midX = (sourceX + targetX) / 2; // Midpoint in X
-  const midY = (sourceY + targetY) / 2; // Midpoint in Y
-  const controlX = midX; // Control point X
-  const controlY = sourceY > targetY ? midY - 50 : midY + 50; // Control point Y for curve adjustment
-  const isDashed = type.includes('dashed');
-  const pathData = `M ${sourceX} ${sourceY} Q ${controlX} ${controlY}, ${targetX} ${targetY}`;
+const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
+  // Get the center of the edge for future use (optional)
+  // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
+  //     sourceX, 
+  //     sourceY, 
+  //     targetX, 
+  //     targetY
+  // });
+
+
+  // // Generate a smooth step path with custom settings
+  // const path = getSmoothStepPath({
+  //     sourceX,
+  //     sourceY,
+  //     targetX,
+  //     targetY,
+  //     sourcePosition: 'right', // Adjust positions if needed
+  //     targetPosition: 'left',
+  //     borderRadius: 10, // Controls the curve at corner points
+  //     offset: 5, // Spacing between segments
+  // });
+
+
+  // const onNodesChange = useCallback(
+  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+  //   [],
+  // );
+  // const onEdgesChange = useCallback(
+  //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+  //   [],
+  // );
+
+
+
 
   return (
-    <g>
-      {/* Draw the edge */}
-      <path
-        d={pathData}
-        stroke="#555"
-        strokeWidth={2}
-        fill="transparent"
-        strokeDasharray={isDashed ? '5,5' : '0'} // Dashed effect if needed
-      />
-      {/* Draw the arrowhead based on type */}
-      {type.includes('filled') && (
-        <polygon
-          points={`
-            ${targetX} ${targetY}
-            ${targetX - 12} ${targetY - 6}
-            ${targetX - 12} ${targetY + 6}
-          `}
-          fill="#555" // Arrow color
+    <>
+        <defs>
+            <marker
+                id={`${id}-arrow`}
+                markerWidth="10"
+                markerHeight="10"
+                refX="5"
+                refY="2.5"
+                orient="auto"
+            >
+                <polygon points="0 0, 10 2.5, 0 5" fill="black" />
+            </marker>
+        </defs>
+        <path
+            id={id}
+            style={style}
+            d={path}
+            className="react-flow__edge-path"
+
         />
-      )}
-      {type.includes('empty') && (
-        <polygon
-          points={`
-            ${targetX} ${targetY}
-            ${targetX - 12} ${targetY - 6}
-            ${targetX - 12} ${targetY + 6}
-          `}
-          fill="none"
-          stroke="#555"
-          strokeWidth={2}
-        />
-      )}
-      {type.includes('diamond') && (
-        <polygon
-          points={`
-            ${targetX} ${targetY}
-            ${targetX - 12} ${targetY}
-            ${targetX - 6} ${targetY - 6}
-            ${targetX - 6} ${targetY + 6}
-          `}
-          fill="#555" // Diamond color
-        />
-      )}
-    </g>
-  );
+    </>
+);
+
+
 };
 
+
+  
 const UMLDiagramEditor = () => {
   const initialNodes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NODES) || '[]');
   const initialEdges = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_EDGES) || '[]');
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes] = useNodesState(initialNodes);
+  const [edges, setEdges] = useEdgesState(initialEdges);
   const [showInstructions, setShowInstructions] = useState(false);
-  const [edgeType, setEdgeType] = useState('filled');
+  const [edgeType, setEdgeType] = useState("Inheritance");
   const [selectedEdge, setSelectedEdge] = useState(null);
   const [draggedNodeType, setDraggedNodeType] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const reactFlowWrapperRef = useRef(null);
 
+
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    [],
+  );
+  const onEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    [],
+  );
+
+  // const onNodesChange = useCallback(
+  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+  //   [],
+  // );
+  // const onEdgesChange = useCallback(
+  //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+  //   [],
+  // );
+
+
+
+
   const onConnect = useCallback(
     (params) => {
-      setEdges((eds) => addEdge({ ...params, type: edgeType }, eds));
+      setEdges((eds) => addEdge({ ...params, data : {edgeType} }, eds));
     },
     [setEdges, edgeType]
   );
@@ -200,7 +236,7 @@ const UMLDiagramEditor = () => {
     window.location.href = `/solutions/post/${challengeId}`;
   };
 
-  const anotherShowInstructions = () => {
+  function anotherShowInstructions() {
     setShowInstructions(true);
   };
 
@@ -240,6 +276,7 @@ const UMLDiagramEditor = () => {
       setDraggedNodeType(null);
     }
   };
+
 
   const onConnectEnd = useCallback(
     (event, connectionState) => {
@@ -325,36 +362,89 @@ const UMLDiagramEditor = () => {
             padding: '5px',
             borderRadius: '5px',
             border: '1px solid #ccc',
-            width: '200px',
+            width: '130px',
           }}
         >
-          <option value="filled">Solid Arrow (Filled)</option>
-          <option value="empty">Solid Arrow (Empty)</option>
-          <option value="dashed-filled">Dashed Arrow (Filled)</option>
-          <option value="dashed-empty">Dashed Arrow (Empty)</option>
-          <option value="diamond">Arrow with Diamond</option>
-          <option value="dashed-diamond">Dashed Arrow with Diamond</option>
+          <option value="Inheritance">Inheritance</option>
+          <option value="Composition">Composition</option>
+          <option value="Implementation">Implementation</option>
         </select>
       </div>
-      <ReactFlow
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ReactFlow
+
         nodes={nodes.map((node) => ({ ...node, data: { ...node.data, removeNode } }))}
-        edges={edges.map((edge) => ({ ...edge, type: edge.type || 'filled' }))}
+        // edges={edges.map((edge) => ({
+        //   ...edge,
+        //   type: 'step', // Always set the edge type to 'step'
+        //   style: {
+        //     stroke: '#000',
+        //     strokeWidth: 2,
+        //     strokeDasharray: edge.data?.edgeType === 'Composition' ? '5, 5' : '0',
+        //   },
+        //   markerEnd: {
+        //     // type: edge.data?.edgeType  == "Inheritance" ? MarkerType.Arrow : MarkerType.ArrowClosed,
+        //     id : edge.data?.edgeType  == "Composition" ? 'url('emptyArrow')' : 'diamond',
+        //   },
+        // }))}     
+        
+        edges = {edges.map((edge) => {
+          let markerId = 'filledArrow'; // Default marker
+          let dashArray = '0'; // Default to solid line
+      
+          switch (edge.data?.edgeType) {
+            case 'Inheritance':
+              markerId = 'filledArrow'; // Solid filled arrow
+              break;
+            case 'Composition':
+              markerId = 'emptyArrow'; // Dashed with empty arrow
+              dashArray = '5,5';
+              break;
+            case 'Implementation':
+              markerId = 'diamond'; // Solid with diamond
+              break;
+            default:
+              markerId = 'filledArrow'; // Default fallback
+          }
+      
+          return {
+            ...edge,
+            type: 'step', // Keep step type
+          style: {
+            stroke: '#000',
+            strokeWidth: 2,
+            strokeDasharray: edge.data?.edgeType === 'Composition' ? '5, 5' : '0',
+          },
+            markerEnd:  markerId, // Use markerId here
+          };
+        })}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onEdgeClick={(event, edge) => setSelectedEdge(edge.id)}
         nodeTypes={nodeTypes}
         edgeTypes={{
-          filled: UMLEdge,
-          empty: UMLEdge,
-          'dashed-filled': UMLEdge,
-          'dashed-empty': UMLEdge,
-          diamond: UMLEdge,
-          'dashed-diamond': UMLEdge,
+          'Inheritance': UMLEdge,
+          'Composition': UMLEdge,
+          'Implementation': UMLEdge,
         }}
         style={{ width: '100%', height: '100%' }}
         onConnectEnd={onConnectEnd}
       >
+        <CustomMarkers/>
         <MiniMap />
         <Controls />
         <Background />
