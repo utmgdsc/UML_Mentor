@@ -8,6 +8,7 @@ interface UMLNodeData {
     methods?: string[];
     color?: string;
     removeNode?: (id: string) => void;
+    updateNodeData?: (id: string, newData: Partial<UMLNodeData>) => void;
     isPreview?: boolean;
 }
 
@@ -33,17 +34,29 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
         }
     }, [attributes, methods]);
 
-    const handleDeleteNode = () => {
-        data.removeNode?.(id);
+    const handleLabelChange = (e) => {
+        const newLabel = e.target.value;
+        setLabel(newLabel);
+        data.updateNodeData?.(id, { label: newLabel });
     };
 
-    const nodeWidth = 200;
+    const handleAttributesChange = (e) => {
+        const newAttributes = e.target.value;
+        setAttributes(newAttributes);
+        data.updateNodeData?.(id, { attributes: newAttributes.split('\n') });
+    };
+
+    const handleMethodsChange = (e) => {
+        const newMethods = e.target.value;
+        setMethods(newMethods);
+        data.updateNodeData?.(id, { methods: newMethods.split('\n') });
+    };
 
     return (
         <div style={{
             border: '1px solid black',
             borderRadius: '5px',
-            width: `${nodeWidth}px`,
+            width: '200px',
             fontFamily: 'Arial, sans-serif',
             position: 'relative',
             backgroundColor: 'white',
@@ -56,70 +69,50 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                 fontWeight: 'bold',
                 position: 'relative'
             }}>
-                <div style={{
-                    fontSize: '14px',
-                    color: 'ghostwhite',
-                    marginBottom: '5px'
-                }}>
-                    &lt;&lt;interface&gt;&gt;
-                </div>
-                {data.isPreview ? (
-                    <div>{label}</div>
-                ) : (
-                    <input
-                        value={label}
-                        onChange={(e) => setLabel(e.target.value)}
-                        style={{
-                            width: '100%',
-                            border: 'none',
-                            backgroundColor: 'transparent',
-                            textAlign: 'center',
-                            fontWeight: 'bold'
-                        }}
-                    />
-                )}
-                {!data.isPreview && (
-                    <button
-                        onClick={handleDeleteNode}
-                        style={{
-                            position: 'absolute',
-                            top: '5px',
-                            right: '5px',
-                            background: 'transparent',
-                            border: 'none',
-                            color: 'red',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            fontSize: '12px',
-                        }}
-                    >
-                        X
-                    </button>
-                )}
+                <input
+                    value={label}
+                    onChange={handleLabelChange}
+                    style={{
+                        width: '100%',
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        textAlign: 'center',
+                        fontWeight: 'bold'
+                    }}
+                />
+                <button
+                    onClick={() => data.removeNode?.(id)}
+                    style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '5px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'red',
+                        fontWeight: 'bold',
+                    }}
+                >
+                    X
+                </button>
             </div>
-
-            {/* Attributes Section */}
-            <div style={{ padding: '10px', borderBottom: '1px solid black' }}>
+            <div style={{ padding: '10px' }}>
                 <textarea
                     ref={attributesRef}
                     value={attributes}
-                    onChange={(e) => setAttributes(e.target.value)}
+                    onChange={handleAttributesChange}
                     placeholder="Attributes"
                     style={{ width: '100%', resize: 'none', overflow: 'hidden' }}
                 />
             </div>
-
-            {/* Methods Section */}
             <div style={{ padding: '10px' }}>
                 <textarea
                     ref={methodsRef}
                     value={methods}
-                    onChange={(e) => setMethods(e.target.value)}
+                    onChange={handleMethodsChange}
                     placeholder="Methods"
                     style={{ width: '100%', resize: 'none', overflow: 'hidden' }}
                 />
             </div>
-
             {!data.isPreview && (
                 <>
                     <Handle

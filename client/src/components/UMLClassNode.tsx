@@ -8,6 +8,7 @@ interface UMLNodeData {
     methods?: string[];
     color?: string;
     removeNode?: (id: string) => void;
+    updateNodeData?: (id: string, newData: Partial<UMLNodeData>) => void;
     isPreview?: boolean;
 }
 
@@ -22,7 +23,6 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     const attributesRef = useRef<HTMLTextAreaElement>(null);
     const methodsRef = useRef<HTMLTextAreaElement>(null);
 
-    // Set height dynamically based on content
     useEffect(() => {
         if (attributesRef.current) {
             attributesRef.current.style.height = 'auto';
@@ -34,25 +34,33 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
         }
     }, [attributes, methods]);
 
-    // Function to delete the entire node
-    const handleDeleteNode = () => {
-        data.removeNode?.(id); // Call removeNode from App
+    const handleLabelChange = (e) => {
+        const newLabel = e.target.value;
+        setLabel(newLabel);
+        data.updateNodeData?.(id, { label: newLabel });
     };
 
-    // Set width and height dynamically based on content
-    const nodeWidth = 200; // Fixed width for simplicity; you can adjust based on content
-    const nodeHeight = 100; // Adjust as needed
+    const handleAttributesChange = (e) => {
+        const newAttributes = e.target.value;
+        setAttributes(newAttributes);
+        data.updateNodeData?.(id, { attributes: newAttributes.split('\n') });
+    };
+
+    const handleMethodsChange = (e) => {
+        const newMethods = e.target.value;
+        setMethods(newMethods);
+        data.updateNodeData?.(id, { methods: newMethods.split('\n') });
+    };
 
     return (
         <div style={{
             border: '1px solid black',
             borderRadius: '5px',
-            width: `${nodeWidth}px`,
+            width: '200px',
             fontFamily: 'Arial, sans-serif',
             position: 'relative',
             backgroundColor: 'white',
         }}>
-            {/* Header with random background color */}
             <div style={{
                 backgroundColor: headerColor,
                 padding: '10px',
@@ -63,7 +71,7 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
             }}>
                 <input
                     value={label}
-                    onChange={(e) => setLabel(e.target.value)}
+                    onChange={handleLabelChange}
                     style={{
                         width: '100%',
                         border: 'none',
@@ -72,9 +80,8 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                         fontWeight: 'bold'
                     }}
                 />
-                {/* Delete Node Button in the Header */}
                 <button
-                    onClick={handleDeleteNode}
+                    onClick={() => data.removeNode?.(id)}
                     style={{
                         position: 'absolute',
                         top: '5px',
@@ -83,37 +90,29 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                         border: 'none',
                         color: 'red',
                         fontWeight: 'bold',
-                        cursor: 'pointer',
-                        fontSize: '12px',
                     }}
                 >
                     X
                 </button>
             </div>
-
-            {/* Attributes Section */}
-            <div style={{ padding: '10px', borderBottom: '1px solid black' }}>
+            <div style={{ padding: '10px' }}>
                 <textarea
                     ref={attributesRef}
                     value={attributes}
-                    onChange={(e) => setAttributes(e.target.value)}
+                    onChange={handleAttributesChange}
                     placeholder="Attributes"
                     style={{ width: '100%', resize: 'none', overflow: 'hidden' }}
                 />
             </div>
-
-            {/* Methods Section */}
             <div style={{ padding: '10px' }}>
                 <textarea
                     ref={methodsRef}
                     value={methods}
-                    onChange={(e) => setMethods(e.target.value)}
+                    onChange={handleMethodsChange}
                     placeholder="Methods"
                     style={{ width: '100%', resize: 'none', overflow: 'hidden' }}
                 />
             </div>
-
-            {/* Node connection handles */}
             {!data.isPreview && (
                 <>
                     <Handle

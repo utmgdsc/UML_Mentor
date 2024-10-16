@@ -109,8 +109,10 @@ const UMLDiagramEditor = ({ problemId }) => {
   const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
   const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
 
+  // Load initial nodes and edges from local storage
   const initialNodes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NODES) || '[]');
   const initialEdges = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_EDGES) || '[]');
+
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
   const [showInstructions, setShowInstructions] = useState(false);
@@ -120,42 +122,40 @@ const UMLDiagramEditor = ({ problemId }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const reactFlowWrapperRef = useRef(null);
 
-
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [],
+    []
   );
+
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [],
+    []
   );
-
-  // const onNodesChange = useCallback(
-  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-  //   [],
-  // );
-  // const onEdgesChange = useCallback(
-  //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-  //   [],
-  // );
-
-
-
 
   const onConnect = useCallback(
     (params) => {
-      setEdges((eds) => addEdge({ ...params, data : {edgeType} }, eds));
+      setEdges((eds) => addEdge({ ...params, data: { edgeType } }, eds));
     },
     [setEdges, edgeType]
   );
 
+  // Save nodes to local storage whenever they change
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
   }, [nodes]);
 
+  // Save edges to local storage whenever they change
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
   }, [edges]);
+
+  const updateNodeData = (nodeId, newData) => {
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
+      )
+    );
+  };
 
   const addInterfaceUMLNode = () => {
     const newNode = {
@@ -163,7 +163,8 @@ const UMLDiagramEditor = ({ problemId }) => {
       position: { x: Math.random() * 500, y: Math.random() * 500 },
       data: {
         label: `InterfaceNode${nodes.length + 1}`,
-        methods: [], // Ensure no default methods
+        attributes: [],
+        methods: [],
         color: getNodeColor(),
       },
       type: 'interfaceUMLNode',
@@ -177,8 +178,8 @@ const UMLDiagramEditor = ({ problemId }) => {
       position: { x: Math.random() * 500, y: Math.random() * 500 },
       data: {
         label: `NewNode${nodes.length + 1}`,
-        attributes: [], // Ensure no default attributes
-        methods: [], // Ensure no default methods
+        attributes: [],
+        methods: [],
         color: getNodeColor(),
       },
       type: 'umlNode',
@@ -387,25 +388,18 @@ const UMLDiagramEditor = ({ problemId }) => {
 
 <ReactFlow
 
-        nodes={nodes.map((node) => ({ ...node, data: { ...node.data, removeNode } }))}
-        // edges={edges.map((edge) => ({
-        //   ...edge,
-        //   type: 'step', // Always set the edge type to 'step'
-        //   style: {
-        //     stroke: '#000',
-        //     strokeWidth: 2,
-        //     strokeDasharray: edge.data?.edgeType === 'Composition' ? '5, 5' : '0',
-        //   },
-        //   markerEnd: {
-        //     // type: edge.data?.edgeType  == "Inheritance" ? MarkerType.Arrow : MarkerType.ArrowClosed,
-        //     id : edge.data?.edgeType  == "Composition" ? 'url('emptyArrow')' : 'diamond',
-        //   },
-        // }))}     
-        
-        edges = {edges.map((edge) => {
+        nodes={nodes.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            removeNode,
+            updateNodeData, // Pass the update function to nodes
+          },
+        }))}
+        edges={edges.map((edge) => {
           let markerId = 'filledArrow'; // Default marker
           let dashArray = '0'; // Default to solid line
-      
+
           switch (edge.data?.edgeType) {
             case 'Inheritance':
               markerId = 'emptyArrow'; // Solid filled arrow
@@ -420,17 +414,17 @@ const UMLDiagramEditor = ({ problemId }) => {
             default:
               markerId = 'filledArrow'; // Default fallback
           }
-      
+
           return {
             ...edge,
             type: 'step', // Keep step type
-          style: {
-            stroke: '#000',
-            strokeWidth: 2,
-            strokeDasharray: edge.data?.edgeType === 'Implementation' ? '5, 5' : '0',
-            strokeDashoffset : 100,
-          },
-            markerEnd:  markerId, // Use markerId here
+            style: {
+              stroke: '#000',
+              strokeWidth: 2,
+              strokeDasharray: edge.data?.edgeType === 'Implementation' ? '5, 5' : '0',
+              strokeDashoffset: 100,
+            },
+            markerEnd: markerId, // Use markerId here
           };
         })}
         onNodesChange={onNodesChange}
@@ -446,7 +440,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         style={{ width: '100%', height: '100%' }}
         onConnectEnd={onConnectEnd}
       >
-        <CustomMarkers/>
+        <CustomMarkers />
         <MiniMap
           nodeColor={(node) => node.data.color || '#eee'} // Use node's color or default to light gray
         />
@@ -478,6 +472,7 @@ const UMLDiagramEditor = ({ problemId }) => {
             <UMLInterfaceNode
               data={{
                 label: 'New Interface',
+                attributes: ['attribute: type'], // Add attributes for preview
                 methods: ['method()'],
                 isPreview: true,
                 showButtons: false,
