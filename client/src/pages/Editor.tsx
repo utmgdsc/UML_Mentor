@@ -163,7 +163,6 @@ const UMLDiagramEditor = ({ problemId }) => {
       position: { x: Math.random() * 500, y: Math.random() * 500 },
       data: {
         label: `InterfaceNode${nodes.length + 1}`,
-        attributes: [],
         methods: [],
         color: getNodeColor(),
       },
@@ -472,7 +471,6 @@ const UMLDiagramEditor = ({ problemId }) => {
             <UMLInterfaceNode
               data={{
                 label: 'New Interface',
-                attributes: ['attribute: type'], // Add attributes for preview
                 methods: ['method()'],
                 isPreview: true,
                 showButtons: false,
