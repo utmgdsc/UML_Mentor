@@ -20,6 +20,11 @@ function InstructionsPopup({
 }: InstructionsPopupProps) {
   const [currentInstructionIndex, setCurrentInstructionIndex] = useState(0);
 
+  // Add a check to ensure instructions are available
+  if (!instructions || instructions.length === 0) {
+    return null; // or return a placeholder component
+  }
+
   const handleNext = () => {
     setCurrentInstructionIndex(
       (prevIndex) => (prevIndex + 1) % instructions.length

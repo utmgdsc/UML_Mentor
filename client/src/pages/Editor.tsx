@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import {
   ReactFlow,
   MiniMap,
@@ -10,15 +10,16 @@ import {
   removeEdge,
   applyNodeChanges,
   applyEdgeChanges,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
-import UMLClassNode from '../components/UMLClassNode';
-import UMLInterfaceNode from '../components/UMLInterfaceNode';
-import InstructionsPopup from '../components/InstructionsPopup'; // Import the InstructionsPopup
-import html2canvas from 'html2canvas'; // Import html2canvas
-import { getBezierPath, getEdgeCenter, MarkerType } from 'react-flow-renderer';
-import {  getSmoothStepPath } from 'reactflow';
-import CustomMarkers from './CustomMarkers';
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import UMLClassNode from "../components/UMLClassNode";
+import UMLInterfaceNode from "../components/UMLInterfaceNode";
+import InstructionsPopup from "../components/InstructionsPopup"; // Import the InstructionsPopup
+import html2canvas from "html2canvas"; // Import html2canvas
+import { getBezierPath, getEdgeCenter, MarkerType } from "react-flow-renderer";
+import { getSmoothStepPath } from "reactflow";
+import CustomMarkers from "./CustomMarkers";
+import { umlDiagramInstructions } from "../components/instructionsData";
 
 // Define custom node types
 const nodeTypes = {
@@ -27,8 +28,9 @@ const nodeTypes = {
 };
 
 // Keys for local storage
-const LOCAL_STORAGE_KEY_NODES = 'uml-diagram-nodes';
-const LOCAL_STORAGE_KEY_EDGES = 'uml-diagram-edges';
+const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
+const LOCAL_STORAGE_KEY_EDGES = "uml-diagram-edges";
+const LOCAL_STORAGE_KEY_INSTRUCTIONS_SEEN = "uml-diagram-instructions-seen";
 
 // Utility function to generate a random pastel color
 const getNodeColor = () => {
@@ -39,17 +41,15 @@ const getNodeColor = () => {
   return `rgb(${r}, ${g}, ${b})`;
 };
 
-
 // UMLEdge component
 const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
   // Get the center of the edge for future use (optional)
   // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-  //     sourceX, 
-  //     sourceY, 
-  //     targetX, 
+  //     sourceX,
+  //     sourceY,
+  //     targetX,
   //     targetY
   // });
-
 
   // // Generate a smooth step path with custom settings
   // const path = getSmoothStepPath({
@@ -63,7 +63,6 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
   //     offset: 5, // Spacing between segments
   // });
 
-
   // const onNodesChange = useCallback(
   //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
   //   [],
@@ -73,45 +72,37 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
   //   [],
   // );
 
-
-
-
   return (
     <>
-        <defs>
-            <marker
-                id={`${id}-arrow`}
-                markerWidth="10"
-                markerHeight="10"
-                refX="5"
-                refY="2.5"
-                orient="auto"
-            >
-                <polygon points="0 0, 10 2.5, 0 5" fill="black" />
-            </marker>
-        </defs>
-        <path
-            id={id}
-            style={style}
-            d={path}
-            className="react-flow__edge-path"
-
-        />
+      <defs>
+        <marker
+          id={`${id}-arrow`}
+          markerWidth="10"
+          markerHeight="10"
+          refX="5"
+          refY="2.5"
+          orient="auto"
+        >
+          <polygon points="0 0, 10 2.5, 0 5" fill="black" />
+        </marker>
+      </defs>
+      <path id={id} style={style} d={path} className="react-flow__edge-path" />
     </>
-);
-
-
+  );
 };
 
-
-  
 const UMLDiagramEditor = ({ problemId }) => {
   const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
   const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
+  const LOCAL_STORAGE_KEY_INSTRUCTIONS_SEEN = `uml-diagram-instructions-seen-${problemId}`;
 
   // Load initial nodes and edges from local storage
-  const initialNodes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NODES) || '[]');
-  const initialEdges = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_EDGES) || '[]');
+  const initialNodes = JSON.parse(
+    localStorage.getItem(LOCAL_STORAGE_KEY_NODES) || "[]"
+  );
+  const initialEdges = JSON.parse(
+    localStorage.getItem(LOCAL_STORAGE_KEY_EDGES) || "[]"
+  );
 
   const [nodes, setNodes] = useNodesState(initialNodes);
   const [edges, setEdges] = useEdgesState(initialEdges);
@@ -152,7 +143,9 @@ const UMLDiagramEditor = ({ problemId }) => {
   const updateNodeData = (nodeId, newData) => {
     setNodes((nds) =>
       nds.map((node) =>
-        node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
+        node.id === nodeId
+          ? { ...node, data: { ...node.data, ...newData } }
+          : node
       )
     );
   };
@@ -166,7 +159,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         methods: [],
         color: getNodeColor(),
       },
-      type: 'interfaceUMLNode',
+      type: "interfaceUMLNode",
     };
     setNodes((nds) => [...nds, newNode]);
   };
@@ -181,7 +174,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         methods: [],
         color: getNodeColor(),
       },
-      type: 'umlNode',
+      type: "umlNode",
     };
     setNodes((nds) => [...nds, newNode]);
   };
@@ -197,7 +190,7 @@ const UMLDiagramEditor = ({ problemId }) => {
 
   const resetWorkspace = () => {
     const userConfirmed = window.confirm(
-      'Are you sure you want to reset the workspace? This action cannot be undone.'
+      "Are you sure you want to reset the workspace? This action cannot be undone."
     );
     if (userConfirmed) {
       setNodes([]);
@@ -214,32 +207,29 @@ const UMLDiagramEditor = ({ problemId }) => {
 
   // Function to generate and download image
   const generateImage = async () => {
-    const reactFlowElement = document.getElementsByClassName('react-flow')[0];
+    const reactFlowElement = document.getElementsByClassName("react-flow")[0];
     const canvas = await html2canvas(reactFlowElement, {
       useCORS: true,
       allowTaint: true,
-      backgroundColor: '#ffffff',
+      backgroundColor: "#ffffff",
       scale: 2,
     });
-    const imageData = canvas.toDataURL('image/png');
-    localStorage.setItem('uml-diagram-image', imageData);
-    const link = document.createElement('a');
+    const imageData = canvas.toDataURL("image/png");
+    localStorage.setItem("uml-diagram-image", imageData);
+    const link = document.createElement("a");
     link.href = imageData;
-    link.download = 'uml-diagram.png';
+    link.download = "uml-diagram.png";
     link.click();
   };
-
 
   const postSolution = async () => {
     const { nodes, edges } = getNodesAndEdges();
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
     await generateImage();
-    const challengeId = 'your-challenge-id'; // Replace this with the actual challenge ID
+    const challengeId = "your-challenge-id"; // Replace this with the actual challenge ID
     window.location.href = `/solutions/post/${challengeId}`;
   };
-
-
 
   const startDraggingNode = (nodeType) => {
     setDraggedNodeType(nodeType);
@@ -266,9 +256,12 @@ const UMLDiagramEditor = ({ problemId }) => {
         id: (nodes.length + 1).toString(),
         position,
         data: {
-          label: draggedNodeType === 'umlNode' ? `NewNode${nodes.length + 1}` : `InterfaceNode${nodes.length + 1}`,
-          attributes: draggedNodeType === 'umlNode' ? [] : [],
-          methods: draggedNodeType === 'umlNode' ? [] : [],
+          label:
+            draggedNodeType === "umlNode"
+              ? `NewNode${nodes.length + 1}`
+              : `InterfaceNode${nodes.length + 1}`,
+          attributes: draggedNodeType === "umlNode" ? [] : [],
+          methods: draggedNodeType === "umlNode" ? [] : [],
           color: getNodeColor(),
         },
         type: draggedNodeType,
@@ -278,20 +271,19 @@ const UMLDiagramEditor = ({ problemId }) => {
     }
   };
 
-
   const onConnectEnd = useCallback(
     (event, connectionState) => {
-      console.log('onConnectEnd triggered', connectionState);
+      console.log("onConnectEnd triggered", connectionState);
       if (!connectionState.isValid) {
         const bounds = reactFlowWrapperRef.current.getBoundingClientRect();
-        console.log('Bounds:', bounds);
+        console.log("Bounds:", bounds);
         const { clientX, clientY } = event;
-        console.log('Mouse position:', clientX, clientY);
+        console.log("Mouse position:", clientX, clientY);
         const position = {
           x: clientX - bounds.left,
           y: clientY - bounds.top,
         };
-        console.log('Calculated position:', position);
+        console.log("Calculated position:", position);
         const newNode = {
           id: (nodes.length + 1).toString(),
           position,
@@ -301,43 +293,63 @@ const UMLDiagramEditor = ({ problemId }) => {
             methods: [],
             color: getNodeColor(),
           },
-          type: 'umlNode', // Change to 'umlNode' for class node
+          type: "umlNode", // Change to 'umlNode' for class node
         };
-        console.log('New node:', newNode);
+        console.log("New node:", newNode);
         setNodes((nds) => [...nds, newNode]);
       }
     },
     [nodes, setNodes]
   );
 
+  useEffect(() => {
+    // Check if the user has seen the instructions
+    const instructionsSeen =
+      localStorage.getItem(LOCAL_STORAGE_KEY_INSTRUCTIONS_SEEN) === "true";
+    if (!instructionsSeen) {
+      setShowInstructions(true);
+    }
+  }, [problemId]);
+
+  const handleCloseInstructions = () => {
+    localStorage.setItem(LOCAL_STORAGE_KEY_INSTRUCTIONS_SEEN, "true");
+    setShowInstructions(false);
+  };
+
   return (
     <div
-      style={{ width: '100%', height: '100%', position: 'relative' }}
+      style={{ width: "100%", height: "100%", position: "relative" }}
       ref={reactFlowWrapperRef}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           zIndex: 1000,
-          background: 'white',
-          padding: '10px',
-          borderRadius: '5px',
-          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-          width: '150px',
-          top: '10px',
-          left: '10px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '10px',
+          background: "white",
+          padding: "10px",
+          borderRadius: "5px",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+          width: "150px",
+          top: "10px",
+          left: "10px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
         }}
       >
-        <h4 style={{ margin: '0', textAlign: 'center' }}>Actions</h4>
-        <button onMouseDown={() => startDraggingNode('interfaceUMLNode')} className="action-button">
+        <h4 style={{ margin: "0", textAlign: "center" }}>Actions</h4>
+        <button
+          onMouseDown={() => startDraggingNode("interfaceUMLNode")}
+          className="action-button"
+        >
           Add Interface Node
         </button>
-        <button onMouseDown={() => startDraggingNode('umlNode')} className="action-button">
+        <button
+          onMouseDown={() => startDraggingNode("umlNode")}
+          className="action-button"
+        >
           Add Class Node
         </button>
         <button onClick={resetWorkspace} className="reset-button">
@@ -346,13 +358,14 @@ const UMLDiagramEditor = ({ problemId }) => {
         <button onClick={postSolution} className="post-button">
           Post Solution
         </button>
-        <button onClick={() => setShowInstructions(true)} className="instructions-button">
-          Show Instructions
-        </button>
-        <button onClick={() => removeEdge(selectedEdge)} className="delete-button" disabled={!selectedEdge}>
+        <button
+          onClick={() => removeEdge(selectedEdge)}
+          className="delete-button"
+          disabled={!selectedEdge}
+        >
           Delete Selected Edge
         </button>
-        <label htmlFor="arrowType" style={{ marginTop: '10px' }}>
+        <label htmlFor="arrowType" style={{ marginTop: "10px" }}>
           Select Arrow Type:
         </label>
         <select
@@ -360,10 +373,10 @@ const UMLDiagramEditor = ({ problemId }) => {
           value={edgeType}
           onChange={(e) => setEdgeType(e.target.value)}
           style={{
-            padding: '5px',
-            borderRadius: '5px',
-            border: '1px solid #ccc',
-            width: '130px',
+            padding: "5px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            width: "130px",
           }}
         >
           <option value="Inheritance">Inheritance</option>
@@ -372,21 +385,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         </select>
       </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<ReactFlow
-
+      <ReactFlow
         nodes={nodes.map((node) => ({
           ...node,
           data: {
@@ -396,31 +395,32 @@ const UMLDiagramEditor = ({ problemId }) => {
           },
         }))}
         edges={edges.map((edge) => {
-          let markerId = 'filledArrow'; // Default marker
-          let dashArray = '0'; // Default to solid line
+          let markerId = "filledArrow"; // Default marker
+          let dashArray = "0"; // Default to solid line
 
           switch (edge.data?.edgeType) {
-            case 'Inheritance':
-              markerId = 'emptyArrow'; // Solid filled arrow
+            case "Inheritance":
+              markerId = "emptyArrow"; // Solid filled arrow
               break;
-            case 'Composition':
-              markerId = 'diamond'; // Dashed with empty arrow
-              dashArray = '5,5';
+            case "Composition":
+              markerId = "diamond"; // Dashed with empty arrow
+              dashArray = "5,5";
               break;
-            case 'Implementation':
-              markerId = 'emptyArrow'; // Solid with diamond
+            case "Implementation":
+              markerId = "emptyArrow"; // Solid with diamond
               break;
             default:
-              markerId = 'filledArrow'; // Default fallback
+              markerId = "filledArrow"; // Default fallback
           }
 
           return {
             ...edge,
-            type: 'step', // Keep step type
+            type: "step", // Keep step type
             style: {
-              stroke: '#000',
+              stroke: "#000",
               strokeWidth: 2,
-              strokeDasharray: edge.data?.edgeType === 'Implementation' ? '5, 5' : '0',
+              strokeDasharray:
+                edge.data?.edgeType === "Implementation" ? "5, 5" : "0",
               strokeDashoffset: 100,
             },
             markerEnd: markerId, // Use markerId here
@@ -432,37 +432,41 @@ const UMLDiagramEditor = ({ problemId }) => {
         onEdgeClick={(event, edge) => setSelectedEdge(edge.id)}
         nodeTypes={nodeTypes}
         edgeTypes={{
-          'Inheritance': UMLEdge,
-          'Composition': UMLEdge,
-          'Implementation': UMLEdge,
+          Inheritance: UMLEdge,
+          Composition: UMLEdge,
+          Implementation: UMLEdge,
         }}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: "100%", height: "100%" }}
         onConnectEnd={onConnectEnd}
       >
         <CustomMarkers />
         <MiniMap
-          nodeColor={(node) => node.data.color || '#eee'} // Use node's color or default to light gray
+          nodeColor={(node) => node.data.color || "#eee"} // Use node's color or default to light gray
         />
         <Controls />
         <Background />
       </ReactFlow>
-      <InstructionsPopup show={showInstructions} handleClose={() => { setShowInstructions(false) }} />
+      <InstructionsPopup
+        show={showInstructions}
+        handleClose={handleCloseInstructions}
+        instructions={umlDiagramInstructions}
+      />
       {draggedNodeType && (
         <div
           style={{
-            position: 'absolute',
+            position: "absolute",
             left: mousePosition.x,
             top: mousePosition.y,
             opacity: 0.5,
-            pointerEvents: 'none',
+            pointerEvents: "none",
           }}
         >
-          {draggedNodeType === 'umlNode' ? (
+          {draggedNodeType === "umlNode" ? (
             <UMLClassNode
               data={{
-                label: 'New Class',
-                attributes: ['attribute: type'],
-                methods: ['method()'],
+                label: "New Class",
+                attributes: ["attribute: type"],
+                methods: ["method()"],
                 isPreview: true,
               }}
               id="preview"
@@ -470,8 +474,8 @@ const UMLDiagramEditor = ({ problemId }) => {
           ) : (
             <UMLInterfaceNode
               data={{
-                label: 'New Interface',
-                methods: ['method()'],
+                label: "New Interface",
+                methods: ["method()"],
                 isPreview: true,
                 showButtons: false,
               }}
@@ -483,6 +487,5 @@ const UMLDiagramEditor = ({ problemId }) => {
     </div>
   );
 };
-
 
 export default UMLDiagramEditor;
