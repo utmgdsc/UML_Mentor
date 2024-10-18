@@ -14,7 +14,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import UMLClassNode from "../components/UMLClassNode";
 import UMLInterfaceNode from "../components/UMLInterfaceNode";
-import InstructionsPopup from "../components/InstructionsPopup"; // Import the InstructionsPopup
+import InstructionsPopup from "../components/InstructionsPopup";
 import html2canvas from "html2canvas"; // Import html2canvas
 import { getBezierPath, getEdgeCenter, MarkerType } from "react-flow-renderer";
 import { getSmoothStepPath } from "reactflow";
@@ -30,7 +30,7 @@ const nodeTypes = {
 // Keys for local storage
 const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
 const LOCAL_STORAGE_KEY_EDGES = "uml-diagram-edges";
-const LOCAL_STORAGE_KEY_INSTRUCTIONS_SEEN = "uml-diagram-instructions-seen";
+const GLOBAL_INSTRUCTIONS_SEEN_KEY = "uml-diagram-instructions-seen-global";
 
 // Utility function to generate a random pastel color
 const getNodeColor = () => {
@@ -94,7 +94,6 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
 const UMLDiagramEditor = ({ problemId }) => {
   const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
   const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
-  const LOCAL_STORAGE_KEY_INSTRUCTIONS_SEEN = `uml-diagram-instructions-seen-${problemId}`;
 
   // Load initial nodes and edges from local storage
   const initialNodes = JSON.parse(
@@ -303,16 +302,17 @@ const UMLDiagramEditor = ({ problemId }) => {
   );
 
   useEffect(() => {
-    // Check if the user has seen the instructions
+    // Check if the user has seen the instructions using the global key
     const instructionsSeen =
-      localStorage.getItem(LOCAL_STORAGE_KEY_INSTRUCTIONS_SEEN) === "true";
+      localStorage.getItem(GLOBAL_INSTRUCTIONS_SEEN_KEY) === "true";
     if (!instructionsSeen) {
       setShowInstructions(true);
     }
-  }, [problemId]);
+  }, []); // This effect now runs only once when the component mounts
 
   const handleCloseInstructions = () => {
-    localStorage.setItem(LOCAL_STORAGE_KEY_INSTRUCTIONS_SEEN, "true");
+    // Use the global key when setting the instructions as seen
+    localStorage.setItem(GLOBAL_INSTRUCTIONS_SEEN_KEY, "true");
     setShowInstructions(false);
   };
 
