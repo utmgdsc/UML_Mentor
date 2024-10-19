@@ -9,8 +9,10 @@ const Solutions = () => {
   const [showingSolutions, setShowingSolutions] = useState<SolutionData[]>([]);
   const [challengeNames, setChallengeNames] = useState<string[]>([]);
   const [solvedChallenges, setSolvedChallenges] = useState<string[]>([]);
-  const [thisUser, setThisUser] = useState<{username: string, role: string}>({username: "", role: ""});
-
+  const [thisUser, setThisUser] = useState<{ username: string; role: string }>({
+    username: "",
+    role: "",
+  });
 
   // fetch the username and all solved challenges (we need the challenge titles)
   useEffect(() => {
@@ -19,12 +21,14 @@ const Solutions = () => {
         if (!res.ok) {
           throw new Error(res.statusText);
         }
-        return res.json() as Promise<{ username: string, role: string }>;
+        return res.json() as Promise<{ username: string; role: string }>;
       })
       .then((data) => {
         setThisUser(data);
-        console.log("fetching: /api/users/" + data.username + "/solvedChallenges")
-        return fetch("/api/users/" + data.username + "/solvedChallenges")
+        console.log(
+          "fetching: /api/users/" + data.username + "/solvedChallenges"
+        );
+        return fetch("/api/users/" + data.username + "/solvedChallenges");
       })
       .then((res: Response) => {
         if (!res.ok) {
@@ -95,19 +99,23 @@ const Solutions = () => {
                     } else {
                       setShowingSolutions(
                         solutions.filter(
-                          (solution) => solution.challengeTitle === challengeTitle,
-                        ),
+                          (solution) =>
+                            solution.challengeTitle === challengeTitle
+                        )
                       );
                     }
                   }}
                 >
                   <option>All</option>
                   {challengeNames.map((challengeName) => (
-                    <option 
-                      disabled={!(thisUser.role === "admin") && !solvedChallenges.includes(challengeName)} 
+                    <option
+                      disabled={
+                        !(thisUser.role === "admin") &&
+                        !solvedChallenges.includes(challengeName)
+                      }
                       key={challengeName}
                     >
-                        {challengeName}
+                      {challengeName}
                     </option>
                   ))}
                 </Form.Control>

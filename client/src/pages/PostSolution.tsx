@@ -14,13 +14,34 @@ type PostSolutionState = {
 const PostSolution = () => {
   const navigate = useNavigate();
   const { id: challengeId } = useParams();
-  const [postSolutionState, setPostSolutionState] = useState<PostSolutionState>(
-    {
-      title: "",
-      description: "",
-      diagram: null,
-    },
-  );
+  const [postSolutionState, setPostSolutionState] = useState<PostSolutionState>({
+    title: "",
+    description: "",
+    diagram: null,
+  });
+
+  useEffect(() => {
+    // Retrieve the image from local storage
+    const imageUrl = localStorage.getItem('uml-diagram-image');
+
+    if (imageUrl) {
+      // Convert the base64 string to a Blob
+      const byteString = atob(imageUrl.split(',')[1]);
+      const mimeString = imageUrl.split(',')[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ab], { type: mimeString });
+      const file = new File([blob], "uml-diagram.png", { type: mimeString });
+      
+      setPostSolutionState((prevData) => ({
+        ...prevData,
+        diagram: file, // Set the diagram state to the generated image file
+      }));
+    }
+  }, []);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -37,19 +58,16 @@ const PostSolution = () => {
       const file = e.target.files[0];
       setPostSolutionState((prevData) => ({
         ...prevData,
-        diagram: file,
+        diagram: file, // Update the diagram with the selected file
       }));
     }
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: Form validation
     const data = new FormData();
     data.append("challengeId", `${challengeId}`);
-
     data.append("title", postSolutionState.title);
-
     data.append("description", postSolutionState.description);
     data.append("diagram", postSolutionState.diagram);
 
@@ -60,6 +78,7 @@ const PostSolution = () => {
       .then((resp) => resp.json())
       .then((data) => {
         navigate(`/solution/${data.id}`);
+        localStorage.removeItem('uml-diagram-image'); // Clear image from local storage after submission
       })
       .catch((err) => {
         console.error(err);
@@ -98,9 +117,12 @@ const PostSolution = () => {
               <Form.Control
                 type="file"
                 name="diagram"
-                onChange={handleFileChange}
                 accept="image/*"
+                onChange={handleFileChange}
               />
+              <Form.Text className="text-muted">
+                {postSolutionState.diagram ? postSolutionState.diagram.name : 'Automatically attached from local storage'}
+              </Form.Text>
             </Form.Group>
             <Button variant="primary" type="submit">
               Submit

@@ -9,9 +9,10 @@ import PostSolution from './pages/PostSolution.tsx';
 import Solution from './pages/Solution.tsx';
 import Profile from './pages/Profile.tsx';
 import Editor from './pages/Editor.tsx';
-import AddChallenge from "./pages/AddChallenge.tsx";
-import Admin from "./pages/Admin.tsx"
-// import ChallengeFilterDropdown from './pages/filterByName.tsx';
+
+import AddChallenge from './pages/AddChallenge.tsx';
+import Admin from './pages/Admin.tsx';
+import SplitLayout from './pages/SplitScreen.tsx';
 
 
 const NAV_CONFIG = {
@@ -50,19 +51,19 @@ const router = createBrowserRouter([
       },
       {
         path: "challenge/:id",
-        element: <Challenge />
+        element: <SplitLayout />, // Updated to use SplitLayout
       },
       {
         path: "challenges",
-        element: <Challenges />
+        element: <Challenges />,
       },
       {
         path: "challenges/add",
-        element: <AddChallenge />
+        element: <AddChallenge />,
       },
       {
         path: "profile/:username",
-        element: <Profile />
+        element: <Profile />,
       },
       // {
       //   path: "challenges/filter",
@@ -82,11 +83,11 @@ const router = createBrowserRouter([
       },
       {
         path: "editor",
-        element: <Editor />
+        element: <Editor />,
       },
       {
         path: "admin",
-        element: <Admin />
+        element: <Admin />,
       },
     ],
   },

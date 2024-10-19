@@ -1,272 +1,488 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { DrawIoEmbed, DrawIoEmbedRef } from "react-drawio";
-import { useQuery } from "../hooks/useQuery";
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import {
+  ReactFlow,
+  MiniMap,
+  Controls,
+  Background,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  removeEdge,
+  applyNodeChanges,
+  applyEdgeChanges,
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import UMLClassNode from '../components/UMLClassNode';
+import UMLInterfaceNode from '../components/UMLInterfaceNode';
+import InstructionsPopup from '../components/InstructionsPopup'; // Import the InstructionsPopup
+import html2canvas from 'html2canvas'; // Import html2canvas
+import { getBezierPath, getEdgeCenter, MarkerType } from 'react-flow-renderer';
+import {  getSmoothStepPath } from 'reactflow';
+import CustomMarkers from './CustomMarkers';
 
-const CONFIG = {
-  defaultEdgeStyle: {
-    endSize: 12,
-    startSize: 12,
-    edgeStyle: "orthogonalEdgeStyle",
-    rounded: 1,
-    curved: 0,
-  },
-  enableCustomLibraries: false,
-  appendCustomLibraries: false,
-  expandLibraries: true,
-  defaultLibraries: "uml",
-  override: false,
+// Define custom node types
+const nodeTypes = {
+  umlNode: UMLClassNode,
+  interfaceUMLNode: UMLInterfaceNode,
 };
 
-const Editor = () => {
-  const drawioRef = useRef<DrawIoEmbedRef>(null);
-  const diagramData = useRef<string | undefined>(undefined);
-  //TODO: Allow the user to change the diagram name (super low priority)
-  const [diagramName, setDiagramName] = useState<string | null>(null);
-  const diagramNameRef = useRef<string | null>(null); //Crutch for the handleSave function
-  const diagramId = useRef<string | null>(null);
+// Keys for local storage
+const LOCAL_STORAGE_KEY_NODES = 'uml-diagram-nodes';
+const LOCAL_STORAGE_KEY_EDGES = 'uml-diagram-edges';
 
-  const query = useQuery();
-
-  function doExport() {
-    if (drawioRef.current) {
-      drawioRef.current.exportDiagram({
-        format: "xmlpng",
-      });
-    }
-  }
+// Utility function to generate a random pastel color
+const getNodeColor = () => {
+  const getPastelColorComponent = () => Math.floor(Math.random() * 128) + 127; // Ensures a value between 127 and 255
+  const r = getPastelColorComponent();
+  const g = getPastelColorComponent();
+  const b = getPastelColorComponent();
+  return `rgb(${r}, ${g}, ${b})`;
+};
 
 
-  //autosave (export) the diagram every 20 seconds (ONLY FOR DIAGRAMS IN PROGRESS, NOT EDITING EXISTING SOLUTIONS)
-  useEffect(() => {
-    if (query.get("type") !== "challenge") return;
-    const interval = setInterval(() => {
-      // console.log("autosaving");
-      doExport();
-    }, 20000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [query]);
-
-  useEffect(() => {
-    // If query.get("type") === "challenge" then we need to fetch the SolutionInProgress from the server
-    // by challengeId and userId. If the SolutionInProgress exists, we need to load it into the editor (diagram + title).
-    // Otherwise we create a new diagram + title, load it into the editor and make a SolutionInProgress entry in the db.
-    if (query.get("type") === "challenge") {
-      const challengeId = query.get("id");
-
-      //fetch an existing diagram from the server and load it into the editor
-      //If the diagram is not found, create a new diagram and save it to the server
-      fetch("/api/inprogress/challenge/" + challengeId) //GET
-      .then(response => { 
-        if(response.status === 404) {
-          throw new Error("404");
-        }
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json() as Promise<{diagram: string, title: string, id: string}>
-      })
-      .then(data => {
-        // console.log(data);
-        diagramData.current = data.diagram;
-        diagramId.current = data.id;
-        setDiagramName(data.title); // IMPORTANT: This state update is required to actually load the diagram
-        diagramNameRef.current = data.title; //Crutch for the handleSave function
-        // console.log("Loaded diagram: " + diagramData.current + " with id: " + diagramId.current + " and name: " + diagramNameRef.current);
-      })
-      .catch((error: Error) => {
-        // console.log("Error: " + error.message);
-        //if the solution in progress has not been created yet, create a new entry in the database
-        if(error.message === "404") {
-          //fetch the challenge details from the server to get the title
-          fetch("/api/challenges/" + challengeId).then(response => { //GET
-            if (!response.ok) {
-              throw new Error(response.statusText);
-            }
-            return response.json() as Promise<{title: string}>
-          }).then(data => {
-            setDiagramName(data.title + " Diagram");
-            diagramNameRef.current = data.title + " Diagram"; //Crutch for the handleSave function
-            //create a new diagram and save it to the server
-            return fetch("/api/inprogress" , { //POST
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                title: diagramNameRef.current, 
-                challengeId: challengeId, 
-                xml: ""})
-            });
-          }).then(response => {
-            if (!response.ok) {
-              throw new Error(response.statusText);
-            }
-            return response.json() as Promise<{diagram: string, title: string, id: string}>
-          }).then(data => {
-            // console.log("Created new diagram with id: " + data.id + " and title: " + data.title);
-            diagramData.current = data.diagram;
-            diagramId.current = data.id;
-            setDiagramName(data.title);
-            diagramNameRef.current = data.title;
-            setTimeout(() => {
-              doExport();
-            }, 1000);
-          }).catch((error) => {
-            console.error(error);
-          });
-        } else {
-          //otherwise, log the error
-          console.error(error);
-        }
-        
-      });
-    }   
-    else if (query.get("type") === "solution") {
-      //TODO: Load the existing solution diagram into the editor. Do not autosave it.
-
-      // If query.get("type") === "solution" then we need to fetch the Solution from the server by solutionId.
-      // We load the solution into the editor. The user can then confirm or drop changes.
-      // Add a note for editing solution diagrams that it should only be used to add minor changes.
-    } else {
-      //Redirect to error page
-      //TODO: implement this properly
-      // return redirect("/error");
-    }
-  },[query] );
+// UMLEdge component
+const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
+  // Get the center of the edge for future use (optional)
+  // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
+  //     sourceX, 
+  //     sourceY, 
+  //     targetX, 
+  //     targetY
+  // });
 
 
-  /**
-   * Save the diagram to the server by sending a PUT request to /api/solutions/inprogress with the diagram data.
-   */
-  const handleSave = useCallback(
-    (data: {
-      event: string;
-      xml: string;
-      data: string;
-      message: { exit?: boolean };
-    }) => {
-      //make sure to only process "export" events
-      if (data.message.exit == true) return;
+  // // Generate a smooth step path with custom settings
+  // const path = getSmoothStepPath({
+  //     sourceX,
+  //     sourceY,
+  //     targetX,
+  //     targetY,
+  //     sourcePosition: 'right', // Adjust positions if needed
+  //     targetPosition: 'left',
+  //     borderRadius: 10, // Controls the curve at corner points
+  //     offset: 5, // Spacing between segments
+  // });
 
-      const rawData = data.data;
-      diagramData.current = rawData.substring(rawData.indexOf(",") + 1); //trim the data:image/png;base64, part
 
-      if (diagramId.current !== null && diagramNameRef.current !== null) {
-        // console.log("Saving diagram: " + diagramData.current +
-        // " with id: " + diagramId.current +
-        // " and name: " + diagramNameRef.current +
-        // "on event" + data.event);
-        // console.log(data.message);
+  // const onNodesChange = useCallback(
+  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+  //   [],
+  // );
+  // const onEdgesChange = useCallback(
+  //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+  //   [],
+  // );
 
-      fetch("/api/inprogress/" + diagramId.current, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          xml: diagramData.current, 
-          title: diagramNameRef.current, 
-          challengeId: query.get("id") //NOTE: This only works for challenges in progress
-        }),
-        // keepalive: true, // To allow saves when the tab is closed LIMITS REQUEST SIZE TO 65KB
-      })
-      .then(response => {
-        console.log(response);
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        return response.json() as Promise<{id: string}>
-      })
-      .then(data => {
-        // console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-    }
-  },[query, diagramName]);
+
 
 
   return (
-    <div>
-      <h1 className="h2">{diagramName}</h1>
-      <div style={{height: "100vh"}}>
-        < DrawIoEmbed 
-          ref={drawioRef}
-          configuration={CONFIG}
-          exportFormat="xmlpng"
-          urlParameters={
-            {
-              // ui: "atlas",
-              spin: true,
-              // modified: true,
-              // keepmodified: true,
-              libraries: true,
-              noSaveBtn: false,
-              saveAndExit: false,
-              noExitBtn: false
-            }
-          }
-          onExport={(data) => {handleSave(data)}} //Note: it says the type is wrong, but it is not. 
-          onSave={(data) => {
-            // console.log(data);
-            // If the save is triggered by another event, then do nothing
-            if(data.parentEvent !== "save") {
-              return;
-            }
-            doExport();
-          }}
-          onLoad={(data) => {
-            // If the xml is null, then we need to wait and reload the diagram from diagramData
-            if (data.xml === null) {
-              // console.log("Waiting for diagramData to be initialized");
-              setTimeout(() => {
-                if (drawioRef.current !== null && diagramData.current !== undefined){
-                  
-                  drawioRef.current?.load({
-                    xmlpng: diagramData.current
-                  });
-                  
-                  console.log("Loaded diagram from stash");
-                }
-                else {
-                  console.log("No diagram data found");
-                }
-              }, 100);
-            }  
-          }}
-          onClose={(data) => {
-            // console.log(data);
-            // If the exit is triggered by another event, then do nothing
-            if(data.parentEvent) {
-              return;
-            }
-            window.close();
+    <>
+        <defs>
+            <marker
+                id={`${id}-arrow`}
+                markerWidth="10"
+                markerHeight="10"
+                refX="5"
+                refY="2.5"
+                orient="auto"
+            >
+                <polygon points="0 0, 10 2.5, 0 5" fill="black" />
+            </marker>
+        </defs>
+        <path
+            id={id}
+            style={style}
+            d={path}
+            className="react-flow__edge-path"
 
-                        // Save and exit. Timeout to make sure the save request is sent before the tab is closed.
-                        // doExport();
-                        // setTimeout(() => {
-                        //     window.close();
-                        // }, 1000);
-                    }}
-                    />
-            </div>
-            {/* TESTING ONLY
-            <button onClick={ () => {
-                if (drawioRef.current !== null && diagramData.current !== undefined){
-                    drawioRef.current?.load({
-                        xmlpng: diagramData.current
-                    });
-                    console.log("Loaded diagram from stash");
-                }
-                else {
-                    console.log("No diagram data found");
-                }
-            }}>Import Diagram</button> */}
+        />
+    </>
+);
+
+
+};
+
+
+  
+const UMLDiagramEditor = ({ problemId }) => {
+  const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
+  const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
+
+  // Load initial nodes and edges from local storage
+  const initialNodes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_NODES) || '[]');
+  const initialEdges = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_EDGES) || '[]');
+
+  const [nodes, setNodes] = useNodesState(initialNodes);
+  const [edges, setEdges] = useEdgesState(initialEdges);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [edgeType, setEdgeType] = useState("Inheritance");
+  const [selectedEdge, setSelectedEdge] = useState(null);
+  const [draggedNodeType, setDraggedNodeType] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const reactFlowWrapperRef = useRef(null);
+
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    []
+  );
+
+  const onEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    []
+  );
+
+  const onConnect = useCallback(
+    (params) => {
+      setEdges((eds) => addEdge({ ...params, data: { edgeType } }, eds));
+    },
+    [setEdges, edgeType]
+  );
+
+  // Save nodes to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
+  }, [nodes]);
+
+  // Save edges to local storage whenever they change
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
+  }, [edges]);
+
+  const updateNodeData = (nodeId, newData) => {
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, ...newData } } : node
+      )
+    );
+  };
+
+  const addInterfaceUMLNode = () => {
+    const newNode = {
+      id: (nodes.length + 1).toString(),
+      position: { x: Math.random() * 500, y: Math.random() * 500 },
+      data: {
+        label: `InterfaceNode${nodes.length + 1}`,
+        methods: [],
+        color: getNodeColor(),
+      },
+      type: 'interfaceUMLNode',
+    };
+    setNodes((nds) => [...nds, newNode]);
+  };
+
+  const addNewNode = () => {
+    const newNode = {
+      id: (nodes.length + 1).toString(),
+      position: { x: Math.random() * 500, y: Math.random() * 500 },
+      data: {
+        label: `NewNode${nodes.length + 1}`,
+        attributes: [],
+        methods: [],
+        color: getNodeColor(),
+      },
+      type: 'umlNode',
+    };
+    setNodes((nds) => [...nds, newNode]);
+  };
+
+  const removeNode = (nodeId) => {
+    setNodes((nds) => nds.filter((node) => node.id !== nodeId));
+  };
+
+  const removeEdge = (edgeId) => {
+    setEdges((eds) => eds.filter((edge) => edge.id !== edgeId));
+    setSelectedEdge(null); // Clear selected edge
+  };
+
+  const resetWorkspace = () => {
+    const userConfirmed = window.confirm(
+      'Are you sure you want to reset the workspace? This action cannot be undone.'
+    );
+    if (userConfirmed) {
+      setNodes([]);
+      setEdges([]);
+      localStorage.removeItem(LOCAL_STORAGE_KEY_NODES);
+      localStorage.removeItem(LOCAL_STORAGE_KEY_EDGES);
+    }
+  };
+
+  // Function to get nodes and edges data
+  const getNodesAndEdges = () => {
+    return { nodes, edges };
+  };
+
+  // Function to generate and download image
+  const generateImage = async () => {
+    const reactFlowElement = document.getElementsByClassName('react-flow')[0];
+    const canvas = await html2canvas(reactFlowElement, {
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      scale: 2,
+    });
+    const imageData = canvas.toDataURL('image/png');
+    localStorage.setItem('uml-diagram-image', imageData);
+    const link = document.createElement('a');
+    link.href = imageData;
+    link.download = 'uml-diagram.png';
+    link.click();
+  };
+
+
+  const postSolution = async () => {
+    const { nodes, edges } = getNodesAndEdges();
+    localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
+    localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
+    await generateImage();
+    const challengeId = 'your-challenge-id'; // Replace this with the actual challenge ID
+    window.location.href = `/solutions/post/${challengeId}`;
+  };
+
+
+
+  const startDraggingNode = (nodeType) => {
+    setDraggedNodeType(nodeType);
+  };
+
+  const handleMouseMove = (event) => {
+    if (draggedNodeType) {
+      const bounds = reactFlowWrapperRef.current.getBoundingClientRect();
+      setMousePosition({
+        x: event.clientX - bounds.left,
+        y: event.clientY - bounds.top,
+      });
+    }
+  };
+
+  const handleMouseUp = (event) => {
+    if (draggedNodeType) {
+      const bounds = reactFlowWrapperRef.current.getBoundingClientRect();
+      const position = {
+        x: event.clientX - bounds.left,
+        y: event.clientY - bounds.top,
+      };
+      const newNode = {
+        id: (nodes.length + 1).toString(),
+        position,
+        data: {
+          label: draggedNodeType === 'umlNode' ? `NewNode${nodes.length + 1}` : `InterfaceNode${nodes.length + 1}`,
+          attributes: draggedNodeType === 'umlNode' ? [] : [],
+          methods: draggedNodeType === 'umlNode' ? [] : [],
+          color: getNodeColor(),
+        },
+        type: draggedNodeType,
+      };
+      setNodes((nds) => [...nds, newNode]);
+      setDraggedNodeType(null);
+    }
+  };
+
+
+  const onConnectEnd = useCallback(
+    (event, connectionState) => {
+      console.log('onConnectEnd triggered', connectionState);
+      if (!connectionState.isValid) {
+        const bounds = reactFlowWrapperRef.current.getBoundingClientRect();
+        console.log('Bounds:', bounds);
+        const { clientX, clientY } = event;
+        console.log('Mouse position:', clientX, clientY);
+        const position = {
+          x: clientX - bounds.left,
+          y: clientY - bounds.top,
+        };
+        console.log('Calculated position:', position);
+        const newNode = {
+          id: (nodes.length + 1).toString(),
+          position,
+          data: {
+            label: `ClassNode${nodes.length + 1}`,
+            attributes: [],
+            methods: [],
+            color: getNodeColor(),
+          },
+          type: 'umlNode', // Change to 'umlNode' for class node
+        };
+        console.log('New node:', newNode);
+        setNodes((nds) => [...nds, newNode]);
+      }
+    },
+    [nodes, setNodes]
+  );
+
+  return (
+    <div
+      style={{ width: '100%', height: '100%', position: 'relative' }}
+      ref={reactFlowWrapperRef}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          zIndex: 1000,
+          background: 'white',
+          padding: '10px',
+          borderRadius: '5px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+          width: '150px',
+          top: '10px',
+          left: '10px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+        }}
+      >
+        <h4 style={{ margin: '0', textAlign: 'center' }}>Actions</h4>
+        <button onMouseDown={() => startDraggingNode('interfaceUMLNode')} className="action-button">
+          Add Interface Node
+        </button>
+        <button onMouseDown={() => startDraggingNode('umlNode')} className="action-button">
+          Add Class Node
+        </button>
+        <button onClick={resetWorkspace} className="reset-button">
+          Reset Workspace
+        </button>
+        <button onClick={postSolution} className="post-button">
+          Post Solution
+        </button>
+        <button onClick={() => setShowInstructions(true)} className="instructions-button">
+          Show Instructions
+        </button>
+        <button onClick={() => removeEdge(selectedEdge)} className="delete-button" disabled={!selectedEdge}>
+          Delete Selected Edge
+        </button>
+        <label htmlFor="arrowType" style={{ marginTop: '10px' }}>
+          Select Arrow Type:
+        </label>
+        <select
+          id="arrowType"
+          value={edgeType}
+          onChange={(e) => setEdgeType(e.target.value)}
+          style={{
+            padding: '5px',
+            borderRadius: '5px',
+            border: '1px solid #ccc',
+            width: '130px',
+          }}
+        >
+          <option value="Inheritance">Inheritance</option>
+          <option value="Composition">Composition</option>
+          <option value="Implementation">Implementation</option>
+        </select>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ReactFlow
+
+        nodes={nodes.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            removeNode,
+            updateNodeData, // Pass the update function to nodes
+          },
+        }))}
+        edges={edges.map((edge) => {
+          let markerId = 'filledArrow'; // Default marker
+          let dashArray = '0'; // Default to solid line
+
+          switch (edge.data?.edgeType) {
+            case 'Inheritance':
+              markerId = 'emptyArrow'; // Solid filled arrow
+              break;
+            case 'Composition':
+              markerId = 'diamond'; // Dashed with empty arrow
+              dashArray = '5,5';
+              break;
+            case 'Implementation':
+              markerId = 'emptyArrow'; // Solid with diamond
+              break;
+            default:
+              markerId = 'filledArrow'; // Default fallback
+          }
+
+          return {
+            ...edge,
+            type: 'step', // Keep step type
+            style: {
+              stroke: '#000',
+              strokeWidth: 2,
+              strokeDasharray: edge.data?.edgeType === 'Implementation' ? '5, 5' : '0',
+              strokeDashoffset: 100,
+            },
+            markerEnd: markerId, // Use markerId here
+          };
+        })}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onEdgeClick={(event, edge) => setSelectedEdge(edge.id)}
+        nodeTypes={nodeTypes}
+        edgeTypes={{
+          'Inheritance': UMLEdge,
+          'Composition': UMLEdge,
+          'Implementation': UMLEdge,
+        }}
+        style={{ width: '100%', height: '100%' }}
+        onConnectEnd={onConnectEnd}
+      >
+        <CustomMarkers />
+        <MiniMap
+          nodeColor={(node) => node.data.color || '#eee'} // Use node's color or default to light gray
+        />
+        <Controls />
+        <Background />
+      </ReactFlow>
+      <InstructionsPopup show={showInstructions} handleClose={() => { setShowInstructions(false) }} />
+      {draggedNodeType && (
+        <div
+          style={{
+            position: 'absolute',
+            left: mousePosition.x,
+            top: mousePosition.y,
+            opacity: 0.5,
+            pointerEvents: 'none',
+          }}
+        >
+          {draggedNodeType === 'umlNode' ? (
+            <UMLClassNode
+              data={{
+                label: 'New Class',
+                attributes: ['attribute: type'],
+                methods: ['method()'],
+                isPreview: true,
+              }}
+              id="preview"
+            />
+          ) : (
+            <UMLInterfaceNode
+              data={{
+                label: 'New Interface',
+                methods: ['method()'],
+                isPreview: true,
+                showButtons: false,
+              }}
+              id="preview"
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
-export default Editor;
+
+export default UMLDiagramEditor;
