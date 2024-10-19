@@ -4,6 +4,7 @@ import { Handle, Position, NodeProps } from '@xyflow/react';
 // Define types for the node data and props
 interface UMLNodeData {
     label?: string;
+    attributes?: string[];
     methods?: string[];
     color?: string;
     removeNode?: (id: string) => void;
@@ -15,22 +16,34 @@ interface UMLNodeProps extends NodeProps<UMLNodeData> {}
 
 const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     const [label, setLabel] = useState<string>(data.label || 'Interface');
+    const [attributes, setAttributes] = useState<string>(data.attributes?.join('\n') || '');
     const [methods, setMethods] = useState<string>(data.methods?.join('\n') || '');
     const headerColor = data.color || '#FFEE93';
 
+    const attributesRef = useRef<HTMLTextAreaElement>(null);
     const methodsRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
+        if (attributesRef.current) {
+            attributesRef.current.style.height = 'auto';
+            attributesRef.current.style.height = `${attributesRef.current.scrollHeight}px`;
+        }
         if (methodsRef.current) {
             methodsRef.current.style.height = 'auto';
             methodsRef.current.style.height = `${methodsRef.current.scrollHeight}px`;
         }
-    }, [methods]);
+    }, [attributes, methods]);
 
     const handleLabelChange = (e) => {
         const newLabel = e.target.value;
         setLabel(newLabel);
         data.updateNodeData?.(id, { label: newLabel });
+    };
+
+    const handleAttributesChange = (e) => {
+        const newAttributes = e.target.value;
+        setAttributes(newAttributes);
+        data.updateNodeData?.(id, { attributes: newAttributes.split('\n') });
     };
 
     const handleMethodsChange = (e) => {
@@ -81,6 +94,15 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                 >
                     X
                 </button>
+            </div>
+            <div style={{ padding: '10px' }}>
+                <textarea
+                    ref={attributesRef}
+                    value={attributes}
+                    onChange={handleAttributesChange}
+                    placeholder="Attributes"
+                    style={{ width: '100%', resize: 'none', overflow: 'hidden' }}
+                />
             </div>
             <div style={{ padding: '10px' }}>
                 <textarea
