@@ -7,30 +7,21 @@ import {
   useNodesState,
   useEdgesState,
   addEdge,
-  removeEdge,
   applyNodeChanges,
   applyEdgeChanges,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import UMLClassNode from "../components/UMLClassNode";
 import UMLInterfaceNode from "../components/UMLInterfaceNode";
-import InstructionsPopup from "../components/InstructionsPopup";
+import InstructionsPopup from "../components/InstructionsPopup"; // Import the InstructionsPopup
 import html2canvas from "html2canvas"; // Import html2canvas
-import { getBezierPath, getEdgeCenter, MarkerType } from "react-flow-renderer";
-import { getSmoothStepPath } from "reactflow";
 import CustomMarkers from "./CustomMarkers";
-import { umlDiagramInstructions } from "../components/instructionsData";
 
 // Define custom node types
 const nodeTypes = {
   umlNode: UMLClassNode,
   interfaceUMLNode: UMLInterfaceNode,
 };
-
-// Keys for local storage
-const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
-const LOCAL_STORAGE_KEY_EDGES = "uml-diagram-edges";
-const GLOBAL_INSTRUCTIONS_SEEN_KEY = "uml-diagram-instructions-seen-global";
 
 // Utility function to generate a random pastel color
 const getNodeColor = () => {
@@ -43,35 +34,6 @@ const getNodeColor = () => {
 
 // UMLEdge component
 const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
-  // Get the center of the edge for future use (optional)
-  // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-  //     sourceX,
-  //     sourceY,
-  //     targetX,
-  //     targetY
-  // });
-
-  // // Generate a smooth step path with custom settings
-  // const path = getSmoothStepPath({
-  //     sourceX,
-  //     sourceY,
-  //     targetX,
-  //     targetY,
-  //     sourcePosition: 'right', // Adjust positions if needed
-  //     targetPosition: 'left',
-  //     borderRadius: 10, // Controls the curve at corner points
-  //     offset: 5, // Spacing between segments
-  // });
-
-  // const onNodesChange = useCallback(
-  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-  //   [],
-  // );
-  // const onEdgesChange = useCallback(
-  //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-  //   [],
-  // );
-
   return (
     <>
       <defs>
@@ -86,12 +48,28 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
           <polygon points="0 0, 10 2.5, 0 5" fill="black" />
         </marker>
       </defs>
-      <path id={id} style={style} d={path} className="react-flow__edge-path" />
+      <path id={id} style={style} className="react-flow__edge-path" />
     </>
   );
 };
 
 const UMLDiagramEditor = ({ problemId }) => {
+  const [challengeName, setChallengeName] = useState("");
+
+  useEffect(() => {
+    // Fetch the challenge details using problemId
+    const fetchChallengeDetails = async () => {
+      try {
+        const response = await fetch(`/api/challenges/${problemId}`);
+        const data = await response.json();
+        setChallengeName(data.title || "Unnamed Challenge"); // Extract the challenge name
+      } catch (error) {
+        console.error("Error fetching challenge details:", error);
+      }
+    };
+
+    fetchChallengeDetails();
+  }, [problemId]);
   const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
   const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
 
@@ -215,19 +193,61 @@ const UMLDiagramEditor = ({ problemId }) => {
     });
     const imageData = canvas.toDataURL("image/png");
     localStorage.setItem("uml-diagram-image", imageData);
-    const link = document.createElement("a");
-    link.href = imageData;
-    link.download = "uml-diagram.png";
-    link.click();
   };
 
+  // Submit to PostSolution form directly
   const postSolution = async () => {
     const { nodes, edges } = getNodesAndEdges();
+    const defaultTitle = `${challengeName} Solution`;
+    //   ? `UML Diagram with Classes: ${nodes.map((n) => n.data.label).join(", ")}`
+    //   : "Empty UML Diagram";
+    // TODO: THIS IS FOR DEBUGGING ^^^ to check if edges show up as well
+
+    // Store the nodes and edges in localStorage (optional)
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
+
+    // Generate the image
     await generateImage();
-    const challengeId = "your-challenge-id"; // Replace this with the actual challenge ID
-    window.location.href = `/solutions/post/${challengeId}`;
+
+    // Retrieve the generated image from localStorage
+    const imageUrl = localStorage.getItem("uml-diagram-image");
+    if (imageUrl) {
+      // Convert the base64 string to a Blob
+      const byteString = atob(imageUrl.split(",")[1]);
+      const mimeString = imageUrl.split(",")[0].split(":")[1].split(";")[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ab], { type: mimeString });
+      const file = new File([blob], "uml-diagram.png", { type: mimeString });
+
+      // Prepare form data
+      const formData = new FormData();
+      formData.append("challengeId", `${problemId}`); // Set problemId as the challenge ID
+      formData.append("title", defaultTitle); // Default title
+      formData.append("description", ""); // Blank description
+      formData.append("diagram", file); // Attach the image file
+
+      // Send the POST request
+      fetch(`/api/solutions`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((resp) => resp.json())
+        .then((data) => {
+          // Redirect to the solution page after successful submission
+          window.location.href = `/solution/${data.id}`;
+          localStorage.removeItem("uml-diagram-image"); // Clear the image from localStorage
+        })
+        .catch((err) => {
+          console.error("Error submitting solution:", err);
+        });
+    } else {
+      console.error("No image found in local storage.");
+    }
   };
 
   const startDraggingNode = (nodeType) => {
@@ -268,52 +288,6 @@ const UMLDiagramEditor = ({ problemId }) => {
       setNodes((nds) => [...nds, newNode]);
       setDraggedNodeType(null);
     }
-  };
-
-  const onConnectEnd = useCallback(
-    (event, connectionState) => {
-      console.log("onConnectEnd triggered", connectionState);
-      if (!connectionState.isValid) {
-        const bounds = reactFlowWrapperRef.current.getBoundingClientRect();
-        console.log("Bounds:", bounds);
-        const { clientX, clientY } = event;
-        console.log("Mouse position:", clientX, clientY);
-        const position = {
-          x: clientX - bounds.left,
-          y: clientY - bounds.top,
-        };
-        console.log("Calculated position:", position);
-        const newNode = {
-          id: (nodes.length + 1).toString(),
-          position,
-          data: {
-            label: `ClassNode${nodes.length + 1}`,
-            attributes: [],
-            methods: [],
-            color: getNodeColor(),
-          },
-          type: "umlNode", // Change to 'umlNode' for class node
-        };
-        console.log("New node:", newNode);
-        setNodes((nds) => [...nds, newNode]);
-      }
-    },
-    [nodes, setNodes]
-  );
-
-  useEffect(() => {
-    // Check if the user has seen the instructions using the global key
-    const instructionsSeen =
-      localStorage.getItem(GLOBAL_INSTRUCTIONS_SEEN_KEY) === "true";
-    if (!instructionsSeen) {
-      setShowInstructions(true);
-    }
-  }, []); // This effect now runs only once when the component mounts
-
-  const handleCloseInstructions = () => {
-    // Use the global key when setting the instructions as seen
-    localStorage.setItem(GLOBAL_INSTRUCTIONS_SEEN_KEY, "true");
-    setShowInstructions(false);
   };
 
   return (
@@ -357,6 +331,12 @@ const UMLDiagramEditor = ({ problemId }) => {
         </button>
         <button onClick={postSolution} className="post-button">
           Post Solution
+        </button>
+        <button
+          onClick={() => setShowInstructions(true)}
+          className="instructions-button"
+        >
+          Show Instructions
         </button>
         <button
           onClick={() => removeEdge(selectedEdge)}
@@ -437,7 +417,6 @@ const UMLDiagramEditor = ({ problemId }) => {
           Implementation: UMLEdge,
         }}
         style={{ width: "100%", height: "100%" }}
-        onConnectEnd={onConnectEnd}
       >
         <CustomMarkers />
         <MiniMap
@@ -448,8 +427,9 @@ const UMLDiagramEditor = ({ problemId }) => {
       </ReactFlow>
       <InstructionsPopup
         show={showInstructions}
-        handleClose={handleCloseInstructions}
-        instructions={umlDiagramInstructions}
+        handleClose={() => {
+          setShowInstructions(false);
+        }}
       />
       {draggedNodeType && (
         <div
