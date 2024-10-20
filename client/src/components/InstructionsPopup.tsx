@@ -23,6 +23,7 @@ function InstructionsPopup({
   // Add a check to ensure instructions are available
   if (!instructions || instructions.length === 0) {
     return null;
+
   }
 
   const handleNext = () => {
