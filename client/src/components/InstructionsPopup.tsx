@@ -22,7 +22,8 @@ function InstructionsPopup({
 
   // Add a check to ensure instructions are available
   if (!instructions || instructions.length === 0) {
-    return null; // or return a placeholder component
+    return null;
+
   }
 
   const handleNext = () => {
