@@ -9,9 +9,11 @@ import PostSolution from './pages/PostSolution.tsx';
 import Solution from './pages/Solution.tsx';
 import Profile from './pages/Profile.tsx';
 import Editor from './pages/Editor.tsx';
+
 import AddChallenge from './pages/AddChallenge.tsx';
 import Admin from './pages/Admin.tsx';
 import SplitLayout from './pages/SplitScreen.tsx';
+
 
 const NAV_CONFIG = {
   brand: "UML Mentor",
@@ -63,6 +65,10 @@ const router = createBrowserRouter([
         path: "profile/:username",
         element: <Profile />,
       },
+      // {
+      //   path: "challenges/filter",
+      //   element: <ChallengeFilterDropdown />
+      // },
       {
         path: "solutions",
         element: <Solutions />,
