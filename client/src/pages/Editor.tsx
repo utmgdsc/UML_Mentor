@@ -19,6 +19,7 @@ import html2canvas from 'html2canvas'; // Import html2canvas
 import { getBezierPath, getEdgeCenter, MarkerType } from 'react-flow-renderer';
 import {  getSmoothStepPath } from 'reactflow';
 import CustomMarkers from './CustomMarkers';
+import domtoimage from 'dom-to-image';
 
 // Define custom node types
 const nodeTypes = {
@@ -207,37 +208,44 @@ const UMLDiagramEditor = ({ problemId }) => {
     }
   };
 
-  // Function to get nodes and edges data
-  const getNodesAndEdges = () => {
-    return { nodes, edges };
-  };
-
-  // Function to generate and download image
-  const generateImage = async () => {
-    const reactFlowElement = document.getElementsByClassName('react-flow')[0];
-    const canvas = await html2canvas(reactFlowElement, {
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      scale: 2,
-    });
-    const imageData = canvas.toDataURL('image/png');
-    localStorage.setItem('uml-diagram-image', imageData);
-    const link = document.createElement('a');
-    link.href = imageData;
-    link.download = 'uml-diagram.png';
-    link.click();
-  };
+ // Function to get nodes and edges data
+ const getNodesAndEdges = () => {
+  return { nodes, edges };
+};
 
 
-  const postSolution = async () => {
-    const { nodes, edges } = getNodesAndEdges();
-    localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
-    localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
-    await generateImage();
-    const challengeId = 'your-challenge-id'; // Replace this with the actual challenge ID
-    window.location.href = `/solutions/post/${challengeId}`;
-  };
+// Function to generate and download image
+const generateImage = async () => {
+  const reactFlowElement = document.getElementsByClassName('react-flow')[0];
+  const canvas = await html2canvas(reactFlowElement, {
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: '#ffffff',
+    scale: 2,
+  });
+  const blob = await domtoimage.toBlob(reactFlowElement, { bgcolor: '#ffffff', quality: 1 });
+  if (!blob) {
+    throw new Error("Failed to create a blob from the canvas.");
+  }
+  const imageData = URL.createObjectURL(blob);
+  // const imageData = canvas.toDataURL('image/png');
+  localStorage.setItem('uml-diagram-image', imageData);
+  const link = document.createElement('a');
+  link.href = imageData;
+  link.download = 'uml-diagram.png';
+  link.click();
+  URL.revokeObjectURL(imageData); 
+};
+
+
+const postSolution = async () => {
+  const { nodes, edges } = getNodesAndEdges();
+  localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
+  localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
+  await generateImage();
+  const challengeId = 'your-challenge-id';
+  window.location.href = `/solutions/post/${challengeId}`;
+};
 
 
 

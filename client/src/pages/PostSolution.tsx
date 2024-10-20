@@ -24,7 +24,7 @@ const PostSolution = () => {
     // Retrieve the image from local storage
     const imageUrl = localStorage.getItem('uml-diagram-image');
 
-    if (imageUrl) {
+    if (imageUrl && imageUrl.startsWith('data:image/png;base64,')) {
       // Convert the base64 string to a Blob
       const byteString = atob(imageUrl.split(',')[1]);
       const mimeString = imageUrl.split(',')[0].split(':')[1].split(';')[0];
@@ -121,7 +121,7 @@ const PostSolution = () => {
                 onChange={handleFileChange}
               />
               <Form.Text className="text-muted">
-                {postSolutionState.diagram ? postSolutionState.diagram.name : 'Automatically attached from local storage'}
+                {postSolutionState.diagram ? postSolutionState.diagram.name : ''}
               </Form.Text>
             </Form.Group>
             <Button variant="primary" type="submit">
