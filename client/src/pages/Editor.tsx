@@ -21,16 +21,16 @@ import { getSmoothStepPath } from "reactflow";
 import CustomMarkers from "./CustomMarkers";
 import { umlDiagramInstructions } from "../components/instructionsData";
 
+// Keys for local storage
+const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
+const LOCAL_STORAGE_KEY_EDGES = "uml-diagram-edges";
+const GLOBAL_INSTRUCTIONS_SEEN_KEY = "uml-diagram-instructions-seen-global";
+
 // Define custom node types
 const nodeTypes = {
   umlNode: UMLClassNode,
   interfaceUMLNode: UMLInterfaceNode,
 };
-
-// Keys for local storage
-const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
-const LOCAL_STORAGE_KEY_EDGES = "uml-diagram-edges";
-const GLOBAL_INSTRUCTIONS_SEEN_KEY = "uml-diagram-instructions-seen-global";
 
 // Utility function to generate a random pastel color
 const getNodeColor = () => {
@@ -71,7 +71,6 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
   //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
   //   [],
   // );
-
   return (
     <>
       <defs>
@@ -86,12 +85,28 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
           <polygon points="0 0, 10 2.5, 0 5" fill="black" />
         </marker>
       </defs>
-      <path id={id} style={style} d={path} className="react-flow__edge-path" />
+      <path id={id} style={style} className="react-flow__edge-path" />
     </>
   );
 };
 
 const UMLDiagramEditor = ({ problemId }) => {
+  const [challengeName, setChallengeName] = useState("");
+
+  useEffect(() => {
+    // Fetch the challenge details using problemId
+    const fetchChallengeDetails = async () => {
+      try {
+        const response = await fetch(`/api/challenges/${problemId}`);
+        const data = await response.json();
+        setChallengeName(data.title || "Unnamed Challenge"); // Extract the challenge name
+      } catch (error) {
+        console.error("Error fetching challenge details:", error);
+      }
+    };
+
+    fetchChallengeDetails();
+  }, [problemId]);
   const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
   const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
 
@@ -215,19 +230,61 @@ const UMLDiagramEditor = ({ problemId }) => {
     });
     const imageData = canvas.toDataURL("image/png");
     localStorage.setItem("uml-diagram-image", imageData);
-    const link = document.createElement("a");
-    link.href = imageData;
-    link.download = "uml-diagram.png";
-    link.click();
   };
 
+  // Submit to PostSolution form directly
   const postSolution = async () => {
     const { nodes, edges } = getNodesAndEdges();
+    const defaultTitle = `${challengeName} Solution`;
+    //   ? `UML Diagram with Classes: ${nodes.map((n) => n.data.label).join(", ")}`
+    //   : "Empty UML Diagram";
+    // TODO: THIS IS FOR DEBUGGING ^^^ to check if edges show up as well
+
+    // Store the nodes and edges in localStorage (optional)
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
+
+    // Generate the image
     await generateImage();
-    const challengeId = "your-challenge-id"; // Replace this with the actual challenge ID
-    window.location.href = `/solutions/post/${challengeId}`;
+
+    // Retrieve the generated image from localStorage
+    const imageUrl = localStorage.getItem("uml-diagram-image");
+    if (imageUrl) {
+      // Convert the base64 string to a Blob
+      const byteString = atob(imageUrl.split(",")[1]);
+      const mimeString = imageUrl.split(",")[0].split(":")[1].split(";")[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ab], { type: mimeString });
+      const file = new File([blob], "uml-diagram.png", { type: mimeString });
+
+      // Prepare form data
+      const formData = new FormData();
+      formData.append("challengeId", `${problemId}`); // Set problemId as the challenge ID
+      formData.append("title", defaultTitle); // Default title
+      formData.append("description", ""); // Blank description
+      formData.append("diagram", file); // Attach the image file
+
+      // Send the POST request
+      fetch(`/api/solutions`, {
+        method: "POST",
+        body: formData,
+      })
+        .then((resp) => resp.json())
+        .then((data) => {
+          // Redirect to the solution page after successful submission
+          window.location.href = `/solution/${data.id}`;
+          localStorage.removeItem("uml-diagram-image"); // Clear the image from localStorage
+        })
+        .catch((err) => {
+          console.error("Error submitting solution:", err);
+        });
+    } else {
+      console.error("No image found in local storage.");
+    }
   };
 
   const startDraggingNode = (nodeType) => {
@@ -357,6 +414,12 @@ const UMLDiagramEditor = ({ problemId }) => {
         </button>
         <button onClick={postSolution} className="post-button">
           Post Solution
+        </button>
+        <button
+          onClick={() => setShowInstructions(true)}
+          className="instructions-button"
+        >
+          Show Instructions
         </button>
         <button
           onClick={() => removeEdge(selectedEdge)}
