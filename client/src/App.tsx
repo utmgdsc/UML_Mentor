@@ -65,10 +65,6 @@ const router = createBrowserRouter([
         path: "profile/:username",
         element: <Profile />,
       },
-      // {
-      //   path: "challenges/filter",
-      //   element: <ChallengeFilterDropdown />
-      // },
       {
         path: "solutions",
         element: <Solutions />,

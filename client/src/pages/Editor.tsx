@@ -20,6 +20,8 @@ import { getBezierPath, getEdgeCenter, MarkerType } from "react-flow-renderer";
 import { getSmoothStepPath } from "reactflow";
 import CustomMarkers from "./CustomMarkers";
 import { umlDiagramInstructions } from "../components/instructionsData";
+import domtoimage from 'dom-to-image';
+
 
 // Keys for local storage
 const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
@@ -220,17 +222,29 @@ const UMLDiagramEditor = ({ problemId }) => {
   };
 
   // Function to generate and download image
-  const generateImage = async () => {
-    const reactFlowElement = document.getElementsByClassName("react-flow")[0];
-    const canvas = await html2canvas(reactFlowElement, {
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: "#ffffff",
-      scale: 2,
+  const generateImage = () => {
+    return new Promise((resolve, reject) => {
+      const reactFlowElement = document.getElementsByClassName('react-flow')[0];
+  
+      domtoimage.toBlob(reactFlowElement, { bgcolor: '#ffffff', quality: 1 })
+        .then((blob) => {
+          if (!blob) {
+            reject(new Error('Failed to create blob.'));
+            return;
+          }
+  
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = reader.result as string;
+            localStorage.setItem('uml-diagram-image', base64data);
+            resolve(true);
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch((error) => reject(error));
     });
-    const imageData = canvas.toDataURL("image/png");
-    localStorage.setItem("uml-diagram-image", imageData);
   };
+  
 
   // Submit to PostSolution form directly
   const postSolution = async () => {
