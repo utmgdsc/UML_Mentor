@@ -500,8 +500,10 @@ const UMLDiagramEditor = ({ problemId }) => {
                 edge.data?.edgeType === "Implementation" ? "5, 5" : "0",
               strokeDashoffset: 100,
             },
-            markerEnd: markerId, // Use markerId here
+            markerStart: markerId, // Use markerId for the start (source)
+            markerEnd: undefined, // Use markerId here
           };
+          
         })}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}

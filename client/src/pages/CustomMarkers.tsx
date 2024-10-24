@@ -2,21 +2,20 @@
 import React from 'react';
 
 const CustomMarkers = () => (
-<svg width="1" height="1" style={{ position: 'absolute', overflow: 'hidden' }}>
-
+  <svg width="1" height="1" style={{ position: 'absolute', overflow: 'hidden' }}>
     <defs>
       {/* Empty Arrow Marker */}
       <marker
-      id="emptyArrow"
+        id="emptyArrow"
         markerWidth="10"
         markerHeight="10"
-        refX="9"
+        refX="0"    // Position at the start
         refY="3"
         orient="auto"
         markerUnits="strokeWidth"  // Ensures size scales with edge thickness
-        fill = "none"
+        fill="none"
       >
-        <path d="M0,0 L0,6 L9,3 Z" fill="none" stroke="black" strokeWidth="1" />
+        <path d="M9,0 L0,3 L9,6 Z" fill="none" stroke="black" strokeWidth="1" />
       </marker>
 
       {/* Diamond Marker */}
@@ -24,7 +23,7 @@ const CustomMarkers = () => (
         id="diamond"
         markerWidth="12"
         markerHeight="12"
-        refX="10"
+        refX="0"    // Position at the start
         refY="6"
         orient="auto"
         markerUnits="strokeWidth"
@@ -37,12 +36,12 @@ const CustomMarkers = () => (
         id="filledArrow"
         markerWidth="10"
         markerHeight="10"
-        refX="9"
+        refX="0"    // Position at the start
         refY="3"
         orient="auto"
         markerUnits="strokeWidth"
       >
-        <path d="M0,0 L0,6 L9,3 Z" fill="black" />
+        <path d="M9,0 L0,3 L9,6 Z" fill="black" />
       </marker>
     </defs>
   </svg>
