@@ -166,10 +166,25 @@ const UMLDiagramEditor = ({ problemId }) => {
     );
   };
 
+  const getNonOverlappingPosition = (existingNodes) => {
+    const basePosition = { x: 200, y: 200 };
+    const offset = 50; // Offset to avoid overlap
+    let position = { ...basePosition };
+
+    // Check for overlap and adjust position
+    while (existingNodes.some(node => node.position.x === position.x && node.position.y === position.y)) {
+      position.x += offset;
+      position.y += offset;
+    }
+
+    return position;
+  };
+
   const addInterfaceUMLNode = () => {
+    const position = getNonOverlappingPosition(nodes);
     const newNode = {
       id: (nodes.length + 1).toString(),
-      position: { x: Math.random() * 500, y: Math.random() * 500 },
+      position,
       data: {
         label: `InterfaceNode${nodes.length + 1}`,
         methods: [],
@@ -181,9 +196,10 @@ const UMLDiagramEditor = ({ problemId }) => {
   };
 
   const addNewNode = () => {
+    const position = getNonOverlappingPosition(nodes);
     const newNode = {
       id: (nodes.length + 1).toString(),
-      position: { x: Math.random() * 500, y: Math.random() * 500 },
+      position,
       data: {
         label: `NewNode${nodes.length + 1}`,
         attributes: [],
@@ -411,16 +427,10 @@ const UMLDiagramEditor = ({ problemId }) => {
         }}
       >
         <h4 style={{ margin: "0", textAlign: "center" }}>Actions</h4>
-        <button
-          onMouseDown={() => startDraggingNode("interfaceUMLNode")}
-          className="action-button"
-        >
+        <button onClick={addInterfaceUMLNode} className="action-button">
           Add Interface Node
         </button>
-        <button
-          onMouseDown={() => startDraggingNode("umlNode")}
-          className="action-button"
-        >
+        <button onClick={addNewNode} className="action-button">
           Add Class Node
         </button>
         <button onClick={resetWorkspace} className="reset-button">
