@@ -19,9 +19,10 @@ const formatUMLDataForOpenAI = (nodes: any[], edges: any[]) => {
   const formattedNodes = nodes.map((node) => ({
     id: node.id,
     type: node.type,
-    label: node.data.label,
-    attributes: node.data.attributes,
-    methods: node.data.methods,
+    label:
+      node.data.label || (node.type === "umlInterface" ? "Interface" : "Class"),
+    attributes: node.type === "umlInterface" ? [] : node.data.attributes || [],
+    methods: node.data.methods || [],
   }));
 
   const formattedEdges = edges.map((edge) => ({
