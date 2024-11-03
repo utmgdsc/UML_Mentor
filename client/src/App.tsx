@@ -72,6 +72,7 @@ const router = createBrowserRouter([
       {
         path: "solution/:id",
         element: <Solution />,
+        // element: <SplitScreenForSolution />,
       },
       {
         path: "/solutions/post/:id",

@@ -290,6 +290,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         .then((resp) => resp.json())
         .then((data) => {
           // Redirect to the solution page after successful submission
+          localStorage.setItem("challengeId", problemId);
           window.location.href = `/solution/${data.id}`;
           localStorage.removeItem("uml-diagram-image"); // Clear the image from localStorage
         })

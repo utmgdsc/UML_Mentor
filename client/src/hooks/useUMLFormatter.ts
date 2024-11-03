@@ -4,6 +4,8 @@ import { useState, useCallback } from "react";
 const getNodesAndEdgesFromStorage = (problemId: string) => {
   const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
   const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
+// const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
+// const LOCAL_STORAGE_KEY_EDGES = "uml-diagram-edges";
 
   const nodesJson = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
   const edgesJson = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);

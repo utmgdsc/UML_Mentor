@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Challenge from "./Challenge"; // Left side content
 import UMLDiagramEditor from "./Editor";
+import Solution from "./Solution";
 
 const SplitLayout: React.FC = () => {
-  const { id: challengeId } = useParams(); // Get the challenge ID from the URL
+  const { id: problemId } = useParams(); // Get the challenge ID from the URL
   const [leftWidth, setLeftWidth] = useState(50); // Initial left panel width
 
   const handleDividerMouseDown = (e: React.MouseEvent) => {
@@ -27,7 +28,7 @@ const SplitLayout: React.FC = () => {
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
-      {/* Left pane - Challenge */}
+      {/* Left pane - SolutionForUserComments */}
       <div
         style={{
           width: `${leftWidth}%`,
@@ -36,10 +37,7 @@ const SplitLayout: React.FC = () => {
           overflowY: "auto", // Enable vertical scrolling
         }}
       >
-        <Challenge /> {/* Ensure this component works without props */}
-        <div style={{ marginTop: "10px", fontWeight: "bold", textAlign: "right" }}>
-          Problem ID: {challengeId}
-        </div>
+        <Solution /> {/* Ensure this component works without props */}
       </div>
 
       {/* Divider */}
@@ -54,7 +52,7 @@ const SplitLayout: React.FC = () => {
         }}
       />
 
-      {/* Right pane - UML Diagram Editor (ReactFlow) */}
+      {/* Right pane - SolutionForAIComments */}
       <div
         style={{
           flex: 1,
@@ -62,7 +60,7 @@ const SplitLayout: React.FC = () => {
           overflowY: "auto", // Enable vertical scrolling
         }}
       >
-        <UMLDiagramEditor problemId={challengeId} />
+        <UMLDiagramEditor problemId={problemId} />
       </div>
     </div>
   );
