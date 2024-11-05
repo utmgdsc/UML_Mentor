@@ -41,7 +41,7 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
         }
 
         // Initialize maxWidth with the minimum width
-        let maxWidth = 175;
+        let maxWidth = 150;
 
         // Define font settings
         const fontSize = 14; // Adjust font size if needed
