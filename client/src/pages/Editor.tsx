@@ -432,6 +432,29 @@ const UMLDiagramEditor = ({ problemId }) => {
     setShowInstructions(false);
   };
 
+  const onEdgeClick = useCallback((event, edge) => {
+    event.stopPropagation(); // Prevent the click from bubbling up to the document
+    setSelectedEdge(edge.id);
+  }, []);
+
+  useEffect(() => {
+    const handleKeyPress = () => {
+      setSelectedEdge(null);
+    };
+
+    const handleClick = () => {
+      setSelectedEdge(null);
+    };
+
+    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
+
   return (
     <div
       style={{ width: "100%", height: "100%", position: "relative" }}
@@ -478,6 +501,21 @@ const UMLDiagramEditor = ({ problemId }) => {
           onClick={() => removeEdge(selectedEdge)}
           className="delete-button"
           disabled={!selectedEdge}
+          style={{
+            backgroundColor: selectedEdge ? "#ff4d4d" : "#ccc", // Red when active, gray when disabled
+            color: "#fff",
+            border: "none",
+            padding: "10px",
+            borderRadius: "5px",
+            cursor: selectedEdge ? "pointer" : "not-allowed",
+            transition: "background-color 0.3s",
+          }}
+          onMouseEnter={(e) => {
+            if (selectedEdge) e.target.style.backgroundColor = "#ff1a1a"; // Darker red on hover
+          }}
+          onMouseLeave={(e) => {
+            if (selectedEdge) e.target.style.backgroundColor = "#ff4d4d"; // Original red
+          }}
         >
           Delete Selected Edge
         </button>
@@ -547,7 +585,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onEdgeClick={(event, edge) => setSelectedEdge(edge.id)}
+        onEdgeClick={onEdgeClick}
         nodeTypes={nodeTypes}
         edgeTypes={{
           Inheritance: UMLEdge,
