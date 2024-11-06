@@ -15,7 +15,7 @@ import "@xyflow/react/dist/style.css";
 import UMLClassNode from "../components/UMLClassNode";
 import UMLInterfaceNode from "../components/UMLInterfaceNode";
 import InstructionsPopup from "../components/InstructionsPopup";
-import html2canvas from "html2canvas"; // Import html2canvas
+import html2canvas from "html2canvas";
 import { getBezierPath, getEdgeCenter, MarkerType } from "react-flow-renderer";
 import { getSmoothStepPath } from "reactflow";
 import CustomMarkers from "./CustomMarkers";
@@ -166,10 +166,25 @@ const UMLDiagramEditor = ({ problemId }) => {
     );
   };
 
+  const getNonOverlappingPosition = (existingNodes) => {
+    const basePosition = { x: 200, y: 200 };
+    const offset = 50; // Offset to avoid overlap
+    let position = { ...basePosition };
+
+    // Check for overlap and adjust position
+    while (existingNodes.some(node => node.position.x === position.x && node.position.y === position.y)) {
+      position.x += offset;
+      position.y += offset;
+    }
+
+    return position;
+  };
+
   const addInterfaceUMLNode = () => {
+    const position = getNonOverlappingPosition(nodes);
     const newNode = {
       id: (nodes.length + 1).toString(),
-      position: { x: Math.random() * 500, y: Math.random() * 500 },
+      position,
       data: {
         label: `InterfaceNode${nodes.length + 1}`,
         methods: [],
@@ -181,9 +196,10 @@ const UMLDiagramEditor = ({ problemId }) => {
   };
 
   const addNewNode = () => {
+    const position = getNonOverlappingPosition(nodes);
     const newNode = {
       id: (nodes.length + 1).toString(),
-      position: { x: Math.random() * 500, y: Math.random() * 500 },
+      position,
       data: {
         label: `NewNode${nodes.length + 1}`,
         attributes: [],
@@ -341,36 +357,65 @@ const UMLDiagramEditor = ({ problemId }) => {
     }
   };
 
+  // Add node on edge drop function
   const onConnectEnd = useCallback(
     (event, connectionState) => {
       console.log("onConnectEnd triggered", connectionState);
       if (!connectionState.isValid) {
         const bounds = reactFlowWrapperRef.current.getBoundingClientRect();
-        console.log("Bounds:", bounds);
         const { clientX, clientY } = event;
-        console.log("Mouse position:", clientX, clientY);
         const position = {
           x: clientX - bounds.left,
           y: clientY - bounds.top,
         };
-        console.log("Calculated position:", position);
+        const newNodeId = (nodes.length + 1).toString(); // Generate a new node ID
         const newNode = {
-          id: (nodes.length + 1).toString(),
+          id: newNodeId,
           position,
           data: {
-            label: `ClassNode${nodes.length + 1}`,
+            label: `ClassNode${newNodeId}`,
             attributes: [],
             methods: [],
             color: getNodeColor(),
           },
-          type: "umlNode", // Change to 'umlNode' for class node
+          type: "umlNode",
         };
-        console.log("New node:", newNode);
         setNodes((nds) => [...nds, newNode]);
+
+        // Determine the opposite position for the new edge
+        const oppositePosition = getOppositePosition(connectionState.fromPosition);
+
+        // Add a new edge connecting the source node to the new node
+        setEdges((eds) =>
+          eds.concat({
+            id: `edge-${connectionState.fromNode.id}-${newNodeId}`, // Create a unique edge ID
+            source: connectionState.fromNode.id,
+            target: newNodeId,
+            sourceHandle: connectionState.fromPosition,
+            targetHandle: oppositePosition,
+            data: { edgeType }, // Include the selected edge type
+          })
+        );
       }
     },
-    [nodes, setNodes]
+    [nodes, setNodes, setEdges, edgeType] // Include edgeType in the dependencies
   );
+
+  // Helper function to determine the opposite position
+  const getOppositePosition = (position) => {
+    switch (position) {
+      case 'left':
+        return 'right';
+      case 'right':
+        return 'left';
+      case 'top':
+        return 'bottom';
+      case 'bottom':
+        return 'top';
+      default:
+        return 'right'; // Default to right if position is unknown
+    }
+  };
 
   useEffect(() => {
     // Check if the user has seen the instructions using the global key
@@ -411,16 +456,10 @@ const UMLDiagramEditor = ({ problemId }) => {
         }}
       >
         <h4 style={{ margin: "0", textAlign: "center" }}>Actions</h4>
-        <button
-          onMouseDown={() => startDraggingNode("interfaceUMLNode")}
-          className="action-button"
-        >
+        <button onClick={addInterfaceUMLNode} className="action-button">
           Add Interface Node
         </button>
-        <button
-          onMouseDown={() => startDraggingNode("umlNode")}
-          className="action-button"
-        >
+        <button onClick={addNewNode} className="action-button">
           Add Class Node
         </button>
         <button onClick={resetWorkspace} className="reset-button">
