@@ -20,7 +20,7 @@ import Avatar from "../components/Avatar";
 import { ReturnFunction } from "../hooks/UMLFormatter";
 // import  {judgeComment}  from "../../../server/services/ai/gur";
 
-
+import axios from 'axios';
 
 function loadSolution(id, setter, setForbidden) {
   fetch(`/api/solutions/${id}`)
@@ -115,6 +115,21 @@ const Solution = ({}) => {
   const edges = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
 
   const umlData = formatForAI(JSON.parse(nodes), JSON.parse(edges) ); // Get UML data if needed
+  const checkContent = async (umlData: string) => {
+    try {
+      const response = await axios.post('/api/guardrails/analyze', { text: umlData });
+      console.log(response)
+      if (response.data.isInappropriate) {
+        throw new Error('Inappropriate content detected');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Content check failed:', error);
+      throw error;
+    }
+  };
+
 
 
   // useEffect(() => {
@@ -145,6 +160,7 @@ const Solution = ({}) => {
     setAiResponses(""); // Clear any previous response
 
         try {
+          await checkContent(umlData);
       const response = await fetch('/api/openai-chat', {
         method: 'POST',
         headers: {
