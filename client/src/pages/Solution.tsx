@@ -18,6 +18,9 @@ import dayjs from "dayjs";
 import Avatar from "../components/Avatar";
 // import { useUMLFormatter } from "../hooks/useUMLFormatter";
 import { ReturnFunction } from "../hooks/UMLFormatter";
+// import  {judgeComment}  from "../../../server/services/ai/gur";
+
+
 
 function loadSolution(id, setter, setForbidden) {
   fetch(`/api/solutions/${id}`)
@@ -65,6 +68,9 @@ const Solution = ({}) => {
   const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
   const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
   const {formatForAI, generateStructureSummary} = ReturnFunction();
+  const [isLoadingAIResponse, setIsLoadingAIResponse] = useState(true); // New loading state for AI response
+
+
 
   const [challengeName, setChallengeName] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
@@ -105,24 +111,40 @@ const Solution = ({}) => {
       });
   }, []);
 
-  const handleAiSubmit = async () => {
-    if (aiMessage.trim() === "") return;
-    
-    const nodes = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
-    const edges = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
+  const nodes = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
+  const edges = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
 
-    const umlData = formatForAI(JSON.parse(nodes), JSON.parse(edges) ); // Get UML data if needed
+  const umlData = formatForAI(JSON.parse(nodes), JSON.parse(edges) ); // Get UML data if needed
+
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     await judgeComment(umlData);
+  //   }
+    
+  //   fetchData();
+  // },[umlData]);
+
+
+  useEffect(() => {
+    async function fetchData() {
+      await handleAiSubmit();
+    }
+    
+    if (challengeName && challengeDescription) {
+      fetchData();
+    }
+  }, [challengeName, challengeDescription]);
   
-    // Add user message to the responses
-    // setAiResponses((prevResponses) => [
-    //   ...prevResponses,
-    //   { text: aiMessage, fromAI: false },
-    // ]);
+  
+
+  async function handleAiSubmit() {
   
     setAiMessage(""); // Clear input after submit
-  
-    // Send user message to the server and get AI response
-    try {
+    setIsLoadingAIResponse(true); // Set loading state to true before making the request
+    setAiResponses(""); // Clear any previous response
+
+        try {
       const response = await fetch('/api/openai-chat', {
         method: 'POST',
         headers: {
@@ -132,21 +154,15 @@ const Solution = ({}) => {
       });
   
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        console.error("OpenAI API error:", response.statusText);
       }
-  
+
       const data = await response.json();
 
-      console.log("HERE");
+
+
+      setAiResponses(data.reply);
   
-      // Add AI reply to the responses
-      // setAiResponses((prevResponses) => [
-      //   ...prevResponses,
-      //   { text: data.reply, fromAI: true },
-      // ]);
-      setTimeout(() => {
-        setAiResponses(data.reply);
-      }, 1000);
     } catch (error) {
       console.error("Error getting AI response:", error);
       // setAiResponses((prevResponses) => [
@@ -155,6 +171,44 @@ const Solution = ({}) => {
       // ]);
       setAiResponses("Error");
     }
+    finally {
+      setIsLoadingAIResponse(false); // Set loading state to false after response or error
+    }
+
+  //  setAiResponses(data.reply);
+  
+
+    // try {
+    //   const response = await fetch('/api/openai-chat', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({  umlData, challengeName, challengeDescription }),
+    //   });
+  
+    //   if (!response.ok) {
+    //     console.error("OpenAI API error:", response.statusText);
+    //   }
+
+    //   const data = await response.json();
+
+
+
+    //   setAiResponses(data.reply);
+  
+    // } catch (error) {
+    //   console.error("Error getting AI response:", error);
+    //   // setAiResponses((prevResponses) => [
+    //   //   ...prevResponses,
+    //   //   { text: "Error: Unable to get a response.", fromAI: true },
+    //   // ]);
+    //   setAiResponses("Error");
+    // }
+    // finally {
+    //   setIsLoadingAIResponse(false); // Set loading state to false after response or error
+    // }
+    // setIsLoadingAIResponse(false); // Set loading state to false after response or error
   };
   
 
@@ -210,11 +264,11 @@ const Solution = ({}) => {
     setShowImage(!showImage);
   };
 
-  useEffect(() => {
-    // Automatically trigger handleAiSubmit on load
-    handleAiSubmit();
-  }, []);
-  console.log("airesponses"+aiResponses);
+  // useEffect(() => {
+  //   // Automatically trigger handleAiSubmit on load
+  //   handleAiSubmit();
+  // }, []);
+
   return (
     <Container className="my-5" fluid="sm">
       <Row className="justify-content-center">
@@ -324,8 +378,12 @@ const Solution = ({}) => {
               <h2>AI's Answers</h2>
               {showAIAnswers && (
                 <div style={{ padding: '0.5rem', maxHeight: '320px', overflowY: 'auto' }}>
-                   <ReactMarkdown>{aiResponses}</ReactMarkdown>
-                </div>
+                {isLoadingAIResponse ? (
+                  <div>Loading AI answers...</div>
+                ) : (
+                  <ReactMarkdown>{aiResponses}</ReactMarkdown>
+                )}
+              </div>
               )}
             </Col>
           </>
@@ -355,10 +413,12 @@ const Solution = ({}) => {
           <Col md={12} style={{ maxHeight: "400px", overflowY: "auto" }}>
             <h2>AI's Answers</h2>
             <div style={{ padding: '0.5rem', maxHeight: '320px', overflowY: 'auto' }}>
-            <div style={{ padding: '0.5rem', maxHeight: '320px', overflowY: 'auto' }}>
-              <ReactMarkdown>{aiResponses}</ReactMarkdown>
+                  {isLoadingAIResponse ? (
+                    <div>Loading AI answers...</div>
+                  ) : (
+                    <ReactMarkdown>{aiResponses}</ReactMarkdown>
+                  )}
                 </div>
-            </div>
           </Col>
         )}
       </Row>
