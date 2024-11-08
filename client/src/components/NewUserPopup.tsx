@@ -65,24 +65,79 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
                 </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="4">
-                <Accordion.Header>5. Browsing Challenges</Accordion.Header>
+                <Accordion.Header>
+                  5. Browsing and Filtering Challenges
+                </Accordion.Header>
                 <Accordion.Body>
                   Challenges on UML Mentor cover a range of topics and
                   difficulties. They're designed to test your application of
-                  design patterns and principles in creating UML diagrams.
-                  Select a challenge that aligns with your interests or areas
-                  you wish to improve. Challenge difficulty ranges from
-                  easy(questions with 1 star on the challenge card) to
-                  hard(questions with 3 stars on the challenge card).
+                  design patterns and principles in creating UML diagrams. You
+                  can organize challenges using several controls:
+                  <ul>
+                    <li>
+                      <strong>Sort by Difficulty:</strong> Arrange challenges
+                      from easy to hard or vice versa
+                    </li>
+                    <li>
+                      <strong>Filter by Challenge Type:</strong> Focus on
+                      specific types of architectural challenges
+                    </li>
+                    <li>
+                      <strong>Filter by Difficulty:</strong> Show only
+                      challenges of certain difficulty levels
+                    </li>
+                    <li>
+                      <strong>Toggle Completed:</strong> Show or hide challenges
+                      you've already completed
+                    </li>
+                  </ul>
+                  <div className="mt-3">
+                    <img
+                      src="/images/filtering.jpg"
+                      alt="Challenge filtering and sorting options"
+                      className="img-fluid rounded border"
+                      style={{ maxWidth: "100%" }}
+                    />
+                    <small className="text-muted d-block mt-1">
+                      Use these controls to organize and find relevant
+                      challenges
+                    </small>
+                  </div>
+                  Challenge difficulty ranges from easy (questions with 1 star)
+                  to hard (questions with 3 stars on the challenge card).
+                  <div className="mt-3">
+                    <img
+                      src="/images/difficulty.jpg"
+                      alt="Challenge card showing difficulty stars and description"
+                      className="img-fluid rounded border"
+                      style={{ maxWidth: "100%" }}
+                    />
+                    <small className="text-muted d-block mt-1">
+                      Example of a challenge card showing difficulty stars and
+                      description
+                    </small>
+                  </div>
                 </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="5">
                 <Accordion.Header>6. Submitting Solutions</Accordion.Header>
                 <Accordion.Body>
                   Create your solution through the built-in editor on the right
-                  side of the screen and press submit solution to submit your
+                  side of the screen and press Post Solution to submit your
                   solution to a question. Submitted solutions can be viewed and
                   commented by other users.
+                  <div className="mt-3">
+                    <img
+                      src="/images/submit.jpg"
+                      alt="UML editor interface with submit button"
+                      className="img-fluid rounded border"
+                      style={{ maxWidth: "100%" }}
+                    />
+                    <small className="text-muted d-block mt-1">
+                      The UML editor interface where you can create and submit
+                      your solutions
+                    </small>
+                  </div>
                 </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="6">
