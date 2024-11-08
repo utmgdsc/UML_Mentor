@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         run: |
+          rm -rf ~/UML_Mentor/
+          mkdir ~/UML_Mentor
           cd ~/UML_Mentor
           git switch main
           git pull
