@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from 'react-markdown';
 import {
   Container,
   Row,
@@ -15,7 +16,8 @@ import CommentForm from "../components/CommentForm";
 import useCheckRole from "../hooks/useCheckRole";
 import dayjs from "dayjs";
 import Avatar from "../components/Avatar";
-import { useUMLFormatter } from "../hooks/useUMLFormatter";
+// import { useUMLFormatter } from "../hooks/useUMLFormatter";
+import { ReturnFunction } from "../hooks/UMLFormatter";
 
 function loadSolution(id, setter, setForbidden) {
   fetch(`/api/solutions/${id}`)
@@ -53,13 +55,36 @@ const Solution = ({}) => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [forbidden, setForbidden] = useState(false);
   const [aiMessage, setAiMessage] = useState("");
-  const [aiResponses, setAiResponses] = useState([]);
+  const [aiResponses, setAiResponses] = useState("");
   const [showStudentAnswers, setShowStudentAnswers] = useState(true);
   const [showAIAnswers, setShowAIAnswers] = useState(true);
   const [showImage, setShowImage] = useState(true);
   const problemId = localStorage.getItem("challengeId");
-  const { formattedData, getFormattedUMLData, prepareOpenAIPrompt } = useUMLFormatter(problemId);
+  // const { formattedData, getFormattedUMLData, prepareOpenAIPrompt } = useUMLFormatter(problemId);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
+  const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
+  const {formatForAI, generateStructureSummary} = ReturnFunction();
+
+  const [challengeName, setChallengeName] = useState("");
+  const [challengeDescription, setChallengeDescription] = useState("");
+
+  useEffect(() => {
+    // Fetch the challenge details using problemId
+    const fetchChallengeDetails = async () => {
+      try {
+        const response = await fetch(`/api/challenges/${problemId}`);
+        const data = await response.json();
+        setChallengeName(data.title || "Unnamed Challenge"); // Extract the challenge name
+        setChallengeDescription(data.generalDescription || "No Description");
+        
+      } catch (error) {
+        console.error("Error fetching challenge details:", error);
+      }
+    };
+
+    fetchChallengeDetails();
+  }, [problemId]);
 
 
   useEffect(() => {
@@ -80,17 +105,19 @@ const Solution = ({}) => {
       });
   }, []);
 
-  const handleAiSubmit = async (e) => {
-    e.preventDefault();
+  const handleAiSubmit = async () => {
     if (aiMessage.trim() === "") return;
-  
-    const umlData = getFormattedUMLData(); // Get UML data if needed
+    
+    const nodes = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
+    const edges = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
+
+    const umlData = formatForAI(JSON.parse(nodes), JSON.parse(edges) ); // Get UML data if needed
   
     // Add user message to the responses
-    setAiResponses((prevResponses) => [
-      ...prevResponses,
-      { text: aiMessage, fromAI: false },
-    ]);
+    // setAiResponses((prevResponses) => [
+    //   ...prevResponses,
+    //   { text: aiMessage, fromAI: false },
+    // ]);
   
     setAiMessage(""); // Clear input after submit
   
@@ -101,7 +128,7 @@ const Solution = ({}) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: aiMessage, umlData }),
+        body: JSON.stringify({  umlData, challengeName, challengeDescription }),
       });
   
       if (!response.ok) {
@@ -111,10 +138,11 @@ const Solution = ({}) => {
       const data = await response.json();
   
       // Add AI reply to the responses
-      setAiResponses((prevResponses) => [
-        ...prevResponses,
-        { text: data.reply, fromAI: true },
-      ]);
+      // setAiResponses((prevResponses) => [
+      //   ...prevResponses,
+      //   { text: data.reply, fromAI: true },
+      // ]);
+      setAiResponses(data.reply);
     } catch (error) {
       console.error("Error getting AI response:", error);
       setAiResponses((prevResponses) => [
@@ -177,6 +205,8 @@ const Solution = ({}) => {
     setShowImage(!showImage);
   };
 
+  handleAiSubmit();
+  console.log("airesponses"+aiResponses);
   return (
     <Container className="my-5" fluid="sm">
       <Row className="justify-content-center">
@@ -286,26 +316,7 @@ const Solution = ({}) => {
               <h2>AI's Answers</h2>
               {showAIAnswers && (
                 <div style={{ padding: '0.5rem', maxHeight: '320px', overflowY: 'auto' }}>
-                  {aiResponses.map((response, index) => (
-                    <div key={index} className={`mb-2 ${response.fromAI ? "text-start" : "text-end"}`}>
-                      <strong>{response.fromAI ? "AI" : currentUserId}:</strong>
-                      <p>{response.text}</p>
-                    </div>
-                  ))}
-                  <form onSubmit={handleAiSubmit} className="mt-3">
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={aiMessage}
-                        onChange={(e) => setAiMessage(e.target.value)}
-                        placeholder="Type your message..."
-                      />
-                      <BootstrapButton type="submit" variant="primary">
-                        Send
-                      </BootstrapButton>
-                    </div>
-                  </form>
+                   <ReactMarkdown>{aiResponses}</ReactMarkdown>
                 </div>
               )}
             </Col>
@@ -336,26 +347,9 @@ const Solution = ({}) => {
           <Col md={12} style={{ maxHeight: "400px", overflowY: "auto" }}>
             <h2>AI's Answers</h2>
             <div style={{ padding: '0.5rem', maxHeight: '320px', overflowY: 'auto' }}>
-              {aiResponses.map((response, index) => (
-                <div key={index} className={`mb-2 ${response.fromAI ? "text-start" : "text-end"}`}>
-                  <strong>{response.fromAI ? "AI" : currentUserId}:</strong>
-                  <p>{response.text}</p>
+            <div style={{ padding: '0.5rem', maxHeight: '320px', overflowY: 'auto' }}>
+              <ReactMarkdown>{aiResponses}</ReactMarkdown>
                 </div>
-              ))}
-              <form onSubmit={handleAiSubmit} className="mt-3">
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={aiMessage}
-                    onChange={(e) => setAiMessage(e.target.value)}
-                    placeholder="Type your message..."
-                  />
-                  <BootstrapButton type="submit" variant="primary">
-                    Send
-                  </BootstrapButton>
-                </div>
-              </form>
             </div>
           </Col>
         )}

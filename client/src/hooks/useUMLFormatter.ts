@@ -1,74 +1,67 @@
-import { useState, useCallback } from "react";
+// client/hooks/useUMLFormatter.ts
+import { useState, useCallback } from 'react';
 
-// Function to get nodes and edges from local storage
-const getNodesAndEdgesFromStorage = (problemId: string) => {
-  const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
-  const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
-// const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
-// const LOCAL_STORAGE_KEY_EDGES = "uml-diagram-edges";
+interface UMLHookProps {
+  problemId: string;
+}
 
-  const nodesJson = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
-  const edgesJson = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
+export const useUMLFormatter = ({ problemId }: UMLHookProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<string | null>(null);
 
-  const nodes = nodesJson ? JSON.parse(nodesJson) : [];
-  const edges = edgesJson ? JSON.parse(edgesJson) : [];
-
-  return { nodes, edges };
-};
-
-// Function to format nodes and edges for OpenAI communication
-const formatUMLDataForOpenAI = (nodes: any[], edges: any[]) => {
-  const formattedNodes = nodes.map((node) => ({
-    id: node.id,
-    type: node.type,
-    label:
-      node.data.label || (node.type === "umlInterface" ? "Interface" : "Class"),
-    attributes: node.type === "umlInterface" ? [] : node.data.attributes || [],
-    methods: node.data.methods || [],
-  }));
-
-  const formattedEdges = edges.map((edge) => ({
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    type: edge.data?.edgeType,
-  }));
-
-  return {
-    nodes: formattedNodes,
-    edges: formattedEdges,
-  };
-};
-
-export const useUMLFormatter = (problemId: string) => {
-  const [formattedData, setFormattedData] = useState<string | null>(null);
-
-  const getFormattedUMLData = useCallback(() => {
-    const { nodes, edges } = getNodesAndEdgesFromStorage(problemId);
-    const formatted = formatUMLDataForOpenAI(nodes, edges);
-    const jsonString = JSON.stringify(formatted, null, 2);
-    setFormattedData(jsonString);
-    return jsonString;
+  const getNodesAndEdgesFromStorage = useCallback(() => {
+    const LOCAL_STORAGE_KEY_NODES = `uml-diagram-nodes-${problemId}`;
+    const LOCAL_STORAGE_KEY_EDGES = `uml-diagram-edges-${problemId}`;
+    
+    const nodesJson = localStorage.getItem(LOCAL_STORAGE_KEY_NODES);
+    const edgesJson = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
+    
+    return {
+      nodes: nodesJson ? JSON.parse(nodesJson) : [],
+      edges: edgesJson ? JSON.parse(edgesJson) : []
+    };
   }, [problemId]);
 
-  const prepareOpenAIPrompt = useCallback(
-    (userPrompt: string) => {
-      const umlData = getFormattedUMLData();
-      return `
-User Prompt: ${userPrompt}
+  const analyzeUML = useCallback(async (challengeTitle: string, challengeDescription: string) => {
+    setIsLoading(true);
+    setError(null);
 
-UML Diagram Data:
-${umlData}
+    try {
+      const { nodes, edges } = getNodesAndEdgesFromStorage();
+      console.log('Sending UML data to server:', { nodes, edges, challengeTitle, challengeDescription });
+      
+      const response = await fetch('/api/ai/analyze-uml', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          umlData: { nodes, edges },
+          challengeTitle,
+          challengeDescription
+        }),
+      });
 
-Please analyze the UML diagram data and respond to the user's prompt.
-`;
-    },
-    [getFormattedUMLData]
-  );
+      if (!response.ok) {
+        throw new Error('Failed to analyze UML diagram');
+      }
+
+      const data = await response.json();
+      setAnalysis(data.analysis);
+      return data.analysis;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getNodesAndEdgesFromStorage]);
 
   return {
-    formattedData,
-    getFormattedUMLData,
-    prepareOpenAIPrompt,
+    analyzeUML,
+    isLoading,
+    error,
+    analysis
   };
 };

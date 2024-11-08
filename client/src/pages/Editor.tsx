@@ -21,7 +21,7 @@ import { getSmoothStepPath } from "reactflow";
 import CustomMarkers from "./CustomMarkers";
 import { umlDiagramInstructions } from "../components/instructionsData";
 import domtoimage from 'dom-to-image';
-
+import { useUMLFormatter } from '../hooks/useUMLFormatter.ts';
 
 // Keys for local storage
 const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
@@ -93,7 +93,10 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
 };
 
 const UMLDiagramEditor = ({ problemId }) => {
+  const { analyzeUML, isLoading, error, analysis } = useUMLFormatter({ problemId });
+  //const { analyzeUML, isLoading } = useUMLFormatter({ problemId });
   const [challengeName, setChallengeName] = useState("");
+  const [challengeDescription, setChallengeDescription] = useState("");
 
   useEffect(() => {
     // Fetch the challenge details using problemId
@@ -102,6 +105,8 @@ const UMLDiagramEditor = ({ problemId }) => {
         const response = await fetch(`/api/challenges/${problemId}`);
         const data = await response.json();
         setChallengeName(data.title || "Unnamed Challenge"); // Extract the challenge name
+        setChallengeDescription(data.generalDescription || "No Description");
+        
       } catch (error) {
         console.error("Error fetching challenge details:", error);
       }
@@ -245,6 +250,75 @@ const UMLDiagramEditor = ({ problemId }) => {
     });
   };
   
+  // Modified postSolution function
+//   const postSolution = async () => {
+//   try {
+//     // Get nodes and edges first
+//     const { nodes, edges } = getNodesAndEdges();
+
+//     // Format the UML diagram for analysis
+//     //const formattedUML = UMLFormatter.formatForAI(nodes, edges);
+
+//     // Analyze the UML diagram with the formatted data
+//     const analysis = await analyzeUML(challengeName, challengeDescription);
+//     // const analysis = await analyzeUML({
+//     //   challengeName,
+//     //   challengeDescription,
+//     //   umlDiagram: formattedUML
+//     // });
+
+//     // Generate the image
+//     await generateImage();
+
+//     // Get the image from localStorage
+//     const imageUrl = localStorage.getItem("uml-diagram-image");
+    
+//     if (!imageUrl) {
+//       throw new Error("Failed to generate diagram image");
+//     }
+
+//     // Convert the base64 string to a Blob
+//     const byteString = atob(imageUrl.split(",")[1]);
+//     const mimeString = imageUrl.split(",")[0].split(":")[1].split(";")[0];
+//     const ab = new ArrayBuffer(byteString.length);
+//     const ia = new Uint8Array(ab);
+//     for (let i = 0; i < byteString.length; i++) {
+//       ia[i] = byteString.charCodeAt(i);
+//     }
+//     const blob = new Blob([ab], { type: mimeString });
+//     const file = new File([blob], "uml-diagram.png", { type: mimeString });
+
+//     // Prepare form data with both the image and the AI analysis
+//     const formData = new FormData();
+//     formData.append("challengeId", problemId);
+//     formData.append("title", `${challengeName} Solution`);
+//     formData.append("description", analysis); // Include the AI analysis as the description
+//     formData.append("diagram", file);
+
+//     // Submit the solution
+//     const response = await fetch("/api/solutions", {
+//       method: "POST",
+//       body: formData,
+//     });
+
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || "Failed to submit solution");
+//     }
+
+//     const data = await response.json();
+
+//     // Clear stored data
+//     localStorage.removeItem("uml-diagram-image");
+    
+//     // Redirect to the solution page
+//     window.location.href = `/solution/${data.id}`;
+//   } catch (error) {
+//     console.error("Error posting solution:", error);
+//     // You might want to show an error message to the user here
+//     throw error; // Re-throw to be handled by the calling code
+//   }
+// };
 
   // Submit to PostSolution form directly
   const postSolution = async () => {
@@ -257,7 +331,7 @@ const UMLDiagramEditor = ({ problemId }) => {
     // Store the nodes and edges in localStorage (optional)
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
-
+    
     // Generate the image
     await generateImage();
 

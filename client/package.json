@@ -14,9 +14,10 @@
   },
   "dependencies": {
     "@types/styled-components": "^5.1.34",
-    "@xyflow/react": "^12.3.2",
+    "@xyflow/react": "^12.3.4",
     "bootstrap": "^5.3.2",
     "dayjs": "^1.11.11",
+    "dom-to-image": "^2.6.0",
     "html2canvas": "^1.4.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.0",
@@ -24,6 +25,7 @@
     "react-dom": "^18.2.0",
     "react-drawio": "^0.1.7",
     "react-json-editor-ajrm": "^2.5.14",
+    "react-markdown": "^9.0.1",
     "react-remark": "^2.1.0",
     "react-router-dom": "^6.21.3",
     "styled-components": "^6.1.13"
