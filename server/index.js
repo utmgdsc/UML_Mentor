@@ -9,6 +9,7 @@ const createAITAUser = require("./scripts/createAITAUser");
 const createAdmins = require("./scripts/createAdmins");
 const authMiddleware = require("./middleware/AuthenticationMiddleware");
 const checkRole = require("./middleware/CheckRoleMiddleware");
+
 // const OPENAI_API_KEY = 'openai-api-key'; // Replace with your OpenAI API key
 require('dotenv').config();
 
@@ -28,6 +29,8 @@ const solutions = require("./routes/SolutionRoutes");
 const users = require("./routes/UserRoutes");
 const comments = require("./routes/CommentRoutes");
 const SolutionInProgress = require("./routes/SolutionInProgressRoutes");
+const aiRoutes = require("./routes/AIRoutes");
+
 
 
 
@@ -37,19 +40,37 @@ const openai = new OpenAI({
 
 // AI chat route
 app.post("/api/openai-chat", authMiddleware, async (req, res) => {
-    const {  umlData } = req.body;
-    const message = "Provide feedback on this UML diagram: " + umlData;
+    const {umlData, challengeName, challengeDescription } = req.body;
+    const systemPrompt = `You are an expert software architect and educator specializing in UML diagram analysis. 
+    Your task is to:
+    1. Analyze the provided UML diagram for correctness and best practices
+    2. Evaluate how well it solves the given challenge
+    3. Suggest specific improvements
+    4. Check for SOLID principle violations
+    5. Assess the overall design quality
+    
+    Format your response in clear sections:
+    - Overall Assessment
+    - Design Strengths
+    - Areas for Improvement
+    - SOLID Principles Analysis
+    - Specific Recommendations`;
     try {
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo", // or another model of your choice
             messages: [
-                { role: "system", content: "You are a teaching assistant for a software architecture course. You are excellent at providing" +
-                " feedback to solutions written by users to software architecture challenges, including questions about UML" +
-                " diagrams, software architecture patterns and SOLID principles. Provide" +
-                " extensive and helpful feedback as a teaching assistant.", },
-                { role: "user", content: "Challenge: {challenge_title}\n{challenge_description}\n" +
-                "\nSolution: {solution_title}\n{solution_description}", }
-              ],
+                { role: "system", content: systemPrompt },
+                { 
+                  role: "user", 
+                  content: `
+      Challenge Title: ${challengeName}
+      Challenge Description: ${challengeDescription}
+      
+      ${umlData}
+      
+      Please provide a comprehensive analysis of this UML diagram in relation to the challenge.`
+                }
+              ]
         });
 
         const aiReply = response.choices[0].message.content.trim();
@@ -81,6 +102,7 @@ app.use("/api/solutions", solutions);
 app.use("/api/inprogress", SolutionInProgress);
 app.use("/api/users", users);
 app.use("/api/comments", comments);
+app.use("/api/ai", aiRoutes);
 
 app.use(ErrorHandler);
 

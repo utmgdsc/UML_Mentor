@@ -136,19 +136,24 @@ const Solution = ({}) => {
       }
   
       const data = await response.json();
+
+      console.log("HERE");
   
       // Add AI reply to the responses
       // setAiResponses((prevResponses) => [
       //   ...prevResponses,
       //   { text: data.reply, fromAI: true },
       // ]);
-      setAiResponses(data.reply);
+      setTimeout(() => {
+        setAiResponses(data.reply);
+      }, 1000);
     } catch (error) {
       console.error("Error getting AI response:", error);
-      setAiResponses((prevResponses) => [
-        ...prevResponses,
-        { text: "Error: Unable to get a response.", fromAI: true },
-      ]);
+      // setAiResponses((prevResponses) => [
+      //   ...prevResponses,
+      //   { text: "Error: Unable to get a response.", fromAI: true },
+      // ]);
+      setAiResponses("Error");
     }
   };
   
@@ -205,7 +210,10 @@ const Solution = ({}) => {
     setShowImage(!showImage);
   };
 
-  handleAiSubmit();
+  useEffect(() => {
+    // Automatically trigger handleAiSubmit on load
+    handleAiSubmit();
+  }, []);
   console.log("airesponses"+aiResponses);
   return (
     <Container className="my-5" fluid="sm">
