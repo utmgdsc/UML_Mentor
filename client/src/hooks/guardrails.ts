@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 
-const API_KEY = 'AIzaSyAkMHNxid9V_4NhKfiqM4qgxpHZFt7PJAA';
+const API_KEY = '';
 const PERSPECTIVE_API_URL = `https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${API_KEY}`;
 
 
