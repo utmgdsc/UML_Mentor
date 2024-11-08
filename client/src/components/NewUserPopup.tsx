@@ -101,11 +101,18 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
                 </Accordion.Header>
                 <Accordion.Body>
                   Points are awarded based on your participation in solving
-                  challenges and contributions to the community. They serve as a
-                  metric for your growth and contributions to the community. 10
-                  points are for easy questions, 20 points are for medium
-                  questions, and 30 points for hard questions. The difficulty
-                  level is indicated by the number of stars next to a challenge.
+                  challenges. They serve as a metric for your growth and
+                  contributions to the community. Points are awarded based on
+                  difficulty:
+                  <br />
+                  - Easy challenges (★): 1 point
+                  <br />
+                  - Medium challenges (★★): 2 points
+                  <br />
+                  - Hard challenges (★★★): 3 points
+                  <br />
+                  The difficulty level is indicated by the number of stars next
+                  to a challenge.
                 </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="8">
@@ -114,9 +121,9 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
                 </Accordion.Header>
                 <Accordion.Body>
                   Engage with solutions posted by others by commenting and
-                  discussing different approaches. Useful feedback is
-                  incentivized with points, encouraging a helpful community. You
-                  will earn 20 points by providing feedback to your peers!
+                  discussing different approaches. Providing useful feedback
+                  helps build a supportive learning community and helps others
+                  improve their solutions.
                 </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="9">
@@ -125,7 +132,7 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
                 </Accordion.Header>
                 <Accordion.Body>
                   You can view and manage your submissions from your profile.
-                  Edit, delete, or update your solutions as needed.
+                  You may delete, or update your solutions as needed.
                 </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="10">
@@ -133,10 +140,13 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
                   11. Data Privacy and User Conduct
                 </Accordion.Header>
                 <Accordion.Body>
-                  Anything you upload to UML Mentor will be visible to the
-                  instructors and TAs of the course, however, your uploads will
-                  not be used for grading. Only your anonymized profile will be
-                  visible to other users.
+                  UML Mentor uses your UTORid for authentication and display.
+                  Your UTORid and submissions will be visible to other users of
+                  the platform, instructors, and TAs. Your solutions, comments,
+                  and profile information (including UTORid) are publicly
+                  visible to other users of the platform. While your work will
+                  not be used for grading, please be mindful that your
+                  contributions are visible to the course community.
                 </Accordion.Body>
               </Accordion.Item>
               <Accordion.Item eventKey="11">
