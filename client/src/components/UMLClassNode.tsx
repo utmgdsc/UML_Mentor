@@ -15,7 +15,7 @@ interface UMLNodeData {
 
 interface UMLNodeProps extends NodeProps<UMLNodeData> {}
 
-const UMLClassNode = ({ data, id }) => {
+const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     const [label, setLabel] = useState<string>(data.label || 'ClassName');
     const [attributes, setAttributes] = useState<string>(data.attributes?.join('\n') || '');
     const [methods, setMethods] = useState<string>(data.methods?.join('\n') || '');
@@ -24,6 +24,8 @@ const UMLClassNode = ({ data, id }) => {
     const attributesRef = useRef<HTMLTextAreaElement>(null);
     const methodsRef = useRef<HTMLTextAreaElement>(null);
     const labelRef = useRef<HTMLInputElement>(null);
+    const nodeRef = useRef<HTMLDivElement>(null);
+
 
     const [nodeWidth, setNodeWidth] = useState(200); // Initial width
 
@@ -31,6 +33,15 @@ const UMLClassNode = ({ data, id }) => {
     useEffect(() => {
         // Dynamically adjust the width based on content
         let maxWidth = 150;
+
+        if (methodsRef.current) {
+            methodsRef.current.style.height = 'auto';
+            methodsRef.current.style.height = `${methodsRef.current.scrollHeight}px`;
+        }
+        if (attributesRef.current) {
+            attributesRef.current.style.height = 'auto';
+            attributesRef.current.style.height = `${attributesRef.current.scrollHeight}px`;
+        }
         const fontSize = 14;
         const fontFamily = 'Arial, sans-serif';
         const font = `${fontSize}px ${fontFamily}`;
@@ -84,17 +95,27 @@ const UMLClassNode = ({ data, id }) => {
         data.updateNodeData?.(id, { methods: newMethods.split('\n') });
     };
 
-    const controlStyle = {
-        background: 'transparent',
-        border: 'none',
-      };
+    const updateMinHeightandWidth = () => {
+        const attributesHeight = attributesRef.current?.scrollHeight || 0;
+        const methodsHeight = methodsRef.current?.scrollHeight || 0;
+        if (nodeRef.current){
+            nodeRef.current.style.height = `${attributesHeight + methodsHeight + 100}px`;
+        }
+    };
+
+
+    useEffect(() => {
+        updateMinHeightandWidth(); // Update height on initial load and whenever text changes
+    }, [attributes, methods]);
 
 
     return (
         <>
-      <NodeResizer minWidth={100} minHeight={30} />
             <div
+            ref={nodeRef}
                 style={{
+                    height: '100%',
+                    width : nodeWidth,
                     border: '1px solid black',
                     borderRadius: '5px',
                     fontFamily: 'Arial, sans-serif',
@@ -159,6 +180,8 @@ const UMLClassNode = ({ data, id }) => {
                             whiteSpace: 'pre',
                             fontSize: '14px',
                             fontFamily: 'Arial, sans-serif',
+                            // height: `${nodeHeight / 2}px`,
+
                         }}
                     />
                 </div>
@@ -172,10 +195,12 @@ const UMLClassNode = ({ data, id }) => {
                         style={{
                             width: '100%',
                             height: '100%',
+                            // height: `${nodeHeight / 2}px`,
                             overflow: 'hidden',
                             whiteSpace: 'pre',
                             fontSize: '14px',
                             fontFamily: 'Arial, sans-serif',
+
                         }}
                     />
                 </div>
