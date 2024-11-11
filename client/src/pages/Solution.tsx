@@ -115,6 +115,8 @@ const Solution = ({}) => {
   const edges = localStorage.getItem(LOCAL_STORAGE_KEY_EDGES);
 
   const umlData = formatForAI(JSON.parse(nodes), JSON.parse(edges) ); // Get UML data if needed
+  console.log(umlData)
+  
   const checkContent = async (umlData: string) => {
     try {
       const response = await axios.post('/api/guardrails/analyze', { text: umlData });
@@ -122,7 +124,7 @@ const Solution = ({}) => {
       if (response.data.isInappropriate) {
         throw new Error('Inappropriate content detected');
       }
-      
+      setAiResponses(response.data.result);
       return true;
     } catch (error) {
       console.error('Content check failed:', error);
@@ -177,7 +179,7 @@ const Solution = ({}) => {
 
 
 
-      setAiResponses(data.reply);
+      // setAiResponses(data.reply);
   
     } catch (error) {
       console.error("Error getting AI response:", error);
@@ -185,7 +187,7 @@ const Solution = ({}) => {
       //   ...prevResponses,
       //   { text: "Error: Unable to get a response.", fromAI: true },
       // ]);
-      setAiResponses("Error");
+      // setAiResponses("Error");
     }
     finally {
       setIsLoadingAIResponse(false); // Set loading state to false after response or error

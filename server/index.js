@@ -30,7 +30,7 @@ const users = require("./routes/UserRoutes");
 const comments = require("./routes/CommentRoutes");
 const SolutionInProgress = require("./routes/SolutionInProgressRoutes");
 const aiRoutes = require("./routes/AIRoutes");
-
+const guardrailsRoutes = require("./routes/guardrailsRoutes");
 
 
 
@@ -103,7 +103,7 @@ app.use("/api/inprogress", SolutionInProgress);
 app.use("/api/users", users);
 app.use("/api/comments", comments);
 app.use("/api/ai", aiRoutes);
-
+app.use("/api/guardrails", guardrailsRoutes);
 app.use(ErrorHandler);
 
 // ENV FILE SPECIFICATION
