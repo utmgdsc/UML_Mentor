@@ -116,16 +116,13 @@ const Solution = ({}) => {
 
   const umlData = formatForAI(JSON.parse(nodes), JSON.parse(edges) ); // Get UML data if needed
   console.log(umlData)
+  console.log("Here")
   
   const checkContent = async (umlData: string) => {
     try {
       const response = await axios.post('/api/guardrails/analyze', { text: umlData });
       console.log(response)
-      if (response.data.isInappropriate) {
-        throw new Error('Inappropriate content detected');
-      }
-      setAiResponses(response.data.result);
-      return true;
+      return response.data.check;
     } catch (error) {
       console.error('Content check failed:', error);
       throw error;
@@ -162,7 +159,12 @@ const Solution = ({}) => {
     setAiResponses(""); // Clear any previous response
 
         try {
-          await checkContent(umlData);
+          const check = await checkContent(umlData);
+          if (check == false) {
+            setAiResponses("The solution seems to violate guidelines!");
+            return;
+          }
+
       const response = await fetch('/api/openai-chat', {
         method: 'POST',
         headers: {
@@ -179,7 +181,7 @@ const Solution = ({}) => {
 
 
 
-      // setAiResponses(data.reply);
+       setAiResponses(data.reply);
   
     } catch (error) {
       console.error("Error getting AI response:", error);
@@ -187,7 +189,7 @@ const Solution = ({}) => {
       //   ...prevResponses,
       //   { text: "Error: Unable to get a response.", fromAI: true },
       // ]);
-      // setAiResponses("Error");
+       setAiResponses("Error");
     }
     finally {
       setIsLoadingAIResponse(false); // Set loading state to false after response or error

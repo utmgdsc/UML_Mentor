@@ -36,18 +36,19 @@ class GuardrailsController {
             const identityAttack = attributes.IDENTITY_ATTACK.summaryScore.value;
             const off_topic = attributes.IDENTITY_ATTACK.summaryScore.value;
 
-            const result = toxicity > 0.3 || insult > 0.3 || flirtation > 0.3 || 
-                          identityAttack > 0.3 || off_topic > 0.6
+            const result = toxicity > 0.3 || insult > 0.3 || flirtation > 0.8 || 
+                          identityAttack > 0.3 
                 ? 'The Solution may be off-topic, rude, or irrelevant.'
                 : 'The Solution appears to be relevant.';
 
-            if (toxicity > 0.3 || insult > 0.3 || flirtation > 0.6 || 
-            identityAttack > 0.3 || off_topic > 0.6){
+            if (toxicity > 0.3 || insult > 0.3 || flirtation > 0.8 || 
+            identityAttack > 0.3){
                 check = false;
             }
-
+            // true is fine
             return res.json({ 
                 result,
+                check,
                 scores: {
                     toxicity,
                     insult,
