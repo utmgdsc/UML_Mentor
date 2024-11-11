@@ -10,6 +10,7 @@ import {
   removeEdge,
   applyNodeChanges,
   applyEdgeChanges,
+  ReactFlowProvider
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import UMLClassNode from "../components/UMLClassNode";
@@ -568,4 +569,12 @@ const UMLDiagramEditor = ({ problemId }) => {
   );
 };
 
-export default UMLDiagramEditor;
+const UMLDiagramEditorFinal = ({ problemId }) => {
+  return (
+    <ReactFlowProvider>
+      <UMLDiagramEditor problemId={problemId} />
+    </ReactFlowProvider>
+  );
+};
+
+export default UMLDiagramEditorFinal;

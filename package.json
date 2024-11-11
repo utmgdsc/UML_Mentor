@@ -12,8 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@langchain/community": "^0.0.41",
+    "@langchain/community": "^0.3.12",
     "@langchain/openai": "^0.0.23",
+    "@reactflow/node-resizer": "^2.2.14",
     "body-parser": "^1.20.2",
     "dayjs": "^1.11.11",
     "dom-to-image": "^2.6.0",

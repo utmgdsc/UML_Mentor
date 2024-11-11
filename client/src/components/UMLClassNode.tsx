@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Handle, Position, NodeProps } from '@xyflow/react';
+import { useState, useEffect, useRef } from 'react';
+import { Handle, Position, NodeProps, NodeResizer, NodeResizeControl } from '@xyflow/react';
 import { memo } from 'react';
-import { NodeResizer, NodeResizeControl } from '@xyflow/react';
 
 interface UMLNodeData {
     label?: string;
@@ -15,7 +14,7 @@ interface UMLNodeData {
 
 interface UMLNodeProps extends NodeProps<UMLNodeData> {}
 
-const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
+const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id, selected }) => {
     const [label, setLabel] = useState<string>(data.label || 'ClassName');
     const [attributes, setAttributes] = useState<string>(data.attributes?.join('\n') || '');
     const [methods, setMethods] = useState<string>(data.methods?.join('\n') || '');
@@ -26,36 +25,28 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
     const labelRef = useRef<HTMLInputElement>(null);
     const nodeRef = useRef<HTMLDivElement>(null);
 
-
-    const [nodeWidth, setNodeWidth] = useState(200); // Initial width
-
+    const [nodeWidth, setNodeWidth] = useState(200);
+    const [nodeHeight, setNodeHeight] = useState(200);
 
     useEffect(() => {
-        // Dynamically adjust the width based on content
         let maxWidth = 150;
-
-        if (methodsRef.current) {
-            methodsRef.current.style.height = 'auto';
-            methodsRef.current.style.height = `${methodsRef.current.scrollHeight}px`;
-        }
-        if (attributesRef.current) {
-            attributesRef.current.style.height = 'auto';
-            attributesRef.current.style.height = `${attributesRef.current.scrollHeight}px`;
-        }
         const fontSize = 14;
         const fontFamily = 'Arial, sans-serif';
         const font = `${fontSize}px ${fontFamily}`;
+        
         let labelWidth = 0;
         if (labelRef.current) {
             const labelText = labelRef.current.value;
             labelWidth = measureTextWidth(labelText, font);
         }
+        
         let attributesMaxWidth = 0;
         const attributesLines = attributes.split('\n');
         attributesLines.forEach(line => {
             const lineWidth = measureTextWidth(line, font);
             attributesMaxWidth = Math.max(attributesMaxWidth, lineWidth);
         });
+        
         let methodsMaxWidth = 0;
         const methodsLines = methods.split('\n');
         methodsLines.forEach(line => {
@@ -95,32 +86,51 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
         data.updateNodeData?.(id, { methods: newMethods.split('\n') });
     };
 
-    const updateMinHeightandWidth = () => {
-        const attributesHeight = attributesRef.current?.scrollHeight || 0;
-        const methodsHeight = methodsRef.current?.scrollHeight || 0;
-        if (nodeRef.current){
-            nodeRef.current.style.height = `${attributesHeight + methodsHeight + 100}px`;
-        }
-    };
+    const controlStyle = {
+        background: 'transparent',
+        border: 'none',
+      };
 
-
-    useEffect(() => {
-        updateMinHeightandWidth(); // Update height on initial load and whenever text changes
-    }, [attributes, methods]);
-
+      function ResizeIcon() {
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+            stroke="#ff0071"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ position: 'absolute', right: 5, bottom: 5 }}
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <polyline points="16 20 20 20 20 16" />
+            <line x1="14" y1="14" x2="20" y2="20" />
+            <polyline points="8 4 4 4 4 8" />
+            <line x1="4" y1="4" x2="10" y2="10" />
+          </svg>
+        );
+      }
 
     return (
         <>
+      <NodeResizeControl style={controlStyle} minWidth={200} minHeight={200}>
+        <ResizeIcon />
+      </NodeResizeControl>
+            
             <div
-            ref={nodeRef}
+                ref={nodeRef}
                 style={{
                     height: '100%',
-                    width : nodeWidth,
+                    width: '100%',
                     border: '1px solid black',
                     borderRadius: '5px',
                     fontFamily: 'Arial, sans-serif',
-                    position: 'relative',
                     backgroundColor: 'white',
+                    display: 'flex',
+                    flexDirection: 'column',
                 }}
             >
                 <div
@@ -131,6 +141,7 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                         textAlign: 'center',
                         fontWeight: 'bold',
                         position: 'relative',
+                        flexShrink: 0,
                     }}
                 >
                     <input
@@ -140,7 +151,6 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                         placeholder="Class Name"
                         style={{
                             width: '100%',
-                            height: '100%',
                             border: 'none',
                             backgroundColor: 'transparent',
                             textAlign: 'center',
@@ -166,43 +176,58 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                         X
                     </button>
                 </div>
-                <div style={{ padding: '7px' }}>
-                    <textarea
-                        ref={attributesRef}
-                        value={attributes}
-                        onChange={handleAttributesChange}
-                        placeholder="Attributes"
-                        wrap="off"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            overflow: 'hidden',
-                            whiteSpace: 'pre',
-                            fontSize: '14px',
-                            fontFamily: 'Arial, sans-serif',
-                            // height: `${nodeHeight / 2}px`,
-
-                        }}
-                    />
-                </div>
-                <div style={{ padding: '7px' }}>
-                    <textarea
-                        ref={methodsRef}
-                        value={methods}
-                        onChange={handleMethodsChange}
-                        placeholder="Methods"
-                        wrap="off"
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            // height: `${nodeHeight / 2}px`,
-                            overflow: 'hidden',
-                            whiteSpace: 'pre',
-                            fontSize: '14px',
-                            fontFamily: 'Arial, sans-serif',
-
-                        }}
-                    />
+                <div style={{ 
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{ 
+                        flex: 1,
+                        padding: '7px',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <textarea
+                            ref={attributesRef}
+                            value={attributes}
+                            onChange={handleAttributesChange}
+                            placeholder="Attributes"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                resize: 'none',
+                                border: 'solid 1px black',
+                                overflow: 'auto',
+                                whiteSpace: 'pre',
+                                fontSize: '14px',
+                                fontFamily: 'Arial, sans-serif',
+                            }}
+                        />
+                    </div>
+                    <div style={{ 
+                        flex: 1,
+                        padding: '7px',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <textarea
+                            ref={methodsRef}
+                            value={methods}
+                            onChange={handleMethodsChange}
+                            placeholder="Methods"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                resize: 'none',
+                                border: 'solid 1px black',
+                                overflow: 'auto',
+                                whiteSpace: 'pre',
+                                fontSize: '14px',
+                                fontFamily: 'Arial, sans-serif',
+                            }}
+                        />
+                    </div>
                 </div>
                 {!data.isPreview && (
                     <>
@@ -257,31 +282,9 @@ const UMLClassNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                     </>
                 )}
             </div>
-        </>
+</>
     );
 };
 
-function ResizeIcon() {
-    return (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        strokeWidth="2"
-        stroke="#ff0071"
-        fill="none"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{ position: 'absolute', right: 5, bottom: 5 }}
-      >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-        <polyline points="16 20 20 20 20 16" />
-        <line x1="14" y1="14" x2="20" y2="20" />
-        <polyline points="8 4 4 4 4 8" />
-        <line x1="4" y1="4" x2="10" y2="10" />
-      </svg>
-    );
-  }
 
 export default memo(UMLClassNode);
