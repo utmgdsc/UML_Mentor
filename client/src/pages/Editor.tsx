@@ -10,6 +10,7 @@ import {
   removeEdge,
   applyNodeChanges,
   applyEdgeChanges,
+  ReactFlowProvider
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import UMLClassNode from "../components/UMLClassNode";
@@ -97,6 +98,7 @@ const UMLDiagramEditor = ({ problemId }) => {
   //const { analyzeUML, isLoading } = useUMLFormatter({ problemId });
   const [challengeName, setChallengeName] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
+
 
   useEffect(() => {
     // Fetch the challenge details using problemId
@@ -570,7 +572,7 @@ const UMLDiagramEditor = ({ problemId }) => {
             type: "step", // Keep step type
             style: {
               stroke: "#000",
-              strokeWidth: 2,
+              strokeWidth: edge.id === selectedEdge ? 4 : 2,
               strokeDasharray:
                 edge.data?.edgeType === "Implementation" ? "5, 5" : "0",
               strokeDashoffset: 100,
@@ -642,4 +644,12 @@ const UMLDiagramEditor = ({ problemId }) => {
   );
 };
 
-export default UMLDiagramEditor;
+const UMLDiagramEditorFinal = ({ problemId }) => {
+  return (
+    <ReactFlowProvider>
+      <UMLDiagramEditor problemId={problemId} />
+    </ReactFlowProvider>
+  );
+};
+
+export default UMLDiagramEditorFinal;
