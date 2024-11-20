@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@types/node": "^22.9.0",
+    "openai": "^4.71.1",
+    "plantuml-encoder": "^1.4.0"
+  }
+}

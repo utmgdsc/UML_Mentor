@@ -23,6 +23,7 @@ import CustomMarkers from "./CustomMarkers";
 import { umlDiagramInstructions } from "../components/instructionsData";
 import domtoimage from "dom-to-image";
 import imageCompression from "browser-image-compression";
+import { useUMLFormatter } from '../hooks/useUMLFormatter.ts';
 
 // Keys for local storage
 const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
@@ -66,7 +67,10 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
 };
 
 const UMLDiagramEditor = ({ problemId }) => {
+  const { analyzeUML, isLoading, error, analysis } = useUMLFormatter({ problemId });
+  //const { analyzeUML, isLoading } = useUMLFormatter({ problemId });
   const [challengeName, setChallengeName] = useState("");
+  const [challengeDescription, setChallengeDescription] = useState("");
 
   useEffect(() => {
     // Fetch the challenge details using problemId
@@ -75,6 +79,8 @@ const UMLDiagramEditor = ({ problemId }) => {
         const response = await fetch(`/api/challenges/${problemId}`);
         const data = await response.json();
         setChallengeName(data.title || "Unnamed Challenge"); // Extract the challenge name
+        setChallengeDescription(data.generalDescription || "No Description");
+        
       } catch (error) {
         console.error("Error fetching challenge details:", error);
       }
@@ -236,7 +242,7 @@ const UMLDiagramEditor = ({ problemId }) => {
     // Store the nodes and edges in localStorage (optional)
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
-
+    
     // Generate the image
     await generateImage();
 
