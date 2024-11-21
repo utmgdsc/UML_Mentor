@@ -10,7 +10,7 @@ import {
   removeEdge,
   applyNodeChanges,
   applyEdgeChanges,
-  ReactFlowProvider
+  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import UMLClassNode from "../components/UMLClassNode";
@@ -21,7 +21,8 @@ import { getBezierPath, getEdgeCenter, MarkerType } from "react-flow-renderer";
 import { getSmoothStepPath } from "reactflow";
 import CustomMarkers from "./CustomMarkers";
 import { umlDiagramInstructions } from "../components/instructionsData";
-import domtoimage from 'dom-to-image';
+import domtoimage from "dom-to-image";
+import imageCompression from "browser-image-compression";
 import { useUMLFormatter } from '../hooks/useUMLFormatter.ts';
 
 // Keys for local storage
@@ -46,34 +47,6 @@ const getNodeColor = () => {
 
 // UMLEdge component
 const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
-  // Get the center of the edge for future use (optional)
-  // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-  //     sourceX,
-  //     sourceY,
-  //     targetX,
-  //     targetY
-  // });
-
-  // // Generate a smooth step path with custom settings
-  // const path = getSmoothStepPath({
-  //     sourceX,
-  //     sourceY,
-  //     targetX,
-  //     targetY,
-  //     sourcePosition: 'right', // Adjust positions if needed
-  //     targetPosition: 'left',
-  //     borderRadius: 10, // Controls the curve at corner points
-  //     offset: 5, // Spacing between segments
-  // });
-
-  // const onNodesChange = useCallback(
-  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-  //   [],
-  // );
-  // const onEdgesChange = useCallback(
-  //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-  //   [],
-  // );
   return (
     <>
       <defs>
@@ -98,7 +71,6 @@ const UMLDiagramEditor = ({ problemId }) => {
   //const { analyzeUML, isLoading } = useUMLFormatter({ problemId });
   const [challengeName, setChallengeName] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
-
 
   useEffect(() => {
     // Fetch the challenge details using problemId
@@ -231,104 +203,41 @@ const UMLDiagramEditor = ({ problemId }) => {
   // Function to generate and download image
   const generateImage = () => {
     return new Promise((resolve, reject) => {
-      const reactFlowElement = document.getElementsByClassName('react-flow')[0];
-  
-      domtoimage.toBlob(reactFlowElement, { bgcolor: '#ffffff', quality: 1 })
-        .then((blob) => {
+      const reactFlowElement = document.getElementsByClassName("react-flow")[0];
+
+      domtoimage
+        .toBlob(reactFlowElement, { bgcolor: "#ffffff", quality: 1 })
+        .then(async (blob) => {
           if (!blob) {
-            reject(new Error('Failed to create blob.'));
+            reject(new Error("Failed to create blob."));
             return;
           }
-  
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64data = reader.result as string;
-            localStorage.setItem('uml-diagram-image', base64data);
+
+          try {
+            // Compress the image using browser-image-compression
+            const options = {
+              maxSizeMB: 0.5, // Set the maximum file size (in MB)
+              maxWidthOrHeight: 800, // Resize to a max width or height of 800px
+              useWebWorker: true,
+            };
+            const compressedBlob = await imageCompression(blob, options);
+
+            const base64data =
+              await imageCompression.getDataUrlFromFile(compressedBlob);
+            localStorage.setItem("uml-diagram-image", base64data);
             resolve(true);
-          };
-          reader.readAsDataURL(blob);
+          } catch (error) {
+            reject(error);
+          }
         })
         .catch((error) => reject(error));
     });
   };
-  
-  // Modified postSolution function
-//   const postSolution = async () => {
-//   try {
-//     // Get nodes and edges first
-//     const { nodes, edges } = getNodesAndEdges();
-
-//     // Format the UML diagram for analysis
-//     //const formattedUML = UMLFormatter.formatForAI(nodes, edges);
-
-//     // Analyze the UML diagram with the formatted data
-//     const analysis = await analyzeUML(challengeName, challengeDescription);
-//     // const analysis = await analyzeUML({
-//     //   challengeName,
-//     //   challengeDescription,
-//     //   umlDiagram: formattedUML
-//     // });
-
-//     // Generate the image
-//     await generateImage();
-
-//     // Get the image from localStorage
-//     const imageUrl = localStorage.getItem("uml-diagram-image");
-    
-//     if (!imageUrl) {
-//       throw new Error("Failed to generate diagram image");
-//     }
-
-//     // Convert the base64 string to a Blob
-//     const byteString = atob(imageUrl.split(",")[1]);
-//     const mimeString = imageUrl.split(",")[0].split(":")[1].split(";")[0];
-//     const ab = new ArrayBuffer(byteString.length);
-//     const ia = new Uint8Array(ab);
-//     for (let i = 0; i < byteString.length; i++) {
-//       ia[i] = byteString.charCodeAt(i);
-//     }
-//     const blob = new Blob([ab], { type: mimeString });
-//     const file = new File([blob], "uml-diagram.png", { type: mimeString });
-
-//     // Prepare form data with both the image and the AI analysis
-//     const formData = new FormData();
-//     formData.append("challengeId", problemId);
-//     formData.append("title", `${challengeName} Solution`);
-//     formData.append("description", analysis); // Include the AI analysis as the description
-//     formData.append("diagram", file);
-
-//     // Submit the solution
-//     const response = await fetch("/api/solutions", {
-//       method: "POST",
-//       body: formData,
-//     });
-
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       throw new Error(errorData.message || "Failed to submit solution");
-//     }
-
-//     const data = await response.json();
-
-//     // Clear stored data
-//     localStorage.removeItem("uml-diagram-image");
-    
-//     // Redirect to the solution page
-//     window.location.href = `/solution/${data.id}`;
-//   } catch (error) {
-//     console.error("Error posting solution:", error);
-//     // You might want to show an error message to the user here
-//     throw error; // Re-throw to be handled by the calling code
-//   }
-// };
 
   // Submit to PostSolution form directly
   const postSolution = async () => {
     const { nodes, edges } = getNodesAndEdges();
     const defaultTitle = `${challengeName} Solution`;
-    //   ? `UML Diagram with Classes: ${nodes.map((n) => n.data.label).join(", ")}`
-    //   : "Empty UML Diagram";
-    // TODO: THIS IS FOR DEBUGGING ^^^ to check if edges show up as well
 
     // Store the nodes and edges in localStorage (optional)
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
@@ -340,7 +249,6 @@ const UMLDiagramEditor = ({ problemId }) => {
     // Retrieve the generated image from localStorage
     const imageUrl = localStorage.getItem("uml-diagram-image");
     if (imageUrl) {
-      // Convert the base64 string to a Blob
       const byteString = atob(imageUrl.split(",")[1]);
       const mimeString = imageUrl.split(",")[0].split(":")[1].split(";")[0];
       const ab = new ArrayBuffer(byteString.length);
@@ -351,24 +259,21 @@ const UMLDiagramEditor = ({ problemId }) => {
       const blob = new Blob([ab], { type: mimeString });
       const file = new File([blob], "uml-diagram.png", { type: mimeString });
 
-      // Prepare form data
       const formData = new FormData();
-      formData.append("challengeId", `${problemId}`); // Set problemId as the challenge ID
-      formData.append("title", defaultTitle); // Default title
-      formData.append("description", ""); // Blank description
-      formData.append("diagram", file); // Attach the image file
+      formData.append("challengeId", `${problemId}`);
+      formData.append("title", defaultTitle);
+      formData.append("description", "");
+      formData.append("diagram", file);
 
-      // Send the POST request
       fetch(`/api/solutions`, {
         method: "POST",
         body: formData,
       })
         .then((resp) => resp.json())
         .then((data) => {
-          // Redirect to the solution page after successful submission
           localStorage.setItem("challengeId", problemId);
           window.location.href = `/solution/${data.id}`;
-          localStorage.removeItem("uml-diagram-image"); // Clear the image from localStorage
+          localStorage.removeItem("uml-diagram-image");
         })
         .catch((err) => {
           console.error("Error submitting solution:", err);
@@ -420,17 +325,13 @@ const UMLDiagramEditor = ({ problemId }) => {
 
   const onConnectEnd = useCallback(
     (event, connectionState) => {
-      console.log("onConnectEnd triggered", connectionState);
       if (!connectionState.isValid) {
         const bounds = reactFlowWrapperRef.current.getBoundingClientRect();
-        console.log("Bounds:", bounds);
         const { clientX, clientY } = event;
-        console.log("Mouse position:", clientX, clientY);
         const position = {
           x: clientX - bounds.left,
           y: clientY - bounds.top,
         };
-        console.log("Calculated position:", position);
         const newNode = {
           id: (nodes.length + 1).toString(),
           position,
@@ -440,9 +341,8 @@ const UMLDiagramEditor = ({ problemId }) => {
             methods: [],
             color: getNodeColor(),
           },
-          type: "umlNode", // Change to 'umlNode' for class node
+          type: "umlNode",
         };
-        console.log("New node:", newNode);
         setNodes((nds) => [...nds, newNode]);
       }
     },
@@ -450,16 +350,14 @@ const UMLDiagramEditor = ({ problemId }) => {
   );
 
   useEffect(() => {
-    // Check if the user has seen the instructions using the global key
     const instructionsSeen =
       localStorage.getItem(GLOBAL_INSTRUCTIONS_SEEN_KEY) === "true";
     if (!instructionsSeen) {
       setShowInstructions(true);
     }
-  }, []); // This effect now runs only once when the component mounts
+  }, []);
 
   const handleCloseInstructions = () => {
-    // Use the global key when setting the instructions as seen
     localStorage.setItem(GLOBAL_INSTRUCTIONS_SEEN_KEY, "true");
     setShowInstructions(false);
   };
@@ -545,31 +443,31 @@ const UMLDiagramEditor = ({ problemId }) => {
           data: {
             ...node.data,
             removeNode,
-            updateNodeData, // Pass the update function to nodes
+            updateNodeData,
           },
         }))}
         edges={edges.map((edge) => {
-          let markerId = "filledArrow"; // Default marker
-          let dashArray = "0"; // Default to solid line
+          let markerId = "filledArrow";
+          let dashArray = "0";
 
           switch (edge.data?.edgeType) {
             case "Inheritance":
-              markerId = "emptyArrow"; // Solid filled arrow
+              markerId = "emptyArrow";
               break;
             case "Composition":
-              markerId = "diamond"; // Dashed with empty arrow
+              markerId = "diamond";
               dashArray = "5,5";
               break;
             case "Implementation":
-              markerId = "emptyArrow"; // Solid with diamond
+              markerId = "emptyArrow";
               break;
             default:
-              markerId = "filledArrow"; // Default fallback
+              markerId = "filledArrow";
           }
 
           return {
             ...edge,
-            type: "step", // Keep step type
+            type: "step",
             style: {
               stroke: "#000",
               strokeWidth: edge.id === selectedEdge ? 4 : 2,
@@ -577,10 +475,9 @@ const UMLDiagramEditor = ({ problemId }) => {
                 edge.data?.edgeType === "Implementation" ? "5, 5" : "0",
               strokeDashoffset: 100,
             },
-            markerStart: markerId, // Use markerId for the start (source)
-            markerEnd: undefined, // Use markerId here
+            markerStart: markerId,
+            markerEnd: undefined,
           };
-          
         })}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
@@ -596,9 +493,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         onConnectEnd={onConnectEnd}
       >
         <CustomMarkers />
-        <MiniMap
-          nodeColor={(node) => node.data.color || "#eee"} // Use node's color or default to light gray
-        />
+        <MiniMap nodeColor={(node) => node.data.color || "#eee"} />
         <Controls />
         <Background />
       </ReactFlow>
