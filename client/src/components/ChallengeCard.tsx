@@ -14,6 +14,7 @@ function ChallengeCard({
   isAdmin,
   hidden,
   keyPatterns,
+  solutionCount,
 }: ChallengeDetailsShort) {
   const [deleted, setDeleted] = useState(false);
 
@@ -127,6 +128,7 @@ function ChallengeCard({
             )}
           </div>
         </ButtonToolbar>
+        <p>Solutions Submitted: {solutionCount}</p>
       </Card.Body>
     </Card>
   );

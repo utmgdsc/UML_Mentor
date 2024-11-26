@@ -49,7 +49,9 @@ const uploadMiddleware = (req, res, next) => {
       return res.status(400).json({ error: err.message });
     } else if (err) {
       // An unknown error occurred when uploading.
-      return res.status(500).json({ error: "An error occurred while uploading the file." });
+      return res
+        .status(500)
+        .json({ error: "An error occurred while uploading the file." });
     }
     // Everything went fine.
     next();
@@ -68,5 +70,9 @@ router.put("/:id", upload.single("diagram"), Solution.edit);
 
 // Delete a solution from the database.
 router.delete("/:id", Solution.delete);
+
+// Get solution counts for each challenge
+router.get("/counts", Solution.getSolutionCounts);
+//api/solutions/counts
 
 module.exports = router;
