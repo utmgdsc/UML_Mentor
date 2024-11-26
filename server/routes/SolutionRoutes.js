@@ -34,6 +34,9 @@ router.get("/user/:username", Solution.getUserSolutions);
 // Get solutions from the database.
 router.get("/", Solution.getAll);
 
+// Get solution counts for each challenge
+router.get("/counts", Solution.getSolutionCounts);
+
 // Get individual solution by id
 router.get("/:id", Solution.get);
 
@@ -71,8 +74,6 @@ router.put("/:id", upload.single("diagram"), Solution.edit);
 // Delete a solution from the database.
 router.delete("/:id", Solution.delete);
 
-// Get solution counts for each challenge
-router.get("/counts", Solution.getSolutionCounts);
 //api/solutions/counts
 
 module.exports = router;
