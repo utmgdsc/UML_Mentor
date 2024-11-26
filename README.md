@@ -1,35 +1,47 @@
 # UML_Mentor
 
-
 ### Development guide (OUTDATED)
-Clone the repository 
+
+Clone the repository
+
 ```
 git clone https://github.com/utmgdsc/UML_Mentor.git
 cd UML_Mentor
 ```
-Install the dependencies 
+
+Install the dependencies
+
 ```
 npm install
-cd client 
+cd client
 npm install
 ```
+
 Run the client in dev mode
+
 ```
 npm run dev
 ```
-Go to `server/index.js` and uncomment line `18` 
+
+Go to `server/index.js` and uncomment line `18`
+
 ```js
 await importChallenges();
 ```
+
 Open a new terminal and run the server in dev mode (execute from root directory).
+
 ```
 npm run devStart
 ```
-The challenges are now imported from the `challenges.json` into the SQLite database. You should now uncomment line 18 to avoid import errors in the future runs. Alternatively, you can pass the `true` parameter to tell the function to reimport challenges on every run (not recommended). 
+
+The challenges are now imported from the `challenges.json` into the SQLite database. You should now uncomment line 18 to avoid import errors in the future runs. Alternatively, you can pass the `true` parameter to tell the function to reimport challenges on every run (not recommended).
+
 ```js
 // await importChallenges();
 ```
-Access the app via the client port `3000`. All of the client requests starting with `/api` are redirected to the server `8080`. 
+
+Access the app via the client port `3000`. All of the client requests starting with `/api` are redirected to the server `8080`.
 
 ## Developer's Documentation
 
@@ -60,7 +72,8 @@ Access the app via the client port `3000`. All of the client requests starting w
 #### Middleware
 
 #### AI
-For Eren to do. 
+
+For Eren to do.
 
 ### Authentication
 
@@ -72,25 +85,25 @@ For Eren to do.
 
 #### Production
 
-
 ## Basic user documentation
 
 ### Solving challenges.
 
-### Posting solutions. 
+### Posting solutions.
 
 ### Viewing solutions.
 
 ## Admin documentation
 
 ### Managing challenges
+
 - Add
 - Delete
 - Hide
 - Edit (todo)
 
 ### Managing users
+
 - Delete Solutions
 - Delete comments
 - Admin dashboard
-
