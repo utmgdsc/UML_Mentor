@@ -14,9 +14,7 @@ exports.getNrecent = async (req, res) => {
   const userSolutions = await Solution.findAll({
     where: { userId: req.user.username },
   });
-  const solvedChallengeIds = userSolutions.map(
-    (solution) => solution.challengeId
-  );
+  const solvedChallengeIds = userSolutions.map((solution) => solution.challengeId);
   const solutions = await Solution.findAll({
     where: { challengeId: solvedChallengeIds },
     limit: n,
@@ -29,17 +27,14 @@ exports.getNrecent = async (req, res) => {
 
 exports.getUserSolutions = async (req, res) => {
   const userId = req.params.username;
-  const solutions = await Solution.findAll({
-    where: { userId },
-    include: { model: User, as: "User" },
-  });
+  const solutions = await Solution.findAll({ where: { userId }, include: {model: User, as: "User"}});
 
   res.status(200).json(solutions);
 };
 
+
 exports.getAll = async (req, res) => {
-  if (req.user.role === "admin") {
-    // don't hide any solutions
+  if (req.user.role === "admin") { // don't hide any solutions
     // eager load the user data
     const solutions = await Solution.findAll({
       // limit: 50,
@@ -54,8 +49,8 @@ exports.getAll = async (req, res) => {
     }
 
     res.status(200).json(solutions);
-  } else {
-    // only return the solutions to the challenges that the user has solved
+  } 
+  else { // only return the solutions to the challenges that the user has solved
     // find all the solutions belonging to the user
     const userSolutions = await Solution.findAll({
       where: { userId: req.user.username },
@@ -66,7 +61,7 @@ exports.getAll = async (req, res) => {
 
     // make a list of challenge id's that the user has solved
     for (let i = 0; i < userSolutions.length; i++) {
-      if (!solvedChallengeIds.includes(userSolutions[i].challengeId)) {
+      if(!solvedChallengeIds.includes(userSolutions[i].challengeId)) {
         solvedChallengeIds.push(userSolutions[i].challengeId);
       }
     }
@@ -94,13 +89,15 @@ exports.getAll = async (req, res) => {
     });
 
     res.status(200).json(solutions);
+    
   }
+
 };
 
 exports.get = async (req, res) => {
   const { id } = req.params;
   const solution = await Solution.findByPk(id);
-
+  
   if (!solution) {
     return res.status(404).json({ message: "Solution not found" });
   }
@@ -108,7 +105,7 @@ exports.get = async (req, res) => {
   // Append the challenge title to the solution
   const challenge = await Challenge.findByPk(solution.challengeId);
   solution.dataValues.challengeTitle = challenge.title;
-
+  
   // Append the user data to the solution
   const user = await User.findByPk(solution.userId);
   solution.dataValues.User = user;
@@ -163,26 +160,23 @@ exports.create = async (req, res) => {
       } else if (challenge.difficulty === "hard") {
         user.score += 30;
       } else {
-        console.error(
-          "Error finding challenge difficulty: ",
-          challenge.difficulty
-        );
+        console.error('Error finding challenge difficulty: ', challenge.difficulty);
       }
 
       await user.save();
     } catch (error) {
-      console.error("Error updating user score:", error);
-      return res.status(500).send("Server error");
+      console.error('Error updating user score:', error);
+      return res.status(500).send('Server error');
     }
 
     res.status(201).json(newSolution);
-    await user.save();
+    await user.save()
     // Prepare AI feedback and submit it as a comment!
     if (diagram) {
       const [chainRunId, feedback] = await AITA.feedback_for_post(
         newSolution,
         challenge,
-        `${STORAGE_CONFIG.location}/${diagram}`
+        `${STORAGE_CONFIG.location}/${diagram}`,
       );
       await Comment.create({
         text: feedback,
@@ -194,9 +188,7 @@ exports.create = async (req, res) => {
     }
   } catch (error) {
     console.error("Error creating solution:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while creating the solution." });
+    res.status(500).json({ error: "An error occurred while creating the solution." });
   }
 };
 
@@ -246,28 +238,6 @@ exports.delete = async (req, res) => {
   await Solution.destroy({ where: { id } });
   res.status(204).send();
   fs.unlink(`${STORAGE_CONFIG.location}/${solution.diagram}`, (err) =>
-    console.log(err)
+  console.log(err),
   );
-};
-
-exports.getSolutionCounts = async (req, res) => {
-  console.log("getSolutionCounts called");
-  try {
-    const solutionCounts = await Solution.findAll({
-      attributes: [
-        "challengeId",
-        [db.Sequelize.fn("COUNT", db.Sequelize.col("id")), "solutionCount"],
-      ],
-      group: ["challengeId"],
-    });
-    console.log(solutionCounts);
-    //should return  {challengeID: solutionCount}
-    // Return the counts, even if it's an empty array
-    res.status(200).json(solutionCounts);
-  } catch (error) {
-    console.error("Error fetching solution counts:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching solution counts." });
-  }
 };

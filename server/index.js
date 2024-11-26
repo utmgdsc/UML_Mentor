@@ -11,7 +11,7 @@ const authMiddleware = require("./middleware/AuthenticationMiddleware");
 const checkRole = require("./middleware/CheckRoleMiddleware");
 
 // const OPENAI_API_KEY = 'openai-api-key'; // Replace with your OpenAI API key
-require("dotenv").config();
+require('dotenv').config();
 
 // Import OpenAI SDK
 const { Configuration, OpenAI } = require("openai");
@@ -32,14 +32,16 @@ const SolutionInProgress = require("./routes/SolutionInProgressRoutes");
 const aiRoutes = require("./routes/AIRoutes");
 const guardrailsRoutes = require("./routes/guardrailsRoutes");
 
+
+
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // This is also the default, can be omitted
+  apiKey: process.env.OPENAI_API_KEY // This is also the default, can be omitted
 });
 
 // AI chat route
 app.post("/api/openai-chat", authMiddleware, async (req, res) => {
-  const { umlData, challengeName, challengeDescription } = req.body;
-  const systemPrompt = `You are an expert software architect and educator specializing in UML diagram analysis. 
+    const {umlData, challengeName, challengeDescription } = req.body;
+    const systemPrompt = `You are an expert software architect and educator specializing in UML diagram analysis. 
     Your task is to:
     1. Analyze the provided UML diagram for correctness and best practices
     2. Evaluate how well it solves the given challenge
@@ -53,44 +55,44 @@ app.post("/api/openai-chat", authMiddleware, async (req, res) => {
     - Areas for Improvement
     - SOLID Principles Analysis
     - Specific Recommendations`;
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // or another model of your choice
-      messages: [
-        { role: "system", content: systemPrompt },
-        {
-          role: "user",
-          content: `
+    try {
+        const response = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo", // or another model of your choice
+            messages: [
+                { role: "system", content: systemPrompt },
+                { 
+                  role: "user", 
+                  content: `
       Challenge Title: ${challengeName}
       Challenge Description: ${challengeDescription}
       
       ${umlData}
       
-      Please provide a comprehensive analysis of this UML diagram in relation to the challenge.`,
-        },
-      ],
-    });
+      Please provide a comprehensive analysis of this UML diagram in relation to the challenge.`
+                }
+              ]
+        });
 
-    const aiReply = response.choices[0].message.content.trim();
-    res.json({ reply: aiReply });
-  } catch (error) {
-    console.error("OpenAI API error:", error);
-    res.status(500).json({ error: "Error communicating with OpenAI." });
-  }
+        const aiReply = response.choices[0].message.content.trim();
+        res.json({ reply: aiReply });
+    } catch (error) {
+        console.error("OpenAI API error:", error);
+        res.status(500).json({ error: "Error communicating with OpenAI." });
+    }
 });
 
 //For testing purposes
 app.post("/test-auth", authMiddleware, (req, res) => {
-  const user = req.user;
+    const user = req.user;
 
-  const userInfo = {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    role: user.role,
-  };
+    const userInfo = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+    };
 
-  res.json(userInfo);
+    res.json(userInfo);
 });
 
 // Set up API routes
@@ -106,26 +108,26 @@ app.use(ErrorHandler);
 
 // ENV FILE SPECIFICATION
 if (process.env?.ENV === "prod") {
-  console.log("!!! RUNNING IN PRODUCTION MODE !!!");
-  app.use(express.static(path.resolve(__dirname, "../client/dist")));
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
-  });
+    console.log("!!! RUNNING IN PRODUCTION MODE !!!");
+    app.use(express.static(path.resolve(__dirname, "../client/dist")));
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "../client/dist", "index.html"));
+    });
 }
 
 if (process.env?.ENV === "dev") {
-  console.log("===[ Running in Dev Mode ]===");
+    console.log("===[ Running in Dev Mode ]===");
 }
 
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
-  console.log("Database synced");
-  // await importChallenges();
-  // await createAITAUser(); // Uncomment if you want to create a user
-  // await createAdmins();
+    console.log("Database synced");
+    await importChallenges();
+    // await createAITAUser(); // Uncomment if you want to create a user
+    createAdmins();
 
-  // Start listening for requests after the database is ready
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
-  });
+    // Start listening for requests after the database is ready
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}.`);
+    });
 });
