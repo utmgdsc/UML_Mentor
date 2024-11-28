@@ -24,6 +24,7 @@
     "react-bootstrap-icons": "^1.10.3",
     "react-dom": "^18.2.0",
     "react-drawio": "^0.1.7",
+    "react-joyride": "^2.9.3",
     "react-json-editor-ajrm": "^2.5.14",
     "react-markdown": "^9.0.1",
     "react-remark": "^2.1.0",

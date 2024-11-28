@@ -23,7 +23,8 @@ import CustomMarkers from "./CustomMarkers";
 import { umlDiagramInstructions } from "../components/instructionsData";
 import domtoimage from "dom-to-image";
 import imageCompression from "browser-image-compression";
-import { useUMLFormatter } from '../hooks/useUMLFormatter.ts';
+import { useUMLFormatter } from "../hooks/useUMLFormatter.ts";
+import { EditorTour } from "../components/EditorTour";
 
 // Keys for local storage
 const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
@@ -67,10 +68,13 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
 };
 
 const UMLDiagramEditor = ({ problemId }) => {
-  const { analyzeUML, isLoading, error, analysis } = useUMLFormatter({ problemId });
+  const { analyzeUML, isLoading, error, analysis } = useUMLFormatter({
+    problemId,
+  });
   //const { analyzeUML, isLoading } = useUMLFormatter({ problemId });
   const [challengeName, setChallengeName] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
+  const [runTour, setRunTour] = useState(false);
 
   useEffect(() => {
     // Fetch the challenge details using problemId
@@ -80,7 +84,6 @@ const UMLDiagramEditor = ({ problemId }) => {
         const data = await response.json();
         setChallengeName(data.title || "Unnamed Challenge"); // Extract the challenge name
         setChallengeDescription(data.generalDescription || "No Description");
-        
       } catch (error) {
         console.error("Error fetching challenge details:", error);
       }
@@ -242,7 +245,7 @@ const UMLDiagramEditor = ({ problemId }) => {
     // Store the nodes and edges in localStorage (optional)
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
-    
+
     // Generate the image
     await generateImage();
 
@@ -386,18 +389,27 @@ const UMLDiagramEditor = ({ problemId }) => {
         }}
       >
         <h4 style={{ margin: "0", textAlign: "center" }}>Actions</h4>
-        <button
-          onMouseDown={() => startDraggingNode("interfaceUMLNode")}
-          className="action-button"
+        <div
+          className="add-node-buttons"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
         >
-          Add Interface Node
-        </button>
-        <button
-          onMouseDown={() => startDraggingNode("umlNode")}
-          className="action-button"
-        >
-          Add Class Node
-        </button>
+          <button
+            onMouseDown={() => startDraggingNode("interfaceUMLNode")}
+            className="action-button"
+          >
+            Add Interface Node
+          </button>
+          <button
+            onMouseDown={() => startDraggingNode("umlNode")}
+            className="action-button"
+          >
+            Add Class Node
+          </button>
+        </div>
         <button onClick={resetWorkspace} className="reset-button">
           Reset Workspace
         </button>
@@ -435,6 +447,13 @@ const UMLDiagramEditor = ({ problemId }) => {
           <option value="Composition">Composition</option>
           <option value="Implementation">Implementation</option>
         </select>
+        <button
+          onClick={() => setRunTour(true)}
+          className="action-button"
+          style={{ marginBottom: "10px" }}
+        >
+          Start Tour
+        </button>
       </div>
 
       <ReactFlow
@@ -535,6 +554,7 @@ const UMLDiagramEditor = ({ problemId }) => {
           )}
         </div>
       )}
+      <EditorTour runTour={runTour} setRunTour={setRunTour} />
     </div>
   );
 };
