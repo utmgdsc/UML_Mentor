@@ -14,6 +14,7 @@ import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort";
 import { ChallengeDifficulties } from "../types/challengeDifficulties";
 import { useQuery } from "../hooks/useQuery";
 import useCheckRole from "../hooks/useCheckRole";
+import { FiBarChart2 } from "react-icons/fi";
 
 function Challenges() {
   const [challengesData, setChallengesData] =
@@ -45,6 +46,11 @@ function Challenges() {
     hard: 0,
   });
 
+  const [completedCounts, setCompletedCounts] = useState({
+    completedEasy: 0,
+    completedMedium: 0,
+    completedHard: 0,
+  });
   // Fetch challenges from the server
   useEffect(() => {
     setIsLoading(true);
@@ -97,6 +103,22 @@ function Challenges() {
           easy: easyCount,
           medium: mediumCount,
           hard: hardCount,
+        });
+        // Calculate completed challenges
+        const completedEasy = data.filter(
+          (challenge) => challenge.completed && challenge.difficulty === 0
+        ).length;
+        const completedMedium = data.filter(
+          (challenge) => challenge.completed && challenge.difficulty === 1
+        ).length;
+        const completedHard = data.filter(
+          (challenge) => challenge.completed && challenge.difficulty === 2
+        ).length;
+
+        setCompletedCounts({
+          completedEasy,
+          completedMedium,
+          completedHard,
         });
 
         // Extract challenge types from keyPatterns and categorize them
@@ -284,182 +306,165 @@ function Challenges() {
             <Col>
               <div className="d-flex justify-content-end align-items-center flex-wrap">
                 <Dropdown className="mx-2 mb-2">
-                  <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                    Sort by Difficulty
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item
-                      onClick={() => {
-                        setSortByDifficulty(!sortByDifficulty);
-                      }}
-                    >
-                      {sortByDifficulty ? "Easier First" : "Harder First"}
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-                <Dropdown
-                  className="mx-2 mb-2"
-                  style={{ marginBottom: "1rem" }}
-                >
-                  {" "}
-                  {/* Adds 1rem space below the button */}
-                  <Dropdown.Toggle
-                    variant="primary"
-                    id="dropdown-basic"
-                    style={{ borderRadius: "8px" }} // Adds slight curve to the main button
-                  >
-                    Filter by Challenge Type
+                  <Dropdown.Toggle variant="primary" id="dropdown-combined">
+                    Sort and Filter
                   </Dropdown.Toggle>
                   <Dropdown.Menu
-                    style={{ padding: "0.5rem", borderRadius: "8px" }}
+                    style={{ padding: "1rem", borderRadius: "8px" }}
                   >
-                    {" "}
-                    {/* Adds slight curve to edges */}
-                    {/* Creational Patterns */}
-                    <Dropdown drop="end">
-                      <Dropdown.Toggle
-                        variant="light"
-                        className="full-width-toggle"
-                        style={{
-                          marginBottom: "0.5rem",
-                          borderRadius: "8px",
-                          width: "100%",
-                        }} // Adds curved edges to the selection box
+                    {/* Sort by Difficulty */}
+                    <div className="mb-3">
+                      <strong>Sort by Difficulty</strong>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setSortByDifficulty(!sortByDifficulty);
+                        }}
                       >
-                        Creational Patterns
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu
-                        className="dropdown-menu-custom"
-                        style={{ borderRadius: "8px", marginLeft: "0.5rem" }} // Slight curve and offset to the right
-                      >
-                        {patternCategories.Creational.map((pattern) => (
-                          <Form.Check
-                            key={pattern}
-                            type="checkbox"
-                            label={pattern}
-                            checked={selectedChallengeTypes.includes(pattern)}
-                            onChange={() => handleChallengeTypeSelect(pattern)}
-                            style={{ marginLeft: "0.5rem" }} // Left margin for patterns
-                          />
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                    {/* Structural Patterns */}
-                    <Dropdown drop="end">
-                      <Dropdown.Toggle
-                        variant="light"
-                        className="full-width-toggle"
-                        style={{
-                          marginBottom: "0.5rem",
-                          borderRadius: "8px",
-                          width: "100%",
-                        }} // Adds curved edges to the selection box
-                      >
-                        Structural Patterns
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu
-                        className="dropdown-menu-custom"
-                        style={{ borderRadius: "8px", marginLeft: "0.5rem" }} // Slight curve and offset to the right
-                      >
-                        {patternCategories.Structural.map((pattern) => (
-                          <Form.Check
-                            key={pattern}
-                            type="checkbox"
-                            label={pattern}
-                            checked={selectedChallengeTypes.includes(pattern)}
-                            onChange={() => handleChallengeTypeSelect(pattern)}
-                            style={{ marginLeft: "0.5rem" }} // Left margin for patterns
-                          />
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                    {/* Behavioral Patterns */}
-                    <Dropdown drop="end">
-                      <Dropdown.Toggle
-                        variant="light"
-                        className="full-width-toggle"
-                        style={{
-                          marginBottom: "0.5rem",
-                          borderRadius: "8px",
-                          width: "100%",
-                        }} // Adds curved edges to the selection box
-                      >
-                        Behavioral Patterns
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu
-                        className="dropdown-menu-custom"
-                        style={{ borderRadius: "8px", marginLeft: "0.5rem" }} // Slight curve and offset to the right
-                      >
-                        {patternCategories.Behavioral.map((pattern) => (
-                          <Form.Check
-                            key={pattern}
-                            type="checkbox"
-                            label={pattern}
-                            checked={selectedChallengeTypes.includes(pattern)}
-                            onChange={() => handleChallengeTypeSelect(pattern)}
-                            style={{ marginLeft: "0.5rem" }} // Left margin for patterns
-                          />
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                    {/* Extra Patterns */}
-                    <Dropdown drop="end">
-                      <Dropdown.Toggle
-                        variant="light"
-                        className="full-width-toggle"
-                        style={{ borderRadius: "8px", width: "100%" }} // Adds curved edges to the selection box
-                      >
-                        Extra Patterns
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu
-                        className="dropdown-menu-custom"
-                        style={{ borderRadius: "8px", marginLeft: "0.5rem" }} // Slight curve and offset to the right
-                      >
-                        {extraPatterns.map((pattern) => (
-                          <Form.Check
-                            key={pattern}
-                            type="checkbox"
-                            label={pattern}
-                            checked={selectedChallengeTypes.includes(pattern)}
-                            onChange={() => handleChallengeTypeSelect(pattern)}
-                            style={{ marginLeft: "0.5rem" }} // Left margin for patterns
-                          />
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </Dropdown.Menu>
-                </Dropdown>
+                        {sortByDifficulty ? "Easier First" : "Harder First"}
+                      </Dropdown.Item>
+                    </div>
 
-                {/* Dropdown for filtering by difficulty */}
-                <Dropdown className="mx-2 mb-2">
-                  <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                    Filter by Difficulty
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Form className="ms-2">
-                      <Form.Label>Difficulty</Form.Label>
+                    <hr />
+
+                    {/* Filter by Challenge Type */}
+                    <div className="mb-3">
+                      <strong>Filter by Challenge Type</strong>
+                      {/* Creational Patterns */}
+                      <Dropdown drop="end">
+                        <Dropdown.Toggle
+                          variant="light"
+                          className="full-width-toggle"
+                          style={{ width: "100%" }}
+                        >
+                          Creational Patterns
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu style={{ borderRadius: "8px" }}>
+                          {patternCategories.Creational.map((pattern) => (
+                            <Form.Check
+                              key={pattern}
+                              type="checkbox"
+                              label={pattern}
+                              checked={selectedChallengeTypes.includes(pattern)}
+                              onChange={() =>
+                                handleChallengeTypeSelect(pattern)
+                              }
+                              style={{
+                                marginLeft: "10px",
+                                marginRight: "10px",
+                              }}
+                            />
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
+
+                      {/* Structural Patterns */}
+                      <Dropdown drop="end">
+                        <Dropdown.Toggle
+                          variant="light"
+                          className="full-width-toggle"
+                          style={{ width: "100%" }}
+                        >
+                          Structural Patterns
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu style={{ borderRadius: "8px" }}>
+                          {patternCategories.Structural.map((pattern) => (
+                            <Form.Check
+                              key={pattern}
+                              type="checkbox"
+                              label={pattern}
+                              checked={selectedChallengeTypes.includes(pattern)}
+                              onChange={() =>
+                                handleChallengeTypeSelect(pattern)
+                              }
+                              style={{
+                                marginLeft: "10px",
+                                marginRight: "10px",
+                              }}
+                            />
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
+
+                      {/* Behavioral Patterns */}
+                      <Dropdown drop="end">
+                        <Dropdown.Toggle
+                          variant="light"
+                          className="full-width-toggle"
+                          style={{ width: "100%" }}
+                        >
+                          Behavioral Patterns
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu style={{ borderRadius: "8px" }}>
+                          {patternCategories.Behavioral.map((pattern) => (
+                            <Form.Check
+                              key={pattern}
+                              type="checkbox"
+                              label={pattern}
+                              checked={selectedChallengeTypes.includes(pattern)}
+                              onChange={() =>
+                                handleChallengeTypeSelect(pattern)
+                              }
+                              style={{
+                                marginLeft: "10px",
+                                marginRight: "10px",
+                              }}
+                            />
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
+
+                      {/* Extra Patterns */}
+                      <Dropdown drop="end">
+                        <Dropdown.Toggle
+                          variant="light"
+                          className="full-width-toggle"
+                          style={{ width: "100%" }}
+                        >
+                          Extra Patterns
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu style={{ borderRadius: "8px" }}>
+                          {extraPatterns.map((pattern) => (
+                            <Form.Check
+                              key={pattern}
+                              type="checkbox"
+                              label={pattern}
+                              checked={selectedChallengeTypes.includes(pattern)}
+                              onChange={() =>
+                                handleChallengeTypeSelect(pattern)
+                              }
+                              style={{
+                                marginLeft: "10px",
+                                marginRight: "10px",
+                              }}
+                            />
+                          ))}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+
+                    <hr />
+
+                    {/* Filter by Difficulty */}
+                    <div>
+                      <strong>Filter by Difficulty</strong>
                       <Form.Check
                         type="checkbox"
                         label="Easy"
-                        onClick={() => {
-                          handleFilter(ChallengeDifficulties.EASY);
-                        }}
+                        onClick={() => handleFilter(ChallengeDifficulties.EASY)}
                       />
                       <Form.Check
                         type="checkbox"
                         label="Medium"
-                        onClick={() => {
-                          handleFilter(ChallengeDifficulties.MEDIUM);
-                        }}
+                        onClick={() =>
+                          handleFilter(ChallengeDifficulties.MEDIUM)
+                        }
                       />
                       <Form.Check
                         type="checkbox"
                         label="Hard"
-                        onClick={() => {
-                          handleFilter(ChallengeDifficulties.HARD);
-                        }}
+                        onClick={() => handleFilter(ChallengeDifficulties.HARD)}
                       />
-                    </Form>
+                    </div>
                   </Dropdown.Menu>
                 </Dropdown>
 
@@ -494,7 +499,7 @@ function Challenges() {
           zIndex: 1001,
         }}
       >
-        📊
+        <FiBarChart2 size={24} />
       </Button>
 
       {/* Floating Stats Widget */}
@@ -503,6 +508,9 @@ function Challenges() {
           totalEasy={difficultyCounts.easy}
           totalMedium={difficultyCounts.medium}
           totalHard={difficultyCounts.hard}
+          completedEasy={completedCounts.completedEasy}
+          completedMedium={completedCounts.completedMedium}
+          completedHard={completedCounts.completedHard}
         />
       )}
     </section>
