@@ -38,7 +38,9 @@ function ChallengeCard({
     [difficulty]
   );
 
-  const backgroundColor = completed ? "bg-success-subtle" : "";
+  const backgroundColor = completed
+    ? "bg-success-subtle"
+    : "bg-secondary-subtle";
 
   function handleDelete() {
     if (
@@ -114,7 +116,12 @@ function ChallengeCard({
   });
 
   return (
-    <Card>
+    <Card
+      className="shadow"
+      style={{
+        border: "none",
+      }}
+    >
       <Card.Header className={backgroundColor}>{difficultyStars}</Card.Header>
       <Card.Body>
         <Card.Title>{title}</Card.Title>

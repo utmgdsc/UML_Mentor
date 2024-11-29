@@ -120,7 +120,7 @@ if (process.env?.ENV === "dev") {
 // Sync Sequelize models
 db.sequelize.sync().then(async () => {
   console.log("Database synced");
-  // await importChallenges();
+  await importChallenges();
   // await createAITAUser(); // Uncomment if you want to create a user
   // await createAdmins();
 

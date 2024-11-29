@@ -132,6 +132,13 @@ function Challenges() {
       });
   }, [query]);
 
+  useEffect(() => {
+    if (challengesData != undefined) {
+      const sortedChallengesData = handleSortByDifficulty(challengesData);
+      setChallengesData(sortedChallengesData);
+    }
+  }, [sortByDifficulty]);
+
   const makeGrid = useCallback((): JSX.Element[] => {
     if (challengesData?.length === 0)
       return [
@@ -428,7 +435,32 @@ function Challenges() {
                   <Dropdown.Toggle variant="primary" id="dropdown-basic">
                     Filter by Difficulty
                   </Dropdown.Toggle>
-                  {/* Dropdown content for difficulty filter */}
+                  <Dropdown.Menu>
+                    <Form className="ms-2">
+                      <Form.Label>Difficulty</Form.Label>
+                      <Form.Check
+                        type="checkbox"
+                        label="Easy"
+                        onClick={() => {
+                          handleFilter(ChallengeDifficulties.EASY);
+                        }}
+                      />
+                      <Form.Check
+                        type="checkbox"
+                        label="Medium"
+                        onClick={() => {
+                          handleFilter(ChallengeDifficulties.MEDIUM);
+                        }}
+                      />
+                      <Form.Check
+                        type="checkbox"
+                        label="Hard"
+                        onClick={() => {
+                          handleFilter(ChallengeDifficulties.HARD);
+                        }}
+                      />
+                    </Form>
+                  </Dropdown.Menu>
                 </Dropdown>
 
                 <Button
