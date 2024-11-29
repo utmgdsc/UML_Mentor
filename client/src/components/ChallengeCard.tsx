@@ -20,8 +20,22 @@ function ChallengeCard({
 
   const difficultyStars = useMemo(
     () =>
-      Array.from({ length: difficulty + 1 }, (_, i) => <StarFill key={i} />),
-    [difficulty],
+      Array.from({ length: difficulty + 1 }, (_, i) => (
+        <StarFill
+          key={i}
+          style={{
+            color:
+              difficulty === 0
+                ? "green"
+                : difficulty === 1
+                  ? "#DAA520"
+                  : difficulty === 2
+                    ? "red"
+                    : "black", // Default to black for other cases
+          }}
+        />
+      )),
+    [difficulty]
   );
 
   const backgroundColor = completed ? "bg-success-subtle" : "";
@@ -29,7 +43,11 @@ function ChallengeCard({
   function handleDelete() {
     if (
       !window.confirm(
+<<<<<<< HEAD
         "Are you sure you want to delete the challenge '" + title + "'?",
+=======
+        "Are you sure you want to delete the challenge '" + title + "'?"
+>>>>>>> c3def9b (ui improve iteration 1)
       )
     ) {
       return;
@@ -135,9 +153,13 @@ function ChallengeCard({
               <Button
                 variant="dark"
                 className="mx-2"
+<<<<<<< HEAD
                 onClick={() => {
                   handleHide(false);
                 }}
+=======
+                onClick={() => handleHide(false)}
+>>>>>>> c3def9b (ui improve iteration 1)
               >
                 Unhide
               </Button>
@@ -146,9 +168,13 @@ function ChallengeCard({
               <Button
                 variant="dark"
                 className="mx-2"
+<<<<<<< HEAD
                 onClick={() => {
                   handleHide(true);
                 }}
+=======
+                onClick={() => handleHide(true)}
+>>>>>>> c3def9b (ui improve iteration 1)
               >
                 Hide
               </Button>

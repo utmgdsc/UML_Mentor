@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import ChallengeCard from "../components/ChallengeCard";
+import FloatingStats from "../components/FloatingStats";
 import {
   Container,
   Row,
@@ -24,6 +25,7 @@ function Challenges() {
   const [selectedChallengeTypes, setSelectedChallengeTypes] = useState<
     string[]
   >([]);
+  const [showStats, setShowStats] = useState(false); // State to control the visibility of FloatingStats
 
   const { isAdmin } = useCheckRole();
   const query = useQuery();
@@ -34,7 +36,14 @@ function Challenges() {
     Structural: ["Adapter", "Decorator", "Facade"],
     Behavioral: ["Strategy", "Observer", "Iterator"],
   };
-  const [extraPatterns, setExtraPatterns] = useState<string[]>([]); // Extra patterns not in the known categories
+  const [extraPatterns, setExtraPatterns] = useState<string[]>([]);
+
+  // Counters for each difficulty level
+  const [difficultyCounts, setDifficultyCounts] = useState({
+    easy: 0,
+    medium: 0,
+    hard: 0,
+  });
 
   // Fetch challenges from the server
   useEffect(() => {
@@ -74,6 +83,22 @@ function Challenges() {
             console.error("Failed fetching the challenges.", err.message);
           });
 
+        // Calculate counts for each difficulty level
+        const easyCount = data.filter(
+          (challenge) => challenge.difficulty === 0
+        ).length;
+        const mediumCount = data.filter(
+          (challenge) => challenge.difficulty === 1
+        ).length;
+        const hardCount = data.filter(
+          (challenge) => challenge.difficulty === 2
+        ).length;
+        setDifficultyCounts({
+          easy: easyCount,
+          medium: mediumCount,
+          hard: hardCount,
+        });
+
         // Extract challenge types from keyPatterns and categorize them
         const patternTypesSet = new Set<string>();
         const detectedExtraPatterns = new Set<string>();
@@ -107,14 +132,6 @@ function Challenges() {
       });
   }, [query]);
 
-  // Sort challengesData by difficulty
-  useEffect(() => {
-    if (challengesData != undefined) {
-      const sortedChallengesData = handleSortByDifficulty(challengesData);
-      setChallengesData(sortedChallengesData);
-    }
-  }, [sortByDifficulty]);
-
   const makeGrid = useCallback((): JSX.Element[] => {
     if (challengesData?.length === 0)
       return [
@@ -137,7 +154,6 @@ function Challenges() {
     let row: JSX.Element[] = [];
     let i = 0;
     for (const challenge of challengesData) {
-      // Filter out challenges by type if none selected or if not in the selected list
       if (
         selectedChallengeTypes.length > 0 &&
         challenge.keyPatterns &&
@@ -156,12 +172,10 @@ function Challenges() {
         continue;
       }
 
-      // Make sure the challenge is not filtered out by difficulty
       if (!filter.includes(challenge.difficulty) && filter.length > 0) {
         continue;
       }
 
-      // Filter out completed challenges if hideComplete is enabled
       if (hideComplete && challenge.completed) {
         continue;
       }
@@ -246,6 +260,7 @@ function Challenges() {
     <section>
       <Container>
         <header>
+          {/* Sorting and filtering controls (unchanged) */}
           <Row className="my-2">
             <Col>
               <h1 className="fs-2">
@@ -260,9 +275,7 @@ function Challenges() {
               </h2>
             </Col>
             <Col>
-              {/* Flex container to keep all buttons in one row */}
               <div className="d-flex justify-content-end align-items-center flex-wrap">
-                {/* Dropdown for sorting by difficulty */}
                 <Dropdown className="mx-2 mb-2">
                   <Dropdown.Toggle variant="primary" id="dropdown-basic">
                     Sort by Difficulty
@@ -277,7 +290,6 @@ function Challenges() {
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-
                 <Dropdown
                   className="mx-2 mb-2"
                   style={{ marginBottom: "1rem" }}
@@ -416,35 +428,9 @@ function Challenges() {
                   <Dropdown.Toggle variant="primary" id="dropdown-basic">
                     Filter by Difficulty
                   </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Form className="ms-2">
-                      <Form.Label>Difficulty</Form.Label>
-                      <Form.Check
-                        type="checkbox"
-                        label="Easy"
-                        onClick={() => {
-                          handleFilter(ChallengeDifficulties.EASY);
-                        }}
-                      />
-                      <Form.Check
-                        type="checkbox"
-                        label="Medium"
-                        onClick={() => {
-                          handleFilter(ChallengeDifficulties.MEDIUM);
-                        }}
-                      />
-                      <Form.Check
-                        type="checkbox"
-                        label="Hard"
-                        onClick={() => {
-                          handleFilter(ChallengeDifficulties.HARD);
-                        }}
-                      />
-                    </Form>
-                  </Dropdown.Menu>
+                  {/* Dropdown content for difficulty filter */}
                 </Dropdown>
 
-                {/* Button for hiding/showing completed challenges */}
                 <Button
                   className={
                     "mx-2 mb-2 " +
@@ -462,6 +448,31 @@ function Challenges() {
         </header>
         {makeGrid()}
       </Container>
+
+      {/* Floating Stats Toggle Button */}
+      <Button
+        variant="primary"
+        onClick={() => setShowStats(!showStats)}
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          borderRadius: "50%",
+          padding: "15px",
+          zIndex: 1001,
+        }}
+      >
+        📊
+      </Button>
+
+      {/* Floating Stats Widget */}
+      {showStats && (
+        <FloatingStats
+          totalEasy={difficultyCounts.easy}
+          totalMedium={difficultyCounts.medium}
+          totalHard={difficultyCounts.hard}
+        />
+      )}
     </section>
   );
 }
