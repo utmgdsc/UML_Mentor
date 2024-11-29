@@ -43,11 +43,7 @@ function ChallengeCard({
   function handleDelete() {
     if (
       !window.confirm(
-<<<<<<< HEAD
-        "Are you sure you want to delete the challenge '" + title + "'?",
-=======
         "Are you sure you want to delete the challenge '" + title + "'?"
->>>>>>> c3def9b (ui improve iteration 1)
       )
     ) {
       return;
@@ -153,13 +149,9 @@ function ChallengeCard({
               <Button
                 variant="dark"
                 className="mx-2"
-<<<<<<< HEAD
                 onClick={() => {
                   handleHide(false);
                 }}
-=======
-                onClick={() => handleHide(false)}
->>>>>>> c3def9b (ui improve iteration 1)
               >
                 Unhide
               </Button>
@@ -168,13 +160,9 @@ function ChallengeCard({
               <Button
                 variant="dark"
                 className="mx-2"
-<<<<<<< HEAD
                 onClick={() => {
                   handleHide(true);
                 }}
-=======
-                onClick={() => handleHide(true)}
->>>>>>> c3def9b (ui improve iteration 1)
               >
                 Hide
               </Button>
