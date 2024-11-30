@@ -169,7 +169,7 @@ function Challenges() {
       challenge.isAdmin = isAdmin;
 
       row.push(
-        <Col lg={4} key={i} className="mb-4">
+        <Col lg={4} key={i} className="mb-4 challenge-card">
           <ChallengeCard
             title={challenge.title}
             generalDescription={challenge.generalDescription}
@@ -263,20 +263,22 @@ function Challenges() {
               {/* Flex container to keep all buttons in one row */}
               <div className="d-flex justify-content-end align-items-center flex-wrap">
                 {/* Dropdown for sorting by difficulty */}
-                <Dropdown className="mx-2 mb-2">
-                  <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                    Sort by Difficulty
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item
-                      onClick={() => {
-                        setSortByDifficulty(!sortByDifficulty);
-                      }}
-                    >
-                      {sortByDifficulty ? "Easier First" : "Harder First"}
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                <div className="filter-controls">
+                  <Dropdown className="mx-2 mb-2">
+                    <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                      Sort by Difficulty
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setSortByDifficulty(!sortByDifficulty);
+                        }}
+                      >
+                        {sortByDifficulty ? "Easier First" : "Harder First"}
+                      </Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
 
                 <Dropdown
                   className="mx-2 mb-2"
