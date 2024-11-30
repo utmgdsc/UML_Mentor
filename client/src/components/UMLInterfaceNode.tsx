@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
-
+import { memo } from 'react';
+import { NodeResizer, NodeResizeControl  } from '@xyflow/react';
 // Define types for the node data and props
 interface UMLNodeData {
     label?: string;
@@ -35,10 +36,10 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
 
     useEffect(() => {
         // Adjust the height of the methods text area
-        if (methodsRef.current) {
-            methodsRef.current.style.height = 'auto';
-            methodsRef.current.style.height = `${methodsRef.current.scrollHeight}px`;
-        }
+        // if (methodsRef.current) {
+        //     methodsRef.current.style.height = 'auto';
+        //     methodsRef.current.style.height = `${methodsRef.current.scrollHeight}px`;
+        // }
 
         // Initialize maxWidth with the minimum width
         let maxWidth = 150;
@@ -84,15 +85,50 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
         data.updateNodeData?.(id, { methods: newMethods.split('\n') });
     };
 
+    const controlStyle = {
+        background: 'transparent',
+        border: 'none',
+      };
+
+
+      function ResizeIcon() {
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+            stroke="#ff0071"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ position: 'absolute', right: 5, bottom: 5 }}
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <polyline points="16 20 20 20 20 16" />
+            <line x1="14" y1="14" x2="20" y2="20" />
+            <polyline points="8 4 4 4 4 8" />
+            <line x1="4" y1="4" x2="10" y2="10" />
+          </svg>
+        );
+      }
+
     return (
-        <div
+        <>
+      <NodeResizeControl style={controlStyle} minWidth={200} minHeight={200}>
+        <ResizeIcon />
+      </NodeResizeControl>        
+      <div
             style={{
+                height: '100%',
+                width: '100%',
                 border: '1px solid black',
                 borderRadius: '5px',
-                width: nodeWidth,
                 fontFamily: 'Arial, sans-serif',
-                position: 'relative',
                 backgroundColor: 'white',
+                display: 'flex',
+                flexDirection: 'column',
             }}
         >
             <div
@@ -137,23 +173,29 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                     X
                 </button>
             </div>
-            <div style={{ padding: '7px' }}>
-                <textarea
-                    ref={methodsRef}
-                    value={methods}
-                    onChange={handleMethodsChange}
-                    placeholder="Methods"
-                    wrap="off"
-                    style={{
-                        width: '100%',
-                        resize: 'none',
-                        overflow: 'hidden',
-                        whiteSpace: 'pre',
-                        fontSize: '14px',
-                        fontFamily: 'Arial, sans-serif',
-                    }}
-                />
-            </div>
+            <div style={{ 
+                        flex: 1,
+                        padding: '7px',
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
+                        <textarea
+                            ref={methodsRef}
+                            value={methods}
+                            onChange={handleMethodsChange}
+                            placeholder="Methods"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                resize: 'none',
+                                border: 'solid 1px black',
+                                overflow: 'auto',
+                                whiteSpace: 'pre',
+                                fontSize: '14px',
+                                fontFamily: 'Arial, sans-serif',
+                            }}
+                        />
+                    </div>
             {!data.isPreview && (
                 <>
                     <Handle
@@ -206,8 +248,8 @@ const UMLInterfaceNode: React.FC<UMLNodeProps> = ({ data, id }) => {
                     />
                 </>
             )}
-        </div>
+        </div></>
     );
 };
 
-export default UMLInterfaceNode;
+export default memo(UMLInterfaceNode);

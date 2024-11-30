@@ -10,18 +10,20 @@ import {
   removeEdge,
   applyNodeChanges,
   applyEdgeChanges,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import UMLClassNode from "../components/UMLClassNode";
 import UMLInterfaceNode from "../components/UMLInterfaceNode";
 import InstructionsPopup from "../components/InstructionsPopup";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas"; // Import html2canvas
 import { getBezierPath, getEdgeCenter, MarkerType } from "react-flow-renderer";
 import { getSmoothStepPath } from "reactflow";
 import CustomMarkers from "./CustomMarkers";
 import { umlDiagramInstructions } from "../components/instructionsData";
-import domtoimage from 'dom-to-image';
-
+import domtoimage from "dom-to-image";
+import imageCompression from "browser-image-compression";
+import { useUMLFormatter } from '../hooks/useUMLFormatter.ts';
 
 // Keys for local storage
 const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
@@ -45,34 +47,6 @@ const getNodeColor = () => {
 
 // UMLEdge component
 const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
-  // Get the center of the edge for future use (optional)
-  // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-  //     sourceX,
-  //     sourceY,
-  //     targetX,
-  //     targetY
-  // });
-
-  // // Generate a smooth step path with custom settings
-  // const path = getSmoothStepPath({
-  //     sourceX,
-  //     sourceY,
-  //     targetX,
-  //     targetY,
-  //     sourcePosition: 'right', // Adjust positions if needed
-  //     targetPosition: 'left',
-  //     borderRadius: 10, // Controls the curve at corner points
-  //     offset: 5, // Spacing between segments
-  // });
-
-  // const onNodesChange = useCallback(
-  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-  //   [],
-  // );
-  // const onEdgesChange = useCallback(
-  //   (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-  //   [],
-  // );
   return (
     <>
       <defs>
@@ -93,7 +67,10 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
 };
 
 const UMLDiagramEditor = ({ problemId }) => {
+  const { analyzeUML, isLoading, error, analysis } = useUMLFormatter({ problemId });
+  //const { analyzeUML, isLoading } = useUMLFormatter({ problemId });
   const [challengeName, setChallengeName] = useState("");
+  const [challengeDescription, setChallengeDescription] = useState("");
 
   useEffect(() => {
     // Fetch the challenge details using problemId
@@ -102,6 +79,8 @@ const UMLDiagramEditor = ({ problemId }) => {
         const response = await fetch(`/api/challenges/${problemId}`);
         const data = await response.json();
         setChallengeName(data.title || "Unnamed Challenge"); // Extract the challenge name
+        setChallengeDescription(data.generalDescription || "No Description");
+        
       } catch (error) {
         console.error("Error fetching challenge details:", error);
       }
@@ -166,25 +145,10 @@ const UMLDiagramEditor = ({ problemId }) => {
     );
   };
 
-  const getNonOverlappingPosition = (existingNodes) => {
-    const basePosition = { x: 200, y: 200 };
-    const offset = 50; // Offset to avoid overlap
-    let position = { ...basePosition };
-
-    // Check for overlap and adjust position
-    while (existingNodes.some(node => node.position.x === position.x && node.position.y === position.y)) {
-      position.x += offset;
-      position.y += offset;
-    }
-
-    return position;
-  };
-
   const addInterfaceUMLNode = () => {
-    const position = getNonOverlappingPosition(nodes);
     const newNode = {
       id: (nodes.length + 1).toString(),
-      position,
+      position: { x: Math.random() * 500, y: Math.random() * 500 },
       data: {
         label: `InterfaceNode${nodes.length + 1}`,
         methods: [],
@@ -196,10 +160,9 @@ const UMLDiagramEditor = ({ problemId }) => {
   };
 
   const addNewNode = () => {
-    const position = getNonOverlappingPosition(nodes);
     const newNode = {
       id: (nodes.length + 1).toString(),
-      position,
+      position: { x: Math.random() * 500, y: Math.random() * 500 },
       data: {
         label: `NewNode${nodes.length + 1}`,
         attributes: [],
@@ -240,47 +203,52 @@ const UMLDiagramEditor = ({ problemId }) => {
   // Function to generate and download image
   const generateImage = () => {
     return new Promise((resolve, reject) => {
-      const reactFlowElement = document.getElementsByClassName('react-flow')[0];
-  
-      domtoimage.toBlob(reactFlowElement, { bgcolor: '#ffffff', quality: 1 })
-        .then((blob) => {
+      const reactFlowElement = document.getElementsByClassName("react-flow")[0];
+
+      domtoimage
+        .toBlob(reactFlowElement, { bgcolor: "#ffffff", quality: 1 })
+        .then(async (blob) => {
           if (!blob) {
-            reject(new Error('Failed to create blob.'));
+            reject(new Error("Failed to create blob."));
             return;
           }
-  
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64data = reader.result as string;
-            localStorage.setItem('uml-diagram-image', base64data);
+
+          try {
+            // Compress the image using browser-image-compression
+            const options = {
+              maxSizeMB: 0.5, // Set the maximum file size (in MB)
+              maxWidthOrHeight: 800, // Resize to a max width or height of 800px
+              useWebWorker: true,
+            };
+            const compressedBlob = await imageCompression(blob, options);
+
+            const base64data =
+              await imageCompression.getDataUrlFromFile(compressedBlob);
+            localStorage.setItem("uml-diagram-image", base64data);
             resolve(true);
-          };
-          reader.readAsDataURL(blob);
+          } catch (error) {
+            reject(error);
+          }
         })
         .catch((error) => reject(error));
     });
   };
-  
 
   // Submit to PostSolution form directly
   const postSolution = async () => {
     const { nodes, edges } = getNodesAndEdges();
     const defaultTitle = `${challengeName} Solution`;
-    //   ? `UML Diagram with Classes: ${nodes.map((n) => n.data.label).join(", ")}`
-    //   : "Empty UML Diagram";
-    // TODO: THIS IS FOR DEBUGGING ^^^ to check if edges show up as well
 
     // Store the nodes and edges in localStorage (optional)
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
-
+    
     // Generate the image
     await generateImage();
 
     // Retrieve the generated image from localStorage
     const imageUrl = localStorage.getItem("uml-diagram-image");
     if (imageUrl) {
-      // Convert the base64 string to a Blob
       const byteString = atob(imageUrl.split(",")[1]);
       const mimeString = imageUrl.split(",")[0].split(":")[1].split(";")[0];
       const ab = new ArrayBuffer(byteString.length);
@@ -291,23 +259,21 @@ const UMLDiagramEditor = ({ problemId }) => {
       const blob = new Blob([ab], { type: mimeString });
       const file = new File([blob], "uml-diagram.png", { type: mimeString });
 
-      // Prepare form data
       const formData = new FormData();
-      formData.append("challengeId", `${problemId}`); // Set problemId as the challenge ID
-      formData.append("title", defaultTitle); // Default title
-      formData.append("description", ""); // Blank description
-      formData.append("diagram", file); // Attach the image file
+      formData.append("challengeId", `${problemId}`);
+      formData.append("title", defaultTitle);
+      formData.append("description", "");
+      formData.append("diagram", file);
 
-      // Send the POST request
       fetch(`/api/solutions`, {
         method: "POST",
         body: formData,
       })
         .then((resp) => resp.json())
         .then((data) => {
-          // Redirect to the solution page after successful submission
+          localStorage.setItem("challengeId", problemId);
           window.location.href = `/solution/${data.id}`;
-          localStorage.removeItem("uml-diagram-image"); // Clear the image from localStorage
+          localStorage.removeItem("uml-diagram-image");
         })
         .catch((err) => {
           console.error("Error submitting solution:", err);
@@ -357,10 +323,8 @@ const UMLDiagramEditor = ({ problemId }) => {
     }
   };
 
-  // Add node on edge drop function
   const onConnectEnd = useCallback(
     (event, connectionState) => {
-      console.log("onConnectEnd triggered", connectionState);
       if (!connectionState.isValid) {
         const bounds = reactFlowWrapperRef.current.getBoundingClientRect();
         const { clientX, clientY } = event;
@@ -368,12 +332,11 @@ const UMLDiagramEditor = ({ problemId }) => {
           x: clientX - bounds.left,
           y: clientY - bounds.top,
         };
-        const newNodeId = (nodes.length + 1).toString(); // Generate a new node ID
         const newNode = {
-          id: newNodeId,
+          id: (nodes.length + 1).toString(),
           position,
           data: {
-            label: `ClassNode${newNodeId}`,
+            label: `ClassNode${nodes.length + 1}`,
             attributes: [],
             methods: [],
             color: getNodeColor(),
@@ -381,79 +344,23 @@ const UMLDiagramEditor = ({ problemId }) => {
           type: "umlNode",
         };
         setNodes((nds) => [...nds, newNode]);
-
-        // Determine the opposite position for the new edge
-        const oppositePosition = getOppositePosition(connectionState.fromPosition);
-
-        // Add a new edge connecting the source node to the new node
-        setEdges((eds) =>
-          eds.concat({
-            id: `edge-${connectionState.fromNode.id}-${newNodeId}`, // Create a unique edge ID
-            source: connectionState.fromNode.id,
-            target: newNodeId,
-            sourceHandle: connectionState.fromPosition,
-            targetHandle: oppositePosition,
-            data: { edgeType }, // Include the selected edge type
-          })
-        );
       }
     },
-    [nodes, setNodes, setEdges, edgeType] // Include edgeType in the dependencies
+    [nodes, setNodes]
   );
 
-  // Helper function to determine the opposite position
-  const getOppositePosition = (position) => {
-    switch (position) {
-      case 'left':
-        return 'right';
-      case 'right':
-        return 'left';
-      case 'top':
-        return 'bottom';
-      case 'bottom':
-        return 'top';
-      default:
-        return 'right'; // Default to right if position is unknown
-    }
-  };
-
   useEffect(() => {
-    // Check if the user has seen the instructions using the global key
     const instructionsSeen =
       localStorage.getItem(GLOBAL_INSTRUCTIONS_SEEN_KEY) === "true";
     if (!instructionsSeen) {
       setShowInstructions(true);
     }
-  }, []); // This effect now runs only once when the component mounts
+  }, []);
 
   const handleCloseInstructions = () => {
-    // Use the global key when setting the instructions as seen
     localStorage.setItem(GLOBAL_INSTRUCTIONS_SEEN_KEY, "true");
     setShowInstructions(false);
   };
-
-  const onEdgeClick = useCallback((event, edge) => {
-    event.stopPropagation(); // Prevent the click from bubbling up to the document
-    setSelectedEdge(edge.id);
-  }, []);
-
-  useEffect(() => {
-    const handleKeyPress = () => {
-      setSelectedEdge(null);
-    };
-
-    const handleClick = () => {
-      setSelectedEdge(null);
-    };
-
-    document.addEventListener("keydown", handleKeyPress);
-    document.addEventListener("click", handleClick);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyPress);
-      document.removeEventListener("click", handleClick);
-    };
-  }, []);
 
   return (
     <div
@@ -479,10 +386,16 @@ const UMLDiagramEditor = ({ problemId }) => {
         }}
       >
         <h4 style={{ margin: "0", textAlign: "center" }}>Actions</h4>
-        <button onClick={addInterfaceUMLNode} className="action-button">
+        <button
+          onMouseDown={() => startDraggingNode("interfaceUMLNode")}
+          className="action-button"
+        >
           Add Interface Node
         </button>
-        <button onClick={addNewNode} className="action-button">
+        <button
+          onMouseDown={() => startDraggingNode("umlNode")}
+          className="action-button"
+        >
           Add Class Node
         </button>
         <button onClick={resetWorkspace} className="reset-button">
@@ -501,21 +414,6 @@ const UMLDiagramEditor = ({ problemId }) => {
           onClick={() => removeEdge(selectedEdge)}
           className="delete-button"
           disabled={!selectedEdge}
-          style={{
-            backgroundColor: selectedEdge ? "#ff4d4d" : "#ccc", // Red when active, gray when disabled
-            color: "#fff",
-            border: "none",
-            padding: "10px",
-            borderRadius: "5px",
-            cursor: selectedEdge ? "pointer" : "not-allowed",
-            transition: "background-color 0.3s",
-          }}
-          onMouseEnter={(e) => {
-            if (selectedEdge) e.target.style.backgroundColor = "#ff1a1a"; // Darker red on hover
-          }}
-          onMouseLeave={(e) => {
-            if (selectedEdge) e.target.style.backgroundColor = "#ff4d4d"; // Original red
-          }}
         >
           Delete Selected Edge
         </button>
@@ -545,47 +443,46 @@ const UMLDiagramEditor = ({ problemId }) => {
           data: {
             ...node.data,
             removeNode,
-            updateNodeData, // Pass the update function to nodes
+            updateNodeData,
           },
         }))}
         edges={edges.map((edge) => {
-          let markerId = "filledArrow"; // Default marker
-          let dashArray = "0"; // Default to solid line
+          let markerId = "filledArrow";
+          let dashArray = "0";
 
           switch (edge.data?.edgeType) {
             case "Inheritance":
-              markerId = "emptyArrow"; // Solid filled arrow
+              markerId = "emptyArrow";
               break;
             case "Composition":
-              markerId = "diamond"; // Dashed with empty arrow
+              markerId = "diamond";
               dashArray = "5,5";
               break;
             case "Implementation":
-              markerId = "emptyArrow"; // Solid with diamond
+              markerId = "emptyArrow";
               break;
             default:
-              markerId = "filledArrow"; // Default fallback
+              markerId = "filledArrow";
           }
 
           return {
             ...edge,
-            type: "step", // Keep step type
+            type: "step",
             style: {
               stroke: "#000",
-              strokeWidth: 2,
+              strokeWidth: edge.id === selectedEdge ? 4 : 2,
               strokeDasharray:
                 edge.data?.edgeType === "Implementation" ? "5, 5" : "0",
               strokeDashoffset: 100,
             },
-            markerStart: markerId, // Use markerId for the start (source)
-            markerEnd: undefined, // Use markerId here
+            markerStart: markerId,
+            markerEnd: undefined,
           };
-          
         })}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        onEdgeClick={onEdgeClick}
+        onEdgeClick={(event, edge) => setSelectedEdge(edge.id)}
         nodeTypes={nodeTypes}
         edgeTypes={{
           Inheritance: UMLEdge,
@@ -596,9 +493,7 @@ const UMLDiagramEditor = ({ problemId }) => {
         onConnectEnd={onConnectEnd}
       >
         <CustomMarkers />
-        <MiniMap
-          nodeColor={(node) => node.data.color || "#eee"} // Use node's color or default to light gray
-        />
+        <MiniMap nodeColor={(node) => node.data.color || "#eee"} />
         <Controls />
         <Background />
       </ReactFlow>
@@ -644,4 +539,12 @@ const UMLDiagramEditor = ({ problemId }) => {
   );
 };
 
-export default UMLDiagramEditor;
+const UMLDiagramEditorFinal = ({ problemId }) => {
+  return (
+    <ReactFlowProvider>
+      <UMLDiagramEditor problemId={problemId} />
+    </ReactFlowProvider>
+  );
+};
+
+export default UMLDiagramEditorFinal;
