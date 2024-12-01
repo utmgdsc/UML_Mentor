@@ -1,21 +1,28 @@
 import React from "react";
-import Joyride, { CallBackProps, STATUS } from "react-joyride";
+import { useNavigate } from "react-router-dom";
+import Joyride, { CallBackProps, STATUS, EVENTS } from "react-joyride";
 import { landingTourSteps } from "../config/landingTourSteps";
+import { useTour } from "../context/TourContext";
 
-interface LandingTourProps {
-  runTour: boolean;
-  setRunTour: (run: boolean) => void;
-}
+export const LandingTour: React.FC = () => {
+  const navigate = useNavigate();
+  const { runTour, setRunTour, stepIndex, setStepIndex } = useTour();
 
-export const LandingTour: React.FC<LandingTourProps> = ({
-  runTour,
-  setRunTour,
-}) => {
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status } = data;
+    const { status, type, index } = data;
+
+    if (type === EVENTS.STEP_AFTER) {
+      const nextStep = landingTourSteps[index + 1];
+      if (nextStep?.navPage) {
+        setTimeout(() => {
+          navigate(nextStep.navPage);
+        }, 300);
+      }
+      setStepIndex(index + 1);
+    }
+
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRunTour(false);
-      // Optionally save to localStorage that the user has seen the tour
       localStorage.setItem("hasSeenTour", "true");
     }
   };
@@ -24,6 +31,7 @@ export const LandingTour: React.FC<LandingTourProps> = ({
     <Joyride
       steps={landingTourSteps}
       run={runTour}
+      stepIndex={stepIndex}
       continuous={true}
       showProgress={true}
       showSkipButton={true}
@@ -34,6 +42,7 @@ export const LandingTour: React.FC<LandingTourProps> = ({
         },
       }}
       callback={handleJoyrideCallback}
+      disableScrolling={true}
     />
   );
 };

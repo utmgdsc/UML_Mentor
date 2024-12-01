@@ -13,24 +13,24 @@ export const landingTourSteps: Step[] = [
   // 2. Challenge Cards & Components
   {
     target: ".challenge-card",
-    content:
-      "Each challenge card shows:<br/>• Difficulty (⭐️ Easy to ⭐️⭐️⭐️ Hard)<br/>• Required design patterns<br/>• Brief description",
+    content: `
+      Each challenge card show difficulty (⭐️ Easy to ⭐️⭐️⭐️ Hard), design patterns involved, and brief description.
+    `,
     placement: "bottom",
   },
 
-  // 3. Filtering and Sorting
+  // 3. Navigate to Challenges (this step triggers navigation)
   {
-    target: ".filter-controls",
-    content:
-      "Filter challenges by difficulty level, completion status, or sort them to find the perfect challenge for you.",
-    placement: "bottom",
+    target: "body",
+    content: "Let's check out the challenges page to see filtering options!",
+    placement: "center",
+    navPage: "/challenges",
   },
 
-  // 4. Solutions Section
+  // 4. Filtering Controls
   {
-    target: ".solutions-section",
-    content:
-      "Browse and learn from solutions submitted by other students. You can view solutions after completing a challenge.",
+    target: ".d-flex.justify-content-end",
+    content: "Use these controls to filter and sort challenges",
     placement: "bottom",
   },
 

@@ -13,13 +13,13 @@ import { ArrowUpRightSquare } from "react-bootstrap-icons";
 import NewUserPopup from "../components/NewUserPopup";
 import { SolutionData } from "../types/SolutionData.ts";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
-import { LandingTour } from "../components/LandingTour";
+import { useTour } from "../context/TourContext";
 
 function Home() {
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
   const [challenges, setChallenges] = useState<ChallengeDetailsShort[]>([]);
   const [showPopup, setShowPopup] = useState(false);
-  const [runTour, setRunTour] = useState(false);
+  const { setRunTour } = useTour();
 
   useEffect(() => {
     // Fetch the recent solutions
@@ -48,13 +48,8 @@ function Home() {
       setShowPopup(true);
     }
 
-    // // Check if this is the user's first visit
-    // const hasSeenTour = localStorage.getItem("hasSeenTour") === "true";
-    // if (!hasSeenTour) {
-    //   setRunTour(true);
-    // }
     setRunTour(true);
-  }, []);
+  }, [setRunTour]);
 
   const handleClose = () => {
     localStorage.setItem("privacyAccepted", "true");
@@ -63,7 +58,6 @@ function Home() {
 
   return (
     <>
-      <LandingTour runTour={runTour} setRunTour={setRunTour} />
       <section>
         {/* Recent Solutions */}
         <Container className="mt-5 solutions-section">
