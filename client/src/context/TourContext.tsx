@@ -5,6 +5,8 @@ interface TourContextType {
   setRunTour: (run: boolean) => void;
   stepIndex: number;
   setStepIndex: (index: number) => void;
+  tourType: "landing" | "editor" | null;
+  setTourType: (type: "landing" | "editor" | null) => void;
 }
 
 const TourContext = createContext<TourContextType | undefined>(undefined);
@@ -14,10 +16,18 @@ export const TourProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [runTour, setRunTour] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+  const [tourType, setTourType] = useState<"landing" | "editor" | null>(null);
 
   return (
     <TourContext.Provider
-      value={{ runTour, setRunTour, stepIndex, setStepIndex }}
+      value={{
+        runTour,
+        setRunTour,
+        stepIndex,
+        setStepIndex,
+        tourType,
+        setTourType,
+      }}
     >
       {children}
     </TourContext.Provider>

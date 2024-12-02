@@ -17,14 +17,16 @@ export const landingTourSteps: Step[] = [
       Each challenge card show difficulty (⭐️ Easy to ⭐️⭐️⭐️ Hard), design patterns involved, and brief description.
     `,
     placement: "bottom",
+    disableBeacon: true,
   },
 
-  // 3. Navigate to Challenges (this step triggers navigation)
+  // 3. Navigate to Challenges
   {
     target: "body",
     content: "Let's check out the challenges page to see filtering options!",
     placement: "center",
     navPage: "/challenges",
+    disableBeacon: true,
   },
 
   // 4. Filtering Controls
@@ -32,6 +34,7 @@ export const landingTourSteps: Step[] = [
     target: ".d-flex.justify-content-end",
     content: "Use these controls to filter and sort challenges",
     placement: "bottom",
+    disableBeacon: true,
   },
 
   // 5. Help & Profile
@@ -40,5 +43,6 @@ export const landingTourSteps: Step[] = [
     content:
       "Access your profile, view help documentation, and track your progress here.",
     placement: "left",
+    disableBeacon: true,
   },
 ];

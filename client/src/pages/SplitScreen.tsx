@@ -12,7 +12,8 @@ const SplitLayout: React.FC = () => {
     const startX = e.clientX;
 
     const onMouseMove = (moveEvent: MouseEvent) => {
-      const newWidth = leftWidth + (moveEvent.clientX - startX) / window.innerWidth * 100;
+      const newWidth =
+        leftWidth + ((moveEvent.clientX - startX) / window.innerWidth) * 100;
       setLeftWidth(Math.min(Math.max(newWidth, 20), 80)); // Constrain width between 20% and 80%
     };
 
@@ -26,7 +27,7 @@ const SplitLayout: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div style={{ display: "flex", height: "100vh", position: "relative" }}>
       {/* Left pane - Challenge */}
       <div
         style={{
@@ -37,7 +38,9 @@ const SplitLayout: React.FC = () => {
         }}
       >
         <Challenge /> {/* Ensure this component works without props */}
-        <div style={{ marginTop: "10px", fontWeight: "bold", textAlign: "right" }}>
+        <div
+          style={{ marginTop: "10px", fontWeight: "bold", textAlign: "right" }}
+        >
           Problem ID: {challengeId}
         </div>
       </div>

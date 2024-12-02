@@ -25,6 +25,7 @@ import domtoimage from "dom-to-image";
 import imageCompression from "browser-image-compression";
 import { useUMLFormatter } from "../hooks/useUMLFormatter.ts";
 import { EditorTour } from "../components/EditorTour";
+import { useTour } from "../context/TourContext";
 
 // Keys for local storage
 const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
@@ -75,6 +76,22 @@ const UMLDiagramEditor = ({ problemId }) => {
   const [challengeName, setChallengeName] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
   const [runTour, setRunTour] = useState(false);
+  const {
+    runTour: globalRunTour,
+    setRunTour: setGlobalRunTour,
+    tourType,
+  } = useTour();
+  const [localRunTour, setLocalRunTour] = useState(false);
+
+  useEffect(() => {
+    if (globalRunTour && tourType === "editor") {
+      // Small delay to ensure component is mounted
+      setTimeout(() => {
+        setLocalRunTour(true);
+        setGlobalRunTour(false);
+      }, 500);
+    }
+  }, [globalRunTour, tourType]);
 
   useEffect(() => {
     // Fetch the challenge details using problemId
@@ -365,6 +382,12 @@ const UMLDiagramEditor = ({ problemId }) => {
     setShowInstructions(false);
   };
 
+  useEffect(() => {
+    if (problemId) {
+      localStorage.setItem("lastVisitedChallenge", problemId);
+    }
+  }, [problemId]);
+
   return (
     <div
       style={{ width: "100%", height: "100%", position: "relative" }}
@@ -447,13 +470,6 @@ const UMLDiagramEditor = ({ problemId }) => {
           <option value="Composition">Composition</option>
           <option value="Implementation">Implementation</option>
         </select>
-        <button
-          onClick={() => setRunTour(true)}
-          className="action-button"
-          style={{ marginBottom: "10px" }}
-        >
-          Start Tour
-        </button>
       </div>
 
       <ReactFlow
@@ -554,7 +570,7 @@ const UMLDiagramEditor = ({ problemId }) => {
           )}
         </div>
       )}
-      <EditorTour runTour={runTour} setRunTour={setRunTour} />
+      <EditorTour runTour={localRunTour} setRunTour={setLocalRunTour} />
     </div>
   );
 };

@@ -9,16 +9,36 @@ type NewUserPopupProps = {
 };
 
 const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
-  const { setRunTour, setStepIndex } = useTour();
+  const { setRunTour, setStepIndex, setTourType } = useTour();
   const navigate = useNavigate();
 
-  const handleStartTour = () => {
+  const handleStartLandingTour = () => {
     handleClose();
+    setTourType("landing");
+    setRunTour(false);
     setStepIndex(0);
     navigate("/");
     setTimeout(() => {
       setRunTour(true);
-    }, 100);
+    }, 800);
+  };
+
+  const handleStartEditorTour = () => {
+    setTourType("editor");
+    setRunTour(false);
+    setStepIndex(0);
+    handleClose();
+
+    // Get the most recent challenge from localStorage
+    const recentChallenge = localStorage.getItem("lastVisitedChallenge");
+    const challengePath = recentChallenge
+      ? `/challenge/${recentChallenge}`
+      : "/challenge/1";
+
+    navigate(challengePath);
+    setTimeout(() => {
+      setRunTour(true);
+    }, 800);
   };
 
   return (
@@ -30,10 +50,17 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
             <div>
               <Button
                 variant="primary"
-                onClick={handleStartTour}
+                onClick={handleStartLandingTour}
                 className="mx-2"
               >
-                Take a Quick Tour
+                Take Website Tour
+              </Button>
+              <Button
+                variant="info"
+                onClick={handleStartEditorTour}
+                className="mx-2"
+              >
+                Take Editor Tour
               </Button>
               <Button
                 variant="secondary"

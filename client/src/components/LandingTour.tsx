@@ -6,7 +6,9 @@ import { useTour } from "../context/TourContext";
 
 export const LandingTour: React.FC = () => {
   const navigate = useNavigate();
-  const { runTour, setRunTour, stepIndex, setStepIndex } = useTour();
+  const { runTour, setRunTour, stepIndex, setStepIndex, tourType } = useTour();
+
+  const shouldRun = runTour && tourType === "landing";
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, type, index } = data;
@@ -31,7 +33,7 @@ export const LandingTour: React.FC = () => {
   return (
     <Joyride
       steps={landingTourSteps}
-      run={runTour}
+      run={shouldRun}
       stepIndex={stepIndex}
       continuous={true}
       showProgress={true}
