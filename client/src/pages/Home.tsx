@@ -13,13 +13,12 @@ import { ArrowUpRightSquare } from "react-bootstrap-icons";
 import NewUserPopup from "../components/NewUserPopup";
 import { SolutionData } from "../types/SolutionData.ts";
 import { ChallengeDetailsShort } from "../types/ChallengeDetailsShort.ts";
-import { useTour } from "../context/TourContext";
 
 function Home() {
   const [solutions, setSolutions] = useState<SolutionData[]>([]);
   const [challenges, setChallenges] = useState<ChallengeDetailsShort[]>([]);
   const [showPopup, setShowPopup] = useState(false);
-  const { setRunTour } = useTour();
+  const [runTour, setRunTour] = useState(false);
 
   useEffect(() => {
     // Fetch the recent solutions
@@ -42,13 +41,16 @@ function Home() {
         console.error(err);
       });
 
-    // Check if the user has accepted the privacy policy
+    // Check for first-time visit and privacy policy
+    const hasVisited = localStorage.getItem("hasVisitedBefore") === "true";
     const privacyAccepted = localStorage.getItem("privacyAccepted") === "true";
+
     if (!privacyAccepted) {
       setShowPopup(true);
+    } else if (!hasVisited) {
+      setRunTour(true);
+      localStorage.setItem("hasVisitedBefore", "true");
     }
-
-    setRunTour(true);
   }, [setRunTour]);
 
   const handleClose = () => {

@@ -23,7 +23,8 @@ export const LandingTour: React.FC = () => {
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRunTour(false);
-      localStorage.setItem("hasSeenTour", "true");
+      setStepIndex(0);
+      navigate("/");
     }
   };
 
