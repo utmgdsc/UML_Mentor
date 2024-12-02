@@ -11,7 +11,7 @@ export const LandingTour: React.FC = () => {
   const shouldRun = runTour && tourType === "landing";
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status, type, index } = data;
+    const { status, type, index, action } = data;
 
     if (type === EVENTS.STEP_AFTER) {
       const nextStep = landingTourSteps[index + 1];
@@ -23,7 +23,10 @@ export const LandingTour: React.FC = () => {
       setStepIndex(index + 1);
     }
 
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+    if (
+      [STATUS.FINISHED, STATUS.SKIPPED].includes(status) ||
+      action === "close"
+    ) {
       setRunTour(false);
       setStepIndex(0);
       navigate("/");
@@ -38,6 +41,7 @@ export const LandingTour: React.FC = () => {
       continuous={true}
       showProgress={true}
       showSkipButton={true}
+      hideCloseButton={true}
       styles={{
         options: {
           primaryColor: "#007bff",

@@ -82,6 +82,7 @@ export const EditorTour: React.FC<EditorTourProps> = ({
       continuous={true}
       showProgress={true}
       showSkipButton={true}
+      hideCloseButton={true}
       styles={{
         options: {
           primaryColor: "#007bff",
@@ -95,8 +96,12 @@ export const EditorTour: React.FC<EditorTourProps> = ({
         disableAnimation: true,
       }}
       callback={(data) => {
-        const { status } = data;
-        if (status === "finished" || status === "skipped") {
+        const { status, action } = data;
+        if (
+          status === "finished" ||
+          status === "skipped" ||
+          action === "close"
+        ) {
           setRunTour(false);
         }
       }}
