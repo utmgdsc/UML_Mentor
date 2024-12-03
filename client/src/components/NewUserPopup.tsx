@@ -222,4 +222,5 @@ const NewUserPopup = ({ show, handleClose }: NewUserPopupProps) => {
   );
 };
 
+export { NewUserPopup };
 export default NewUserPopup;
