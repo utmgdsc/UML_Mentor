@@ -676,6 +676,7 @@ function Challenges() {
                         style={{
                           display: "flex",
                           alignItems: "center",
+                          gap: "8px",
                         }}
                       />
                     </div>
@@ -687,6 +688,26 @@ function Challenges() {
         </header>
         {makeGrid()}
       </Container>
+      <style>
+        {`
+  .custom-switch .form-check-input {
+    border: 3px solid #000; /* Thicker border */
+    width: 40px; /* Adjust width */
+    height: 20px; /* Adjust height */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); /* Optional shadow */
+    background-color: #fff; /* Optional background */
+  }
+
+  .custom-switch .form-check-input:checked {
+    background-color: #007bff; /* Optional toggle color when active */
+    border-color: #0056b3; /* Change border color when checked */
+  }
+
+  .custom-switch .form-check-label {
+    margin-left: 10px; /* Space between switch and label text */
+  }
+`}
+      </style>
 
       {/* Floating Stats Toggle Button */}
       <Button
