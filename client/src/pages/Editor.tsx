@@ -72,16 +72,26 @@ const UMLDiagramEditor = ({ problemId }) => {
   const { analyzeUML, isLoading, error, analysis } = useUMLFormatter({
     problemId,
   });
-  //const { analyzeUML, isLoading } = useUMLFormatter({ problemId });
   const [challengeName, setChallengeName] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
-  const [runTour, setRunTour] = useState(false);
+  const [localRunTour, setLocalRunTour] = useState(false);
   const {
     runTour: globalRunTour,
     setRunTour: setGlobalRunTour,
     tourType,
+    setTourType,
   } = useTour();
-  const [localRunTour, setLocalRunTour] = useState(false);
+
+  const EDITOR_TOUR_SEEN_KEY = "editorTourSeen";
+
+  useEffect(() => {
+    const tourSeen = localStorage.getItem(EDITOR_TOUR_SEEN_KEY) === "true";
+    if (!tourSeen) {
+      setTourType("editor");
+      setLocalRunTour(true);
+      localStorage.setItem(EDITOR_TOUR_SEEN_KEY, "true");
+    }
+  }, [setTourType]);
 
   useEffect(() => {
     if (globalRunTour && tourType === "editor") {
@@ -89,9 +99,9 @@ const UMLDiagramEditor = ({ problemId }) => {
       setTimeout(() => {
         setLocalRunTour(true);
         setGlobalRunTour(false);
-      }, 500);
+      }, 200);
     }
-  }, [globalRunTour, tourType]);
+  }, [globalRunTour, tourType, setGlobalRunTour]);
 
   useEffect(() => {
     // Fetch the challenge details using problemId
