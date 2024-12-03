@@ -15,6 +15,7 @@ import { ChallengeDifficulties } from "../types/challengeDifficulties";
 import { useQuery } from "../hooks/useQuery";
 import useCheckRole from "../hooks/useCheckRole";
 import { FiBarChart2 } from "react-icons/fi";
+import { IoFilterSharp } from "react-icons/io5";
 
 function Challenges() {
   const [challengesData, setChallengesData] =
@@ -30,7 +31,14 @@ function Challenges() {
 
   const { isAdmin } = useCheckRole();
   const query = useQuery();
-
+  // truncate description to three line
+  function truncateDescription(description, maxLength = 140) {
+    // maxLength is an approximation of 3 lines based on font size and layout
+    if (description.length > maxLength) {
+      return description.substring(0, maxLength) + "...";
+    }
+    return description;
+  }
   // Pattern categories
   const patternCategories = {
     Creational: ["Builder", "Simple Factory"],
@@ -215,7 +223,9 @@ function Challenges() {
         <Col lg={4} key={i} className="mb-4">
           <ChallengeCard
             title={challenge.title}
-            generalDescription={challenge.generalDescription}
+            generalDescription={truncateDescription(
+              challenge.generalDescription
+            )}
             id={challenge.id}
             difficulty={challenge.difficulty}
             completed={challenge.completed}
@@ -290,7 +300,7 @@ function Challenges() {
       <Container>
         <header>
           {/* Sorting and filtering controls (unchanged) */}
-          <Row className="my-2">
+          <Row className="my-4">
             <Col>
               <h1 className="fs-2">
                 {query.get("hidden") === "true"
@@ -305,12 +315,26 @@ function Challenges() {
             </Col>
             <Col>
               <div className="d-flex justify-content-end align-items-center flex-wrap">
-                <Dropdown className="mx-2 mb-2">
-                  <Dropdown.Toggle variant="primary" id="dropdown-combined">
-                    Sort and Filter
+                <Dropdown
+                  className="mx-2 mb-2"
+                  // style={{ boxShadow: "inset 0 1px 0 hsl(224, 84%, 74%)" }}
+                >
+                  <Dropdown.Toggle
+                    variant="primary"
+                    id="dropdown-combined"
+                    style={{
+                      textAlign: "left", // Align toggle text to the left
+                      width: "100%", // Ensure full-width toggle
+                    }}
+                  >
+                    Sort and Filter <IoFilterSharp />
                   </Dropdown.Toggle>
                   <Dropdown.Menu
-                    style={{ padding: "1rem", borderRadius: "8px" }}
+                    style={{
+                      padding: "1rem",
+                      borderRadius: "8px",
+                      width: "250px",
+                    }}
                   >
                     {/* Sort by Difficulty */}
                     <div className="mb-3">
@@ -319,6 +343,7 @@ function Challenges() {
                         onClick={() => {
                           setSortByDifficulty(!sortByDifficulty);
                         }}
+                        style={{ textAlign: "left" }}
                       >
                         {sortByDifficulty ? "Easier First" : "Harder First"}
                       </Dropdown.Item>
@@ -334,11 +359,13 @@ function Challenges() {
                         <Dropdown.Toggle
                           variant="light"
                           className="full-width-toggle"
-                          style={{ width: "100%" }}
+                          style={{ width: "100%", textAlign: "left" }}
                         >
                           Creational Patterns
                         </Dropdown.Toggle>
-                        <Dropdown.Menu style={{ borderRadius: "8px" }}>
+                        <Dropdown.Menu
+                          style={{ borderRadius: "8px", textAlign: "left" }}
+                        >
                           {patternCategories.Creational.map((pattern) => (
                             <Form.Check
                               key={pattern}
@@ -351,8 +378,20 @@ function Challenges() {
                               style={{
                                 marginLeft: "10px",
                                 marginRight: "10px",
+                                borderRadius: "4px",
                               }}
-                            />
+                            >
+                              <Form.Check.Input
+                                type="checkbox"
+                                style={{
+                                  border: "2px solid #000", // Makes the checkbox border visible
+                                  width: "16px",
+                                  height: "16px",
+                                  marginRight: "8px",
+                                }}
+                              />
+                              <Form.Check.Label>{pattern}</Form.Check.Label>
+                            </Form.Check>
                           ))}
                         </Dropdown.Menu>
                       </Dropdown>
@@ -362,11 +401,13 @@ function Challenges() {
                         <Dropdown.Toggle
                           variant="light"
                           className="full-width-toggle"
-                          style={{ width: "100%" }}
+                          style={{ width: "100%", textAlign: "left" }}
                         >
                           Structural Patterns
                         </Dropdown.Toggle>
-                        <Dropdown.Menu style={{ borderRadius: "8px" }}>
+                        <Dropdown.Menu
+                          style={{ borderRadius: "8px", textAlign: "left" }}
+                        >
                           {patternCategories.Structural.map((pattern) => (
                             <Form.Check
                               key={pattern}
@@ -379,8 +420,20 @@ function Challenges() {
                               style={{
                                 marginLeft: "10px",
                                 marginRight: "10px",
+                                textAlign: "left",
                               }}
-                            />
+                            >
+                              <Form.Check.Input
+                                type="checkbox"
+                                style={{
+                                  border: "2px solid #000", // Makes the checkbox border visible
+                                  width: "16px",
+                                  height: "16px",
+                                  marginRight: "8px",
+                                }}
+                              />
+                              <Form.Check.Label>{pattern}</Form.Check.Label>
+                            </Form.Check>
                           ))}
                         </Dropdown.Menu>
                       </Dropdown>
@@ -390,7 +443,7 @@ function Challenges() {
                         <Dropdown.Toggle
                           variant="light"
                           className="full-width-toggle"
-                          style={{ width: "100%" }}
+                          style={{ width: "100%", textAlign: "left" }}
                         >
                           Behavioral Patterns
                         </Dropdown.Toggle>
@@ -408,7 +461,18 @@ function Challenges() {
                                 marginLeft: "10px",
                                 marginRight: "10px",
                               }}
-                            />
+                            >
+                              <Form.Check.Input
+                                type="checkbox"
+                                style={{
+                                  border: "2px solid #000", // Makes the checkbox border visible
+                                  width: "16px",
+                                  height: "16px",
+                                  marginRight: "8px",
+                                }}
+                              />
+                              <Form.Check.Label>{pattern}</Form.Check.Label>
+                            </Form.Check>
                           ))}
                         </Dropdown.Menu>
                       </Dropdown>
@@ -418,7 +482,7 @@ function Challenges() {
                         <Dropdown.Toggle
                           variant="light"
                           className="full-width-toggle"
-                          style={{ width: "100%" }}
+                          style={{ width: "100%", textAlign: "left" }}
                         >
                           Extra Patterns
                         </Dropdown.Toggle>
@@ -436,7 +500,18 @@ function Challenges() {
                                 marginLeft: "10px",
                                 marginRight: "10px",
                               }}
-                            />
+                            >
+                              <Form.Check.Input
+                                type="checkbox"
+                                style={{
+                                  border: "2px solid #000", // Makes the checkbox border visible
+                                  width: "16px",
+                                  height: "16px",
+                                  marginRight: "8px",
+                                }}
+                              />
+                              <Form.Check.Label>{pattern}</Form.Check.Label>
+                            </Form.Check>
                           ))}
                         </Dropdown.Menu>
                       </Dropdown>
@@ -451,34 +526,73 @@ function Challenges() {
                         type="checkbox"
                         label="Easy"
                         onClick={() => handleFilter(ChallengeDifficulties.EASY)}
-                      />
+                      >
+                        <Form.Check.Input
+                          type="checkbox"
+                          style={{
+                            border: "2px solid #000", // Makes the checkbox border visible
+                            width: "16px",
+                            height: "16px",
+                            marginRight: "8px", // Adds spacing between the checkbox and label
+                          }}
+                        />
+                        <Form.Check.Label>Easy</Form.Check.Label>
+                      </Form.Check>
                       <Form.Check
                         type="checkbox"
                         label="Medium"
                         onClick={() =>
                           handleFilter(ChallengeDifficulties.MEDIUM)
                         }
-                      />
+                      >
+                        <Form.Check.Input
+                          type="checkbox"
+                          style={{
+                            border: "2px solid #000", // Makes the checkbox border visible
+                            width: "16px",
+                            height: "16px",
+                            marginRight: "8px", // Adds spacing between the checkbox and label
+                          }}
+                        />
+                        <Form.Check.Label>Medium</Form.Check.Label>
+                      </Form.Check>
                       <Form.Check
                         type="checkbox"
                         label="Hard"
                         onClick={() => handleFilter(ChallengeDifficulties.HARD)}
+                      >
+                        <Form.Check.Input
+                          type="checkbox"
+                          style={{
+                            border: "2px solid #000", // Makes the checkbox border visible
+                            width: "16px",
+                            height: "16px",
+                            marginRight: "8px", // Adds spacing between the checkbox and label
+                          }}
+                        />
+                        <Form.Check.Label>Hard</Form.Check.Label>
+                      </Form.Check>
+                    </div>
+                    <hr />
+                    <div className="mb-3">
+                      <strong>Show Completed</strong>
+                      <Form.Switch
+                        id="toggle-hide-completed"
+                        label={
+                          !hideComplete
+                            ? "Showing Completed"
+                            : "Hiding Completed"
+                        }
+                        checked={hideComplete}
+                        onChange={() => setHideComplete(!hideComplete)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
                       />
                     </div>
                   </Dropdown.Menu>
                 </Dropdown>
-
-                <Button
-                  className={
-                    "mx-2 mb-2 " +
-                    (!hideComplete ? "btn-primary" : "btn-danger")
-                  }
-                  onClick={() => {
-                    setHideComplete(!hideComplete);
-                  }}
-                >
-                  {!hideComplete ? "Showing Completed" : "Hiding Completed"}
-                </Button>
               </div>
             </Col>
           </Row>
