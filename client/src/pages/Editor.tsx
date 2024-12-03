@@ -405,6 +405,7 @@ const UMLDiagramEditor = ({ problemId }) => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
+      <EditorTour runTour={localRunTour} setRunTour={setLocalRunTour} />
       <div
         style={{
           position: "absolute",
@@ -580,7 +581,6 @@ const UMLDiagramEditor = ({ problemId }) => {
           )}
         </div>
       )}
-      <EditorTour runTour={localRunTour} setRunTour={setLocalRunTour} />
     </div>
   );
 };
