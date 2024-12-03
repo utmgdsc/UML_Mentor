@@ -23,7 +23,9 @@ import CustomMarkers from "./CustomMarkers";
 import { umlDiagramInstructions } from "../components/instructionsData";
 import domtoimage from "dom-to-image";
 import imageCompression from "browser-image-compression";
-import { useUMLFormatter } from '../hooks/useUMLFormatter.ts';
+import { useUMLFormatter } from "../hooks/useUMLFormatter.ts";
+import { EditorTour } from "../components/EditorTour";
+import { useTour } from "../context/TourContext";
 
 // Keys for local storage
 const LOCAL_STORAGE_KEY_NODES = "uml-diagram-nodes";
@@ -67,10 +69,39 @@ const UMLEdge = ({ id, sourceX, sourceY, targetX, targetY, style }) => {
 };
 
 const UMLDiagramEditor = ({ problemId }) => {
-  const { analyzeUML, isLoading, error, analysis } = useUMLFormatter({ problemId });
-  //const { analyzeUML, isLoading } = useUMLFormatter({ problemId });
+  const { analyzeUML, isLoading, error, analysis } = useUMLFormatter({
+    problemId,
+  });
   const [challengeName, setChallengeName] = useState("");
   const [challengeDescription, setChallengeDescription] = useState("");
+  const [localRunTour, setLocalRunTour] = useState(false);
+  const {
+    runTour: globalRunTour,
+    setRunTour: setGlobalRunTour,
+    tourType,
+    setTourType,
+  } = useTour();
+
+  const EDITOR_TOUR_SEEN_KEY = "editorTourSeen";
+
+  useEffect(() => {
+    const tourSeen = localStorage.getItem(EDITOR_TOUR_SEEN_KEY) === "true";
+    if (!tourSeen) {
+      setTourType("editor");
+      setLocalRunTour(true);
+      localStorage.setItem(EDITOR_TOUR_SEEN_KEY, "true");
+    }
+  }, [setTourType]);
+
+  useEffect(() => {
+    if (globalRunTour && tourType === "editor") {
+      // Small delay to ensure component is mounted
+      setTimeout(() => {
+        setLocalRunTour(true);
+        setGlobalRunTour(false);
+      }, 200);
+    }
+  }, [globalRunTour, tourType, setGlobalRunTour]);
 
   useEffect(() => {
     // Fetch the challenge details using problemId
@@ -80,7 +111,6 @@ const UMLDiagramEditor = ({ problemId }) => {
         const data = await response.json();
         setChallengeName(data.title || "Unnamed Challenge"); // Extract the challenge name
         setChallengeDescription(data.generalDescription || "No Description");
-        
       } catch (error) {
         console.error("Error fetching challenge details:", error);
       }
@@ -242,7 +272,7 @@ const UMLDiagramEditor = ({ problemId }) => {
     // Store the nodes and edges in localStorage (optional)
     localStorage.setItem(LOCAL_STORAGE_KEY_NODES, JSON.stringify(nodes));
     localStorage.setItem(LOCAL_STORAGE_KEY_EDGES, JSON.stringify(edges));
-    
+
     // Generate the image
     await generateImage();
 
@@ -362,6 +392,12 @@ const UMLDiagramEditor = ({ problemId }) => {
     setShowInstructions(false);
   };
 
+  useEffect(() => {
+    if (problemId) {
+      localStorage.setItem("lastVisitedChallenge", problemId);
+    }
+  }, [problemId]);
+
   return (
     <div
       style={{ width: "100%", height: "100%", position: "relative" }}
@@ -369,6 +405,7 @@ const UMLDiagramEditor = ({ problemId }) => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
+      <EditorTour runTour={localRunTour} setRunTour={setLocalRunTour} />
       <div
         style={{
           position: "absolute",
@@ -386,18 +423,27 @@ const UMLDiagramEditor = ({ problemId }) => {
         }}
       >
         <h4 style={{ margin: "0", textAlign: "center" }}>Actions</h4>
-        <button
-          onMouseDown={() => startDraggingNode("interfaceUMLNode")}
-          className="action-button"
+        <div
+          className="add-node-buttons"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
         >
-          Add Interface Node
-        </button>
-        <button
-          onMouseDown={() => startDraggingNode("umlNode")}
-          className="action-button"
-        >
-          Add Class Node
-        </button>
+          <button
+            onMouseDown={() => startDraggingNode("interfaceUMLNode")}
+            className="action-button"
+          >
+            Add Interface Node
+          </button>
+          <button
+            onMouseDown={() => startDraggingNode("umlNode")}
+            className="action-button"
+          >
+            Add Class Node
+          </button>
+        </div>
         <button onClick={resetWorkspace} className="reset-button">
           Reset Workspace
         </button>

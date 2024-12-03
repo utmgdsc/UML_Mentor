@@ -1,18 +1,18 @@
-import { useState , useEffect} from 'react';
+import { useState, useEffect } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PersonCircle } from "react-bootstrap-icons";
 import { NAV_CONFIG } from "../App.tsx";
-import NewUserPopup from './NewUserPopup'; // Make sure this path is correct
+import NewUserPopup from "./NewUserPopup"; // Make sure this path is correct
 import { QuestionCircle } from "react-bootstrap-icons";
-import { UserData } from '../types/UserData';
-import { useQuery } from '../hooks/useQuery.tsx';
+import { UserData } from "../types/UserData";
+import { useQuery } from "../hooks/useQuery.tsx";
 
 function NavigationBar() {
   const [showNewUserPopup, setShowNewUserPopup] = useState(false);
   const location = useLocation().pathname;
   const [username, setUsername] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<string | null>(null); 
+  const [userRole, setUserRole] = useState<string | null>(null);
   const navigate = useNavigate();
   const query = useQuery();
 
@@ -23,7 +23,7 @@ function NavigationBar() {
         if (!response.ok) {
           throw new Error(response.statusText);
         }
-        return response.json() as Promise<{username: string, role: string}>;
+        return response.json() as Promise<{ username: string; role: string }>;
       })
       .then((data) => {
         console.log("Fetched username: " + data.username);
@@ -31,8 +31,11 @@ function NavigationBar() {
         setUsername(data.username);
         setUserRole(data.role);
       })
-      .catch((err: Error) => { // Add the error type 'Error'
-        console.error("Failed fetching the username\nError message: " + err.message);
+      .catch((err: Error) => {
+        // Add the error type 'Error'
+        console.error(
+          "Failed fetching the username\nError message: " + err.message
+        );
       });
   }, [username]);
 
@@ -46,7 +49,7 @@ function NavigationBar() {
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-tertiary">
+      <Navbar expand="lg" className="bg-body-tertiary navbar">
         <Container>
           <Navbar.Brand href={"/"}>{NAV_CONFIG.brand}</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -61,33 +64,62 @@ function NavigationBar() {
                   {route.name}
                 </Nav.Link>
               ))}
-              {
-                userRole === "admin" && 
-                  <>
-                    <Nav.Link
-                      onClick={() => navigate('/admin')}
-                      className={location === '/admin' ? 'text-primary' : ''}
-                    >
-                      Admin
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {navigate("/challenges/add")}} className={location === "/challenges/add" ? "text-primary" : ""}>
-                      Add Challenge
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {navigate("challenges/?hidden=true")}} className={(location === "/challenges/" && query.get("hidden") === "true") ? "text-primary" : ""}>
-                      Hidden Challenges  
-                    </Nav.Link> 
-                  </>
-                  
-              }
+              {userRole === "admin" && (
+                <>
+                  <Nav.Link
+                    onClick={() => navigate("/admin")}
+                    className={location === "/admin" ? "text-primary" : ""}
+                  >
+                    Admin
+                  </Nav.Link>
+                  <Nav.Link
+                    onClick={() => {
+                      navigate("/challenges/add");
+                    }}
+                    className={
+                      location === "/challenges/add" ? "text-primary" : ""
+                    }
+                  >
+                    Add Challenge
+                  </Nav.Link>
+                  <Nav.Link
+                    onClick={() => {
+                      navigate("challenges/?hidden=true");
+                    }}
+                    className={
+                      location === "/challenges/" &&
+                      query.get("hidden") === "true"
+                        ? "text-primary"
+                        : ""
+                    }
+                  >
+                    Hidden Challenges
+                  </Nav.Link>
+                </>
+              )}
             </Nav>
-            <Nav className="align-items-center">
-              {/* "NewUserPopup" button */}
-              <QuestionCircle size={20} onClick={toggleNewUserPopup} style={{ cursor: 'pointer' }} />
-              {/* Profile button */}
-              <Nav.Link onClick={handleProfileClick} className="d-flex align-items-center">
-                <PersonCircle size={20} className={location === NAV_CONFIG.profile.href ? "text-primary" : ""} />
-              </Nav.Link>
-            </Nav>
+            <div className="user-controls">
+              <Nav className="align-items-center">
+                {/* "NewUserPopup" button */}
+                <QuestionCircle
+                  size={20}
+                  onClick={toggleNewUserPopup}
+                  style={{ cursor: "pointer" }}
+                />
+                {/* Profile button */}
+                <Nav.Link
+                  onClick={handleProfileClick}
+                  className="d-flex align-items-center"
+                >
+                  <PersonCircle
+                    size={20}
+                    className={
+                      location === NAV_CONFIG.profile.href ? "text-primary" : ""
+                    }
+                  />
+                </Nav.Link>
+              </Nav>
+            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>
