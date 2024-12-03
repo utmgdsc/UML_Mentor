@@ -39,6 +39,9 @@ function Challenges() {
     }
     return description;
   }
+  const [activeFilters, setActiveFilters] = useState<
+    { type: string; label: string }[]
+  >([]); // Unified state for all active filters
   // Pattern categories
   const patternCategories = {
     Creational: ["Builder", "Simple Factory"],
@@ -191,6 +194,9 @@ function Challenges() {
     let row: JSX.Element[] = [];
     let i = 0;
     for (const challenge of challengesData) {
+      if (!filter.includes(challenge.difficulty) && filter.length > 0) {
+        continue;
+      }
       if (
         selectedChallengeTypes.length > 0 &&
         challenge.keyPatterns &&
@@ -285,9 +291,60 @@ function Challenges() {
       setSelectedChallengeTypes(
         selectedChallengeTypes.filter((t) => t !== type)
       );
+      setActiveFilters((prev) =>
+        prev.filter(
+          (filter) =>
+            !(filter.type === "ChallengeType" && filter.label === type)
+        )
+      );
     } else {
       setSelectedChallengeTypes([...selectedChallengeTypes, type]);
+      setActiveFilters((prev) => [
+        ...prev,
+        { type: "ChallengeType", label: type },
+      ]);
     }
+  }
+
+  function clearAllFilters() {
+    setSortByDifficulty(false);
+    setFilter([]);
+    setSelectedChallengeTypes([]);
+    setActiveFilters([]);
+  }
+
+  function removeFilter(type: string, label: string) {
+    if (type === "ChallengeType") {
+      setSelectedChallengeTypes((prev) => prev.filter((t) => t !== label));
+    }
+    if (type === "Difficulty") {
+      const difficultyValue = Object.entries({
+        Easy: 0,
+        Medium: 1,
+        Hard: 2,
+      }).find(([key]) => key === label)?.[1];
+      setFilter((prev) =>
+        prev.filter((d) => d !== (difficultyValue as ChallengeDifficulties))
+      );
+    }
+    if (type === "SortByDifficulty") {
+      setSortByDifficulty(false);
+    }
+    setActiveFilters((prev) =>
+      prev.filter((filter) => !(filter.type === type && filter.label === label))
+    );
+  }
+
+  function toggleSortByDifficulty() {
+    const label = sortByDifficulty ? "Easier First" : "Harder First";
+
+    setSortByDifficulty(!sortByDifficulty);
+    setActiveFilters((prev) => {
+      if (prev.some((filter) => filter.type === "SortByDifficulty")) {
+        return prev.filter((filter) => filter.type !== "SortByDifficulty");
+      }
+      return [...prev, { type: "SortByDifficulty", label }];
+    });
   }
 
   if (query.get("hidden") === "true" && !isAdmin)
@@ -312,6 +369,45 @@ function Challenges() {
                   ? "Challenges not accessible by regular users"
                   : "Choose a challenge to start solving!"}
               </h2>
+              <div className="filter-bubbles d-flex align-items-center">
+                {activeFilters.map((filter, index) => (
+                  <span
+                    key={index}
+                    style={{
+                      display: "inline-flex", // Flexbox for centering
+                      alignItems: "center", // Vertically center the text
+                      justifyContent: "center", // Horizontally center the text
+                      backgroundColor: "#81C784", // Background color
+                      color: "#343A40", // Text color
+                      padding: "8px 16px", // Controlled padding for consistent spacing
+                      borderRadius: "9999px", // Fully rounded for dynamic sizing
+                      fontWeight: "600", // Bold text for emphasis
+                      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.15)", // Subtle shadow
+                      fontSize: "16px", // Readable font size
+                      whiteSpace: "nowrap", // Prevent text wrapping
+                      lineHeight: "1", // Prevent extra vertical spacing
+                      margin: "4px", // Spacing between bubbles
+                      textAlign: "center", // Ensure text is horizontally centered
+                    }}
+                  >
+                    {String(filter.label).trim()}
+                  </span>
+                ))}
+                {activeFilters.length > 0 && (
+                  <button
+                    className="btn btn-link text-decoration-none ms-3"
+                    onClick={clearAllFilters}
+                    style={{
+                      textDecoration: "none", // Prevent Bootstrap link underline
+                      color: "#007bff", // Custom color for "Clear all"
+                      fontWeight: "bold", // Bold for emphasis
+                      fontSize: "14px", // Readable size
+                    }}
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
             </Col>
             <Col>
               <div className="d-flex justify-content-end align-items-center flex-wrap">
@@ -534,60 +630,37 @@ function Challenges() {
                     {/* Filter by Difficulty */}
                     <div>
                       <strong>Filter by Difficulty</strong>
-                      <Form.Check
-                        type="checkbox"
-                        label="Easy"
-                        onClick={() => handleFilter(ChallengeDifficulties.EASY)}
-                      >
-                        <Form.Check.Input
+                      {Object.entries({
+                        0: "Easy",
+                        1: "Medium",
+                        2: "Hard",
+                      }).map(([key, label]) => (
+                        <Form.Check
+                          key={key}
                           type="checkbox"
-                          style={{
-                            border: "2px solid #000", // Makes the checkbox border visible
-                            width: "16px",
-                            height: "16px",
-                            marginRight: "8px", // Adds spacing between the checkbox and label
-                          }}
-                          onChange={() => handleChallengeTypeSelect(pattern)}
-                        />
-                        <Form.Check.Label>Easy</Form.Check.Label>
-                      </Form.Check>
-                      <Form.Check
-                        type="checkbox"
-                        label="Medium"
-                        onClick={() =>
-                          handleFilter(ChallengeDifficulties.MEDIUM)
-                        }
-                      >
-                        <Form.Check.Input
-                          type="checkbox"
-                          style={{
-                            border: "2px solid #000", // Makes the checkbox border visible
-                            width: "16px",
-                            height: "16px",
-                            marginRight: "8px", // Adds spacing between the checkbox and label
-                          }}
-                          onChange={() => handleChallengeTypeSelect(pattern)}
-                        />
-                        <Form.Check.Label>Medium</Form.Check.Label>
-                      </Form.Check>
-                      <Form.Check
-                        type="checkbox"
-                        label="Hard"
-                        onClick={() => handleFilter(ChallengeDifficulties.HARD)}
-                      >
-                        <Form.Check.Input
-                          type="checkbox"
-                          style={{
-                            border: "2px solid #000", // Makes the checkbox border visible
-                            width: "16px",
-                            height: "16px",
-                            marginRight: "8px", // Adds spacing between the checkbox and label
-                          }}
-                          onChange={() => handleChallengeTypeSelect(pattern)}
-                        />
-                        <Form.Check.Label>Hard</Form.Check.Label>
-                      </Form.Check>
+                          className="mb-2"
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          <Form.Check.Input
+                            type="checkbox"
+                            checked={filter.includes(parseInt(key))}
+                            onChange={() =>
+                              handleFilter(
+                                parseInt(key) as ChallengeDifficulties
+                              )
+                            }
+                            style={{
+                              border: "2px solid #000",
+                              width: "16px",
+                              height: "16px",
+                              marginRight: "10px",
+                            }}
+                          />
+                          <Form.Check.Label>{label}</Form.Check.Label>
+                        </Form.Check>
+                      ))}
                     </div>
+
                     <hr />
                     <div className="mb-3">
                       <strong>Show Completed</strong>
