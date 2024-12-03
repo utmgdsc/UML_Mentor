@@ -389,6 +389,9 @@ function Challenges() {
                                   height: "16px",
                                   marginRight: "8px",
                                 }}
+                                onChange={() =>
+                                  handleChallengeTypeSelect(pattern)
+                                }
                               />
                               <Form.Check.Label>{pattern}</Form.Check.Label>
                             </Form.Check>
@@ -431,6 +434,9 @@ function Challenges() {
                                   height: "16px",
                                   marginRight: "8px",
                                 }}
+                                onChange={() =>
+                                  handleChallengeTypeSelect(pattern)
+                                }
                               />
                               <Form.Check.Label>{pattern}</Form.Check.Label>
                             </Form.Check>
@@ -470,6 +476,9 @@ function Challenges() {
                                   height: "16px",
                                   marginRight: "8px",
                                 }}
+                                onChange={() =>
+                                  handleChallengeTypeSelect(pattern)
+                                }
                               />
                               <Form.Check.Label>{pattern}</Form.Check.Label>
                             </Form.Check>
@@ -509,6 +518,9 @@ function Challenges() {
                                   height: "16px",
                                   marginRight: "8px",
                                 }}
+                                onChange={() =>
+                                  handleChallengeTypeSelect(pattern)
+                                }
                               />
                               <Form.Check.Label>{pattern}</Form.Check.Label>
                             </Form.Check>
@@ -535,6 +547,7 @@ function Challenges() {
                             height: "16px",
                             marginRight: "8px", // Adds spacing between the checkbox and label
                           }}
+                          onChange={() => handleChallengeTypeSelect(pattern)}
                         />
                         <Form.Check.Label>Easy</Form.Check.Label>
                       </Form.Check>
@@ -553,6 +566,7 @@ function Challenges() {
                             height: "16px",
                             marginRight: "8px", // Adds spacing between the checkbox and label
                           }}
+                          onChange={() => handleChallengeTypeSelect(pattern)}
                         />
                         <Form.Check.Label>Medium</Form.Check.Label>
                       </Form.Check>
@@ -569,6 +583,7 @@ function Challenges() {
                             height: "16px",
                             marginRight: "8px", // Adds spacing between the checkbox and label
                           }}
+                          onChange={() => handleChallengeTypeSelect(pattern)}
                         />
                         <Form.Check.Label>Hard</Form.Check.Label>
                       </Form.Check>
