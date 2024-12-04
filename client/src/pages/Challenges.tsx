@@ -377,8 +377,8 @@ function Challenges() {
                       display: "inline-flex", // Flexbox for centering
                       alignItems: "center", // Vertically center the text
                       justifyContent: "center", // Horizontally center the text
-                      backgroundColor: "#81C784", // Background color
-                      color: "#343A40", // Text color
+                      backgroundColor: "#6C757D", // Background color Yellow
+                      color: "#FFFFFF", // Text color
                       padding: "8px 16px", // Controlled padding for consistent spacing
                       borderRadius: "9999px", // Fully rounded for dynamic sizing
                       fontWeight: "600", // Bold text for emphasis
