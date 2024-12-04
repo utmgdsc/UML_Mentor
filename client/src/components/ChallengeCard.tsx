@@ -20,16 +20,32 @@ function ChallengeCard({
 
   const difficultyStars = useMemo(
     () =>
-      Array.from({ length: difficulty + 1 }, (_, i) => <StarFill key={i} />),
-    [difficulty],
+      Array.from({ length: difficulty + 1 }, (_, i) => (
+        <StarFill
+          key={i}
+          style={{
+            color:
+              difficulty === 0
+                ? "green"
+                : difficulty === 1
+                  ? "#DAA520"
+                  : difficulty === 2
+                    ? "red"
+                    : "black", // Default to black for other cases
+          }}
+        />
+      )),
+    [difficulty]
   );
 
-  const backgroundColor = completed ? "bg-success-subtle" : "";
+  const backgroundColor = completed
+    ? "bg-success-subtle"
+    : "bg-secondary-subtle";
 
   function handleDelete() {
     if (
       !window.confirm(
-        "Are you sure you want to delete the challenge '" + title + "'?",
+        "Are you sure you want to delete the challenge '" + title + "'?"
       )
     ) {
       return;
@@ -100,7 +116,12 @@ function ChallengeCard({
   });
 
   return (
-    <Card>
+    <Card
+      className="shadow"
+      style={{
+        border: "none",
+      }}
+    >
       <Card.Header className={backgroundColor}>{difficultyStars}</Card.Header>
       <Card.Body>
         <Card.Title>{title}</Card.Title>

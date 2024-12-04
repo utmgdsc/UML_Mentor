@@ -55,8 +55,8 @@ function Home() {
   return (
     <section>
       {/* Recent Solutions */}
-      <Container className="mt-5">
-        <h2 className="mb-3">Recent Solutions</h2>
+      <Container className="mt-5 recent-solutions-container">
+        <h2 className="section-title mb-3">Recent Solutions</h2>
         <Row sm={1} lg={3} className="gx-4 gy-4">
           {solutions.map((solution) => (
             <Col key={solution.id}>
@@ -73,18 +73,22 @@ function Home() {
         </Row>
         <BootstrapButton
           variant="outline-primary"
-          className="mt-3"
+          className="mt-3 see-more-btn"
           href="/solutions"
         >
           See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
         </BootstrapButton>
       </Container>
-
+      <hr className="section-divider" /> {/* Divider between sections */}
       {/* Suggested Challenges */}
-      <Container className="my-5">
+      <Container className="my-5 suggested-challenges-container">
         <Stack direction="horizontal" className="justify-content-between mb-3">
-          <h2>Suggested Challenges</h2>
-          <BootstrapButton variant="outline-primary" href="/challenges">
+          <h2 className="section-title">Suggested Challenges</h2>
+          <BootstrapButton
+            variant="outline-primary"
+            className="see-more-btn"
+            href="/challenges"
+          >
             See More <ArrowUpRightSquare style={{ marginLeft: "0.5rem" }} />
           </BootstrapButton>
         </Stack>
